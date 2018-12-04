@@ -1,0 +1,14 @@
+---
+title: "Basic analysis of pilot data"
+output: html_notebook
+---
+
+# executing  *Cmd+Shift+Enter*. 
+# Add a new chunk *Cmd+Option+I*.
+# *Cmd+Shift+K* to preview the HTML file 
+
+```{r}
+datafile <- "~/Documents/MATLAB/projects/SingleCP_DotsReversal_Task/data/pilot/pilot1.csv"
+data <- read.csv(file=datafile, header=TRUE, sep=",")
+str(data)
+```
