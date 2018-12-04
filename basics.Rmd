@@ -3,12 +3,51 @@ title: "Basic analysis of pilot data"
 output: html_notebook
 ---
 
-# executing  *Cmd+Shift+Enter*. 
+<!-- executing  *Cmd+Shift+Enter*. 
 # Add a new chunk *Cmd+Option+I*.
-# *Cmd+Shift+K* to preview the HTML file 
-
+# *Cmd+Shift+K* to preview the HTML file -->
+Note how, for now, this code uses data produced from [this code](https://github.com/aernesto/SingleCP_DotsReversal_Task/releases/tag/pilot1).
 ```{r}
 datafile <- "~/Documents/MATLAB/projects/SingleCP_DotsReversal_Task/data/pilot/pilot1.csv"
 data <- read.csv(file=datafile, header=TRUE, sep=",")
 str(data)
 ```
+Basic questions that we may, together with their answer:
+
+* How many trials were produced?
+```{r}
+numTrials <- length(unique(data$trialIndex))
+# display warning if somehow a trial or more are duplicated
+duplicates <- numTrials != nrow(data)
+if (duplicates) {
+  print("some trials are duplicated")
+} else {
+  print(numTrials)
+}
+```
+
+* How many trials were produced per combination of factors? 
+```{r}
+# create a smaller dataframe only containing the independent variables
+indepVarNames <- c("trialIndex","initDirection","presenceCP","coherence","viewingDuration","probCP","timeCP")
+if (duplicates) {
+  print("find a way to deal with duplicates!")
+} else {
+  indVar_df <- data[indepVarNames]
+  str(indVar_df)
+}
+
+```
+```{r}
+unique(indVar_df)
+```
+
+
+* What were the marginal frequencies?
+```{r}
+
+```
+
+
+
+
