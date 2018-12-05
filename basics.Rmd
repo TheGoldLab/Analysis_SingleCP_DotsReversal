@@ -1,18 +1,27 @@
 ---
 title: "Basic analysis of pilot data"
-output: html_notebook
+output:
+  html_notebook:
+    toc: true
+    theme: united
+    code_folding: hide
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: Adrian Radillo
 ---
 
-<!-- executing  *Cmd+Shift+Enter*. 
-# Add a new chunk *Cmd+Option+I*.
-# *Cmd+Shift+K* to preview the HTML file -->
+<!-- 
+executing  *Cmd+Shift+Enter*. 
+Add a new chunk *Cmd+Option+I*.
+*Cmd+Shift+K* to preview the HTML file -->
 Note how, for now, this code uses data produced from [this code](https://github.com/aernesto/SingleCP_DotsReversal_Task/releases/tag/pilot1).
-```{r}
-datafile <- "~/Documents/MATLAB/projects/SingleCP_DotsReversal_Task/data/pilot/pilot1.csv"
-data <- read.csv(file=datafile, header=TRUE, sep=",")
-str(data)
+```{r echo=FALSE, results='hide'}
+library(data.table) # see https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html for reference
+datafile <- "~/programing/data/psychophys/pilot1.csv"
+data <- fread(file=datafile, header=TRUE, sep=",")
+# uncomment next line to inspect data table
+# str(data)
 ```
-Basic questions that we may, together with their answer:
+## Basic questions that we may ask, together with their answer:
 
 * How many trials were produced?
 ```{r}
@@ -20,34 +29,44 @@ numTrials <- length(unique(data$trialIndex))
 # display warning if somehow a trial or more are duplicated
 duplicates <- numTrials != nrow(data)
 if (duplicates) {
-  print("some trials are duplicated")
+  print("some trials are duplicated -- remainder of notebook should NOT be executed")
 } else {
   print(numTrials)
 }
 ```
 
 * How many trials were produced per combination of factors? 
-```{r}
-# create a smaller dataframe only containing the independent variables
-indepVarNames <- c("trialIndex","initDirection","presenceCP","coherence","viewingDuration","probCP","timeCP")
-if (duplicates) {
-  print("find a way to deal with duplicates!")
-} else {
-  indVar_df <- data[indepVarNames]
-  str(indVar_df)
+```{r echo=FALSE}
+# ARGS:
+#   initTable       initial data.table object
+#   groupVarNames   vector of column names to use for grouping
+# RETURNS:
+#   combFactors     data.table with unique rows and their frequencies (i.e. count)
+getFreq <- function(initTable, groupVarNames) {
+  # create a smaller data table only containing the independent variables
+  df <- initTable[, ..groupVarNames]
+
+  # create other data table which counts trials with similar indep. vars. values (freq. column)
+  combFactors <- df[, .N, by=names(df)]
+  setnames(combFactors, c(groupVarNames, "freq."))
+  return(combFactors)
 }
-
 ```
+
 ```{r}
-unique(indVar_df)
+indepVarNames <- c("initDirection","presenceCP","coherence","viewingDuration","probCP","timeCP")
+combFactors <- getFreq(data, indepVarNames)
+combFactors
 ```
-
 
 * What were the marginal frequencies?
 ```{r}
-
+for (i in 1:length(indepVarNames)) {
+  print(getFreq(data, indepVarNames[i]))
+}
 ```
 
 
 
+* What is the accuracy on the task?
 
