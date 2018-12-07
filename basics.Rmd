@@ -13,10 +13,10 @@ author: Adrian Radillo
 executing  *Cmd+Shift+Enter*. 
 Add a new chunk *Cmd+Option+I*.
 *Cmd+Shift+K* to preview the HTML file -->
-Note how, for now, this code uses data produced from [this code](https://github.com/aernesto/SingleCP_DotsReversal_Task/releases/tag/pilot1).
+Note how, for now, this code uses data produced from [this code](https://github.com/TheGoldLab/SingleCP_DotsReversal_Task/releases/tag/pilot2).
 ```{r echo=FALSE, results='hide'}
 library(data.table) # see https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html for reference
-datafile <- "~/programing/data/psychophys/pilot1.csv"
+datafile <- "~/programing/data/psychophys/pilot2.csv"
 data <- fread(file=datafile, header=TRUE, sep=",")
 # uncomment next line to inspect data table
 # str(data)
@@ -89,5 +89,15 @@ accuracy_nonCP <- round(accuracy_nonCP, digits = 2)
 toDisplay <- cpGrouping[, ("accuracy") := data.frame("accuracy"=c(accuracy_nonCP, accuracy_CP))]
 print(toDisplay)
 toDisplay # print a second time because of a bug that I don't fully understand (see https://github.com/IRkernel/IRkernel/issues/127 and https://github.com/rstudio/rmarkdown/issues/1002)
+```
+
+Compare accuracy as a function of viewing duration
+```{r}
+# first get marginal frequencies
+toDisplay <- data[order(viewingDuration),.(freq = .N, correct = sum(correct)), by=viewingDuration]
+
+# then add the accuracy column
+toDisplay <- toDisplay[,.(viewingDuration, freq, correct, accuracy = round(correct/freq*100,digits=2))]
+toDisplay
 ```
 
