@@ -22,6 +22,13 @@ data <- fread(file=datafile, header=TRUE, sep=",")
 # str(data)
 ```
 ## Basic questions that we may ask
+### How long did the session last?
+```{r}
+#library(ggplot2)
+# I don't know what choiceTime means
+# data[,.(tot_in_minutes = sum(choiceTime) / 60, mean_in_sec = mean(choiceTime), var_in_sec_sq = var(choiceTime))]
+```
+
 
 ### How many trials were produced?
 ```{r}
@@ -71,7 +78,7 @@ for (i in 1:length(indepVarNames)) {
 accuracy <- sum(data[,correct])/numTrials
 cat(accuracy * 100,"%", sep = '')
 ```
-Compare accuracy on CP and non-CP trials
+#### Accuracy on CP vs. non-CP trials
 ```{r}
 # count CP and Non-CP trials
 cpGrouping <- getFreq(data, "presenceCP")
@@ -91,13 +98,35 @@ print(toDisplay)
 toDisplay # print a second time because of a bug that I don't fully understand (see https://github.com/IRkernel/IRkernel/issues/127 and https://github.com/rstudio/rmarkdown/issues/1002)
 ```
 
-Compare accuracy as a function of viewing duration
+#### Accuracy as a function of viewing duration
 ```{r}
 # first get marginal frequencies
 toDisplay <- data[order(viewingDuration),.(freq = .N, correct = sum(correct)), by=viewingDuration]
 
 # then add the accuracy column
 toDisplay <- toDisplay[,.(viewingDuration, freq, correct, accuracy = round(correct/freq*100,digits=2))]
+toDisplay
+```
+
+#### Accuracy as a function of coherence level
+```{r}
+# first get marginal frequencies
+toDisplay <- data[order(coherence),.(freq = .N, correct = sum(correct)), by=coherence]
+
+# then add the accuracy column
+toDisplay <- toDisplay[,.(coherence, freq, correct, accuracy = round(correct/freq*100,digits=2))]
+toDisplay
+```
+
+#### Group by change point presence after CP time
+For viewing durations greater than the change point time, compare accuracies between CP and non-CP trials
+```{r}
+# first get marginal frequencies
+toDisplay <- data[viewingDuration > .2,
+                  .(freq = .N, correct = sum(correct)), 
+                  by=.(viewingDuration, presenceCP)]
+# then add the accuracy column
+toDisplay <- toDisplay[,.(viewingDuration, freq, correct, presenceCP,  accuracy = round(correct/freq*100,digits=2))]
 toDisplay
 ```
 
