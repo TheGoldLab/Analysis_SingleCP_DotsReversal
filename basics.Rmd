@@ -16,6 +16,7 @@ Add a new chunk *Cmd+Option+I*.
 Note how, for now, this code uses data produced from [this code](https://github.com/TheGoldLab/SingleCP_DotsReversal_Task/releases/tag/pilot2).
 ```{r echo=FALSE, results='hide'}
 library(data.table) # see https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html for reference
+library(ggplot2)
 datafile <- "~/programing/data/psychophys/pilot2.csv"
 data <- fread(file=datafile, header=TRUE, sep=",")
 # uncomment next line to inspect data table
@@ -24,11 +25,8 @@ data <- fread(file=datafile, header=TRUE, sep=",")
 ## Basic questions that we may ask
 ### How long did the session last?
 ```{r}
-#library(ggplot2)
-# I don't know what choiceTime means
-# data[,.(tot_in_minutes = sum(choiceTime) / 60, mean_in_sec = mean(choiceTime), var_in_sec_sq = var(choiceTime))]
+cat( round(data[,sum(trialEnd - trialStart)] / 60, digits = 2), "min" )
 ```
-
 
 ### How many trials were produced?
 ```{r}
@@ -129,4 +127,30 @@ toDisplay <- data[viewingDuration > .2,
 toDisplay <- toDisplay[,.(viewingDuration, freq, correct, presenceCP,  accuracy = round(correct/freq*100,digits=2))]
 toDisplay
 ```
-
+### How precise were the dots timings?
+We plot `(dotsOff - dotsOn) - viewingDuration`, across all trials.
+```{r}
+axes_labels_font <- 18
+axes_font <- 15
+durTable <- data[,.(dotsDurationError = (dotsOff - dotsOn - viewingDuration) * 1000, presenceCP, viewingDuration)]
+g <- ggplot(durTable, aes(x=1:nrow(durTable), y=dotsDurationError)) + 
+  geom_line(size=.2) +  geom_point(aes(shape=factor(presenceCP),
+                                       col=factor(viewingDuration)),size=3) 
+# Add Title and Labels
+g + labs(title="Error in generated dots duration", 
+         subtitle="From pilot1 dataset", 
+         y="duration error (msec)", 
+         x="trial (in session order)",
+         color="viewing dur.", shape="CP") + theme(plot.title=element_text(size=20, 
+                                    family="American Typewriter",
+                                    color="tomato",
+                                    lineheight=1.2),  # title
+            plot.subtitle=element_text(size=15, 
+                                       family="American Typewriter"),  # subtitle
+            plot.caption=element_text(size=15),  # caption
+            axis.title.x=element_text(size=axes_labels_font),  # X axis title
+            axis.title.y=element_text(size=axes_labels_font),  # Y axis title
+            axis.text.x=element_text(size=axes_font),  # X axis text
+            axis.text.y=element_text(size=axes_font))  # Y axis text
+```
+Note how the largest errors (roughly 40msec) occur on longest viewing duration trials which contain a change point (blue triangles).
