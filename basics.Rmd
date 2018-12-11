@@ -1,14 +1,132 @@
 ---
 title: "Basic analysis of pilot data"
-output: html_notebook
+output:
+  html_notebook:
+    toc: true
+    theme: united
+    code_folding: hide
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: Adrian Radillo
 ---
 
-# executing  *Cmd+Shift+Enter*. 
-# Add a new chunk *Cmd+Option+I*.
-# *Cmd+Shift+K* to preview the HTML file 
+<!-- 
+executing  *Cmd+Shift+Enter*. 
+Add a new chunk *Cmd+Option+I*.
+*Cmd+Shift+K* to preview the HTML file -->
+Note how, for now, this code uses data produced from [this code](https://github.com/TheGoldLab/SingleCP_DotsReversal_Task/releases/tag/pilot2).
+```{r echo=FALSE, results='hide'}
+library(data.table) # see https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html for reference
+datafile <- "~/programing/data/psychophys/pilot2.csv"
+data <- fread(file=datafile, header=TRUE, sep=",")
+# uncomment next line to inspect data table
+# str(data)
+```
+## Basic questions that we may ask
+### How long did the session last?
+```{r}
+#library(ggplot2)
+# I don't know what choiceTime means
+# data[,.(tot_in_minutes = sum(choiceTime) / 60, mean_in_sec = mean(choiceTime), var_in_sec_sq = var(choiceTime))]
+```
+
+
+### How many trials were produced?
+```{r}
+numTrials <- length(unique(data$trialIndex))
+# display warning if somehow a trial or more are duplicated
+duplicates <- numTrials != nrow(data)
+if (duplicates) {
+  print("some trials are duplicated -- remainder of notebook should NOT be executed")
+} else {
+  cat(numTrials, "trials")
+}
+```
+
+### How many trials were produced per combination of factors? 
+```{r echo=FALSE}
+# ARGS:
+#   initTable       initial data.table object
+#   groupVarNames   vector of column names to use for grouping
+# RETURNS:
+#   combFactors     data.table with unique rows and their frequencies (i.e. count)
+getFreq <- function(initTable, groupVarNames) {
+  # create a smaller data table only containing the independent variables
+  df <- initTable[, ..groupVarNames]
+
+  # create other data table which counts trials with similar indep. vars. values (freq. column)
+  combFactors <- df[, .N, by=names(df)]
+  setnames(combFactors, c(groupVarNames, "freq."))
+  return(combFactors)
+}
+```
 
 ```{r}
-datafile <- "~/Documents/MATLAB/projects/SingleCP_DotsReversal_Task/data/pilot/pilot1.csv"
-data <- read.csv(file=datafile, header=TRUE, sep=",")
-str(data)
+indepVarNames <- c("initDirection","presenceCP","coherence","viewingDuration","probCP","timeCP")
+combFactors <- getFreq(data, indepVarNames)
+combFactors
 ```
+
+### What were the marginal frequencies?
+```{r}
+for (i in 1:length(indepVarNames)) {
+  print(getFreq(data, indepVarNames[i]))
+}
+```
+
+### What is the accuracy on the task?
+```{r}
+accuracy <- sum(data[,correct])/numTrials
+cat(accuracy * 100,"%", sep = '')
+```
+#### Accuracy on CP vs. non-CP trials
+```{r}
+# count CP and Non-CP trials
+cpGrouping <- getFreq(data, "presenceCP")
+numCPtrials <- cpGrouping[presenceCP == 1, freq.]
+numNonCPtrials <- cpGrouping[presenceCP == 0, freq.]
+
+# compute accuracies in each group of trials
+accuracy_CP <- sum(data[presenceCP == 1, correct])/numCPtrials * 100
+accuracy_nonCP <- sum(data[presenceCP == 0, correct])/numNonCPtrials * 100
+# round to 2 decimals
+accuracy_CP <- round(accuracy_CP, digits = 2)
+accuracy_nonCP <- round(accuracy_nonCP, digits = 2)
+
+# display summarizing table
+toDisplay <- cpGrouping[, ("accuracy") := data.frame("accuracy"=c(accuracy_nonCP, accuracy_CP))]
+print(toDisplay)
+toDisplay # print a second time because of a bug that I don't fully understand (see https://github.com/IRkernel/IRkernel/issues/127 and https://github.com/rstudio/rmarkdown/issues/1002)
+```
+
+#### Accuracy as a function of viewing duration
+```{r}
+# first get marginal frequencies
+toDisplay <- data[order(viewingDuration),.(freq = .N, correct = sum(correct)), by=viewingDuration]
+
+# then add the accuracy column
+toDisplay <- toDisplay[,.(viewingDuration, freq, correct, accuracy = round(correct/freq*100,digits=2))]
+toDisplay
+```
+
+#### Accuracy as a function of coherence level
+```{r}
+# first get marginal frequencies
+toDisplay <- data[order(coherence),.(freq = .N, correct = sum(correct)), by=coherence]
+
+# then add the accuracy column
+toDisplay <- toDisplay[,.(coherence, freq, correct, accuracy = round(correct/freq*100,digits=2))]
+toDisplay
+```
+
+#### Group by change point presence after CP time
+For viewing durations greater than the change point time, compare accuracies between CP and non-CP trials
+```{r}
+# first get marginal frequencies
+toDisplay <- data[viewingDuration > .2,
+                  .(freq = .N, correct = sum(correct)), 
+                  by=.(viewingDuration, presenceCP)]
+# then add the accuracy column
+toDisplay <- toDisplay[,.(viewingDuration, freq, correct, presenceCP,  accuracy = round(correct/freq*100,digits=2))]
+toDisplay
+```
+
