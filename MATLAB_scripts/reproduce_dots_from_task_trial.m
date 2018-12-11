@@ -4,54 +4,38 @@
 filename = 'pilot1.mat';
 taskName = 'SingleCP_DotsReversal';
 [topNode, FIRA] = topsTreeNodeTopNode.getDataFromFile(filename, taskName);
+trialNumber=10; % different from trialIndex in FIRA
 
 %% set up a dotsDrawable object
 
-% Demonstrate random dot kinetograms, allow visual inspection.
-%
-% @ingroup dotsDemos
-delay=10;
+% get specific parameters to draw the dots, namely:
+% initDirection
+% coherence
+% viewingDuration (or dotsOff-dotsOn?)
+% 
+%    TODO: deal with
+% endDirection
+% presenceCP
+% timeCP
+% randSeedBase
+%    TODO 2: also find a way to store and retrieve
+% stencilNumber
+% pixelSize
+% diameter 
+% speed
 
-gridSize = 1;
-
-% create a kinetogram with minimal motion features
-clean = dotsDrawableDotKinetogram();
-clean.stencilNumber = 1;
-clean.pixelSize = 3;
-clean.diameter = 16;
 clean.yCenter = gridSize;
 clean.xCenter = -gridSize;
-clean.direction = 180;
-clean.coherence = 50;
 
-% Aggrigate the kinetograms into one ensemble
-kinetograms = topsEnsemble('kinetograms');
-kinetograms.addObject(clean);
+% get appropriate column numbers for FIRA.ecodes.data matrix
+col.direction = find(strcmp(FIRA.ecodes.name, 'initDirection'),1);
+col.coherence = find(strcmp(FIRA.ecodes.name, 'coherence'),1);
+col.dotsDuration = find(strcmp(FIRA.ecodes.name, 'viewingDuration'),1);
 
-% automate the task of drawing all the objects
-%   the static drawFrame() takes a cell array of objects
-% isCell = true;
-kinetograms.automateObjectMethod( ...
-    'draw', @dotsDrawable.drawFrame, {}, [], isCell);
+% get actual parameter values from FIRA.ecodes.data matrix
+dotsParams.direction = FIRA.ecodes.data(trialNumber, col.direction);
+dotsParams.coherence = FIRA.ecodes.data(trialNumber, col.coherence);
+dotsParams.dotsDuration = FIRA.ecodes.data(trialNumber, col.dotsDuration);
 
-%% draw it
-try
-    % get a drawing window
-    %sc=dotsTheScreen.theObject;
-    %sc.reset('displayIndex', 2);
-    dotsTheScreen.reset('displayIndex', 0);
-    dotsTheScreen.openWindow();
-    
-    % get the objects ready to use the window
-    kinetograms.callObjectMethod(@prepareToDrawInWindow);
-    
-    % let the ensemble animate for a while
-    kinetograms.run(delay);
-    
-    % close the OpenGL drawing window
-    dotsTheScreen.closeWindow();
-    
-catch err
-    dotsTheScreen.closeWindow();
-    rethrow(err)
-end
+%% Draw the dots
+draw_dots(dotsParams)
