@@ -36,7 +36,11 @@ try
     kinetograms.callObjectMethod(@prepareToDrawInWindow);
     
     % let the ensemble animate for a while
-    kinetograms.run(dotsParams.dotsDuration);
+    time = mglGetSecs;
+    while mglGetSecs < time + dotsParams.dotsDuration
+       ret = dotsDrawable.drawFrame(kinetograms.objects)
+    end
+    %kinetograms.run(dotsParams.dotsDuration);
     
     % close the OpenGL drawing window
     dotsTheScreen.closeWindow();
