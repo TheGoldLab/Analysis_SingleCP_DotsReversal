@@ -6,26 +6,35 @@ taskName = 'SingleCP_DotsReversal';
 [topNode, FIRA] = topsTreeNodeTopNode.getDataFromFile(filename, taskName);
 trialNumber=10; % different from trialIndex in FIRA
 
+% NOTE: the topNode object defined above is the topNode used for the task
+% Hence, the topsTreeNodeTask object corresponding to the task is a child
+% of the topNode object. In our case, our task corresponds to the class
+% topsTreeNodeTaskSingleCPDotsReversal. When exploring the topNode object,
+% the children field will appear with the appropriate task type only if the
+% class definition is in the MATLAB path. If it isn't, the children field
+% appears empty. But it is not empty, the user may still access the
+% topsTreeNodeTask object by accessing topNode.children
+
 %% set up a dotsDrawable object
 
-% get specific parameters to draw the dots, namely:
-% initDirection
-% coherence
-% viewingDuration (or dotsOff-dotsOn?)
-% 
+% get specific parameters to draw the dots:
 %    TODO: deal with
 % endDirection
 % presenceCP
 % timeCP
 % randSeedBase
-%    TODO 2: also find a way to store and retrieve
-% stencilNumber
-% pixelSize
-% diameter 
-% speed
+% coherenceSTD
+% dotsOff-dotsOn
 
-clean.yCenter = gridSize;
-clean.xCenter = -gridSize;
+topNodeDrawableSettings = topNode.children{1}.drawable.stimulusEnsemble.dots.settings;
+
+dotsParams.stencilNumber = topNodeDrawableSettings.stencilNumber;
+dotsParams.pixelSize = topNodeDrawableSettings.pixelSize;
+dotsParams.diameter = topNodeDrawableSettings.diameter;
+dotsParams.speed = topNodeDrawableSettings.speed;
+dotsParams.yCenter = topNodeDrawableSettings.yCenter;
+dotsParams.xCenter = topNodeDrawableSettings.xCenter;
+dotsParams.density = topNodeDrawableSettings.density;
 
 % get appropriate column numbers for FIRA.ecodes.data matrix
 col.direction = find(strcmp(FIRA.ecodes.name, 'initDirection'),1);

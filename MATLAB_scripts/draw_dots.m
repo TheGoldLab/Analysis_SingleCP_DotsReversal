@@ -1,17 +1,15 @@
 function draw_dots(dotsParams)
 
-gridSize = 1;
-
 % create a kinetogram with minimal motion features
 clean = dotsDrawableDotKinetogram();
 
+clean.stencilNumber = dotsParams.stencilNumber;
+clean.pixelSize = dotsParams.pixelSize;
+clean.diameter = dotsParams.diameter;
+clean.density = dotsParams.density;
 
-clean.stencilNumber = 1;
-clean.pixelSize = 3;
-clean.diameter = 16;
-
-clean.yCenter = gridSize;
-clean.xCenter = -gridSize;
+clean.yCenter = dotsParams.yCenter;
+clean.xCenter = dotsParams.xCenter;
 
 clean.direction = dotsParams.direction;
 clean.coherence = dotsParams.coherence;
