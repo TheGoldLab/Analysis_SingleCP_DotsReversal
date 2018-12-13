@@ -14,7 +14,11 @@ clean.xCenter = dotsParams.xCenter;
 clean.direction = dotsParams.direction;
 clean.coherence = dotsParams.coherence;
 
-% Aggrigate the kinetograms into one ensemble
+clean.randBase = dotsParams.randSeedBase;
+% as of 12/13/18, this base random seed is used as described in this line:
+% https://github.com/TheGoldLab/Lab-Matlab-Control/blob/bf12ab259585ba34a549f6fbbe97e8a4f4b6791d/snow-dots/classes/drawable/dotsDrawableDotKinetogram.m#L145
+
+% Aggregate the kinetograms into one ensemble
 kinetograms = topsEnsemble('kinetograms');
 kinetograms.addObject(clean);
 
