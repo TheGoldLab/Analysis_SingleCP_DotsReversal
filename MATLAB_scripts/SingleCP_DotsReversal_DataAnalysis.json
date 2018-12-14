@@ -6,10 +6,11 @@
 	        "update": "never"
 	},
 	{
-		"flavor": "eyeDev",
-		"name": "Lab-Matlab-Control",
+		"flavor": "Adrian_Tests",
+		"name": "lmc_forked",
 		"type": "git",
-		"url": "https://github.com/TheGoldLab/Lab-Matlab-Control.git"
+		"url": "https://github.com/aernesto/Lab-Matlab-Control.git",
+		"toolboxRoot": "#lmc_forked_Adrian_Tests"
 	},
 	{
 		"name": "mgl",
