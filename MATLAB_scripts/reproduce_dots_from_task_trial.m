@@ -1,6 +1,6 @@
 %% AIM: write a script that displays the dots stimulus from a specific trial
 
-%% get data from the task 
+%% get data from the task (currently who-MEX bug)
 clear all
 
 filename = 'pilot2.mat';

@@ -1,22 +1,37 @@
-function draw_dots(dotsParams)
+function draw_dots(varargin)
 
-% create a kinetogram with minimal motion features
+% create a kinetogram 
 clean = dotsDrawableDotKinetogram();
 
-clean.stencilNumber = dotsParams.stencilNumber;
-clean.pixelSize = dotsParams.pixelSize;
-clean.diameter = dotsParams.diameter;
-clean.density = dotsParams.density;
-
-clean.yCenter = dotsParams.yCenter;
-clean.xCenter = dotsParams.xCenter;
-
-clean.direction = dotsParams.direction;
-clean.coherence = dotsParams.coherence;
-
-clean.randBase = dotsParams.randSeedBase;
-% as of 12/13/18, this base random seed is used as described in this line:
-% https://github.com/TheGoldLab/Lab-Matlab-Control/blob/bf12ab259585ba34a549f6fbbe97e8a4f4b6791d/snow-dots/classes/drawable/dotsDrawableDotKinetogram.m#L145
+if nargin > 0 && strcmp(varargin{1},'dotsParams')
+    clean.stencilNumber = dotsParams.stencilNumber;
+    clean.pixelSize = dotsParams.pixelSize;
+    clean.diameter = dotsParams.diameter;
+    clean.density = dotsParams.density;
+    
+    clean.yCenter = dotsParams.yCenter;
+    clean.xCenter = dotsParams.xCenter;
+    
+    clean.direction = dotsParams.direction;
+    clean.coherence = dotsParams.coherence;
+    
+    clean.randBase = dotsParams.randSeedBase;
+    % as of 12/13/18, this base random seed is used as described in this line:
+    % https://github.com/TheGoldLab/Lab-Matlab-Control/blob/bf12ab259585ba34a549f6fbbe97e8a4f4b6791d/snow-dots/classes/drawable/dotsDrawableDotKinetogram.m#L145
+elseif nargin == 0
+        clean.stencilNumber = dotsParams.stencilNumber;
+    clean.pixelSize = dotsParams.pixelSize;
+    clean.diameter = dotsParams.diameter;
+    clean.density = dotsParams.density;
+    
+    clean.yCenter = dotsParams.yCenter;
+    clean.xCenter = dotsParams.xCenter;
+    
+    clean.direction = dotsParams.direction;
+    clean.coherence = dotsParams.coherence;
+    
+    clean.randBase = dotsParams.randSeedBase;
+end
 
 % Aggregate the kinetograms into one ensemble
 kinetograms = topsEnsemble('kinetograms');
