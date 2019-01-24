@@ -5,6 +5,13 @@
 		"url": "https://github.com/aernesto/SingleCP_DotsReversal_DataAnalysis.git",
 	        "update": "never"
 	},
+	{	
+		"name": "SingleCP_DotsReversal_Task",
+		"type": "git",
+		"url": "https://github.com/TheGoldLab/SingleCP_DotsReversal_Task.git",
+	        "update": "",
+		"toolboxRoot": "#SingleCP_DotsReversal_Task"
+	},
 	{
 		"flavor": "Adrian_Tests",
 		"name": "lmc_forked",
