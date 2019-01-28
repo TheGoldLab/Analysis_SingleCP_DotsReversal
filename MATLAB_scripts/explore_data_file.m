@@ -12,4 +12,45 @@ taskName = 'SingleCP_DotsReversal';
 fileWithPath = ['/Users/adrian/',taskName,'/topsDataLog/',inFilename];
 The_Data_Log = topsDataLog.theDataLog(true);
 topsDataLog.readDataFile(fileWithPath);
-all_frameInfo = The_Data_Log.getAllItemsFromGroup('frameInfo');
+info_frames = The_Data_Log.getAllItemsFromGroup('frameInfo');
+
+
+% count number of frames actually drawn
+numFrames=1;
+if isempty(info_frames{end})
+    while ~isempty(info_frames{numFrames})
+        numFrames = numFrames+1;
+    end
+    numFrames = numFrames - 1; % correct for last increment of while loop
+else
+    numFrames = length(info_frames);
+end
+
+colNames = {...
+        'frameIdx', ...
+        'onsetTime', ...
+        'onsetFrame', ...
+        'swapTime', ...
+        'isTight'};
+numCols = length(colNames);
+% build matrix that will be converted to a table at the end
+dataMatrix = zeros(numFrames,numCols);
+
+for frameIdx = 1:numFrames
+    currFrame = info_frames{frameIdx};
+       
+    % prepare all but last 3 cols of the 'standard row' to fill
+    standardRow = [frameIdx, currFrame.onsetTime, currFrame.onsetFrame,...
+        currFrame.swapTime, currFrame.isTight];
+    
+    dataMatrix(frameIdx,:) = standardRow;
+end
+
+
+
+framesDataAsTable=array2table(dataMatrix, 'VariableNames', colNames);
+writetable(framesDataAsTable,...
+    ['/Users/adrian/SingleCP_DotsReversal/pilot4',...
+    '_framesInfo.csv'],'WriteRowNames',true)
+
+
