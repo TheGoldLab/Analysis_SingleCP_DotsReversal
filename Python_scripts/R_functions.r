@@ -12,3 +12,16 @@ getFreq <- function(initTable, groupVarNames) {
   setnames(combFactors, c(groupVarNames, "freq."))
   return(combFactors)
 }
+
+# ARGS:
+#   pilotNumber  integer representing the version of the pilot data to load
+#   dataFolder   path to folder where data is stored
+#   dataTag      type of data = string representing the last part of the csv filename
+# RETURNS:
+#   dataTable    data.table corresponding to the csv file
+# NOTE: data.table package should be loaded before calling the function
+loadPilotCSV <- function(pilotNumber, dataFolder, dataTag) {
+    datafile <- paste(dataFolder,'Pilot',pilotNumber,"/pilot",pilotNumber,"_",dataTag,".csv",sep='')
+    dataTable <- fread(file=datafile, header=TRUE, sep=",")
+  return(dataTable)
+}
