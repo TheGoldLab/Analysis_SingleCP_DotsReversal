@@ -1,2 +1,4 @@
 *.html
 *.mat
+!code_hiding.html
+.ipynb_checkpoints/*

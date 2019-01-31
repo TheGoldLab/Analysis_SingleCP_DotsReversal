@@ -16,7 +16,9 @@ Add a new chunk *Cmd+Option+I*.
 Note how, for now, this code uses data produced from [this code](https://github.com/TheGoldLab/SingleCP_DotsReversal_Task/releases/tag/pilot2).
 ```{r echo=FALSE, results='hide'}
 library(data.table) # see https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html for reference
-datafile <- "~/programing/data/psychophys/pilot2.csv"
+library(ggplot2)
+dataTag <- "pilot2"
+datafile <- paste("~/programing/data/psychophys/",dataTag,".csv",sep='')
 data <- fread(file=datafile, header=TRUE, sep=",")
 # uncomment next line to inspect data table
 # str(data)
@@ -24,11 +26,8 @@ data <- fread(file=datafile, header=TRUE, sep=",")
 ## Basic questions that we may ask
 ### How long did the session last?
 ```{r}
-#library(ggplot2)
-# I don't know what choiceTime means
-# data[,.(tot_in_minutes = sum(choiceTime) / 60, mean_in_sec = mean(choiceTime), var_in_sec_sq = var(choiceTime))]
+cat( round(data[,sum(trialEnd - trialStart)] / 60, digits = 2), "min" )
 ```
-
 
 ### How many trials were produced?
 ```{r}
@@ -128,5 +127,90 @@ toDisplay <- data[viewingDuration > .2,
 # then add the accuracy column
 toDisplay <- toDisplay[,.(viewingDuration, freq, correct, presenceCP,  accuracy = round(correct/freq*100,digits=2))]
 toDisplay
+```
+### How precise were the dots timings?
+We plot `(dotsOff - dotsOn) - viewingDuration`, across all trials, and overlay average durations of 1 and 2 frames (dashed lines).
+```{r}
+axes_labels_font <- 18
+axes_font <- 15
+frameRate <- 60 # rounded estimate obtained from dotsTheScreen.windowFrameRate
+frameDuration <- (1 / frameRate) * 1000 # in msec
+frameDurations <- c(frameDuration, 2*frameDuration)
+
+durTable <- data[,.(dotsDurationError = (dotsOff - dotsOn - viewingDuration) * 1000, presenceCP, viewingDuration)]
+
+# call to ggplot()
+g <- ggplot(durTable, aes(x=1:nrow(durTable), y=dotsDurationError)) + 
+  geom_line(size=.2) +  
+  geom_point(aes(shape=factor(presenceCP), col=factor(viewingDuration)),size=3) +
+  geom_hline(yintercept = frameDurations, linetype="dashed") +
+  annotate("text", x=37, y=frameDurations, vjust = 1.3, label = c("1 frame","2 frames"))
+# Add Title and Labels
+g + labs(title="Error in generated dots duration", 
+         subtitle=paste("From",dataTag,"dataset",sep=" "), 
+         y="duration error (msec)", 
+         x="trial (in session order)",
+         color="viewing dur.", shape="CP") + theme(plot.title=element_text(size=20, 
+                                    family="American Typewriter",
+                                    color="tomato",
+                                    lineheight=1.2),  # title
+            plot.subtitle=element_text(size=15, 
+                                       family="American Typewriter"),  # subtitle
+            plot.caption=element_text(size=15),  # caption
+            axis.title.x=element_text(size=axes_labels_font),  # X axis title
+            axis.title.y=element_text(size=axes_labels_font),  # Y axis title
+            axis.text.x=element_text(size=axes_font),  # X axis text
+            axis.text.y=element_text(size=axes_font))  # Y axis text
+```
+Note how the largest errors (roughly 40msec) occur on longest viewing duration trials which contain a change point (blue triangles).
+
+Also, there seems to be 3 main error magnitudes as points cluster around integer multiples of the average frame duration. In the `meanDurationError` column below, we compute the average error duration for each cluster. With an approximate frame rate of 60, we present in `num_frames` the approximate number of frames for these three durations.
+```{r}
+# note, it might be ideal to leverage the following package
+# library("pomp2")
+# see documentation for pomp2 package
+# pdf: file:///home/adrian/Downloads/v69i12.pdf
+# website: https://kingaa.github.io/pomp/vignettes/upgrade_guide.html
+
+# for now, very simple algo.
+# bin duration errors into 3 bins
+intervals <- bin(durTable[,.(dotsDurationError)], nbins = 3, method = "cluster")
+names(intervals) <- "interval"
+
+# add the bins as a factor to the data.table
+durTable[, ("interval") := intervals]
+
+# compute mean durations
+unordered <- durTable[, .(num_trials=.N, meanDurationError = mean(dotsDurationError)), by = intervals]
+
+# display results, with num_frame column
+unordered[order(meanDurationError),.(num_trials, meanDurationError, num_frames = (meanDurationError * frameRate / 1000))]
+```
+
+Finally, the error increases by a few milliseconds with each 100 msec of viewing duration. That is, in a given cluster, colors are roughly vertically ordered.
+
+### Explore random seed
+```{r}
+axes_labels_font <- 18
+axes_font <- 15
+seedTable <- data[,.(randSeedBase,trialIndex)]
+g <- ggplot(seedTable, aes(x=1:nrow(seedTable), y=randSeedBase)) + 
+  geom_line(size=.2) #+  geom_point(aes(shape=factor(presenceCP), col=factor(viewingDuration)),size=3) 
+
+# Add Title and Labels
+g + labs(title="Random seed base", 
+         subtitle=paste("From",dataTag,"dataset",sep=" "), 
+         y="randSeedBase", 
+         x="trial (in session order)") + theme(plot.title=element_text(size=20, 
+                                    family="American Typewriter",
+                                    color="tomato",
+                                    lineheight=1.2),  # title
+            plot.subtitle=element_text(size=15, 
+                                       family="American Typewriter"),  # subtitle
+            plot.caption=element_text(size=15),  # caption
+            axis.title.x=element_text(size=axes_labels_font),  # X axis title
+            axis.title.y=element_text(size=axes_labels_font),  # Y axis title
+            axis.text.x=element_text(size=axes_font),  # X axis text
+            axis.text.y=element_text(size=axes_font))  # Y axis text
 ```
 
