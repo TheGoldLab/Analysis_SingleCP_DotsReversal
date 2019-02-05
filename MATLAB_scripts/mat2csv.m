@@ -3,11 +3,12 @@
 
 clear all
 clear classes
+clear mex
 clear
 
 %% Folders and path variables
 
-fileNameWithoutExt = 'pilot6'; 
+fileNameWithoutExt = 'pilot7'; 
 taskName = 'SingleCP_DotsReversal';
 
 % single .mat file outputted by our task
