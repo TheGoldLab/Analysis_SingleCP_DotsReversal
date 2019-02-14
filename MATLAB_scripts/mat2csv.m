@@ -8,7 +8,7 @@ clear
 
 %% Folders and path variables
 
-fileNameWithoutExt = 'pilot8'; 
+fileNameWithoutExt = 'pilot9'; 
 taskName = 'SingleCP_DotsReversal';
 
 % single .mat file outputted by our task
