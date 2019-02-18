@@ -6,10 +6,10 @@
 getFreq <- function(initTable, groupVarNames) {
   # create a smaller data table only containing the independent variables
   df <- initTable[, ..groupVarNames]
-
+  totTrials <- nrow(df)
   # create other data table which counts trials with similar indep. vars. values (freq. column)
-  combFactors <- df[, .N, by=names(df)]
-  setnames(combFactors, c(groupVarNames, "freq."))
+  combFactors <- df[, .(numTrials=.N, proportion=.N/totTrials), by=names(df)]
+#   setnames(combFactors, c(groupVarNames, "numTrials"))
   return(combFactors)
 }
 
