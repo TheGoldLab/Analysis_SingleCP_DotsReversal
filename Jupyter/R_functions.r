@@ -25,3 +25,15 @@ loadPilotCSV <- function(pilotNumber, dataFolder, dataTag) {
     dataTable <- fread(file=datafile, header=TRUE, sep=",")
   return(dataTable)
 }
+
+# ARGS:
+#   dataFolder   path to folder where data is stored
+#   dataTag      type of data = string representing the last part of the csv filename
+# RETURNS:
+#   dataTable    data.table corresponding to the csv file
+# NOTE: data.table package should be loaded before calling the function
+loadTestCSV <- function(dataFolder, dataTag) {
+    datafile <- paste(dataFolder,'test','/test2_',dataTag,".csv",sep='')
+    dataTable <- fread(file=datafile, header=TRUE, sep=",")
+  return(dataTable)
+}
