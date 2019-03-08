@@ -1,2 +1,6 @@
 *.html
+*.mat
+!code_hiding.html
 .ipynb_checkpoints/*
+Python_scripts/.ipynb_checkpoints/*
+Jupyter/.ipynb_checkpoints/*
