@@ -16,7 +16,7 @@
 		"flavor": "Adrian_Tests",
 		"name": "lmc_forked",
 		"type": "git",
-		"url": "https://github.com/aernesto/Lab-Matlab-Control.git",
+		"url": "https://github.com/aernesto/Lab-Matlab-Control.git"
 	},
 	{
 		"name": "mgl",
