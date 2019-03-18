@@ -8,21 +8,17 @@ clear
 
 %% Folders and path variables
 
-fileNameWithoutExt = 'pilot11'; 
-taskName = 'SingleCP_DotsReversal';
-
-% single .mat file outputted by our task
-matFileWithPath = ['/Users/adrian/',taskName,'/topsDataLog/',...
-    fileNameWithoutExt,'.mat'];
+studyTag = 'SingleCP_DotsReversal';
+sessionTag = '2019_03_13_16_06'; % Quest '2019_03_13_14_35';
 
 % location of .csv files to output
-csvPath = ['/Users/adrian/',taskName,'/'];
+csvPath = ['../data/test/'];
 
 
 %% FIRA.ecodes data
 [topNode, FIRA] = ...
-    topsTreeNodeTopNode.getDataFromFile([fileNameWithoutExt,'.mat'],...
-    taskName);
+    topsTreeNodeTopNode.loadRawData(studyTag,...
+    sessionTag);
 T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
 writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
 
