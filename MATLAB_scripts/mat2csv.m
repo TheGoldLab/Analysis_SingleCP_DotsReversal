@@ -9,20 +9,26 @@ clear
 %% Folders and path variables
 
 studyTag = 'SingleCP_DotsReversal';
-sessionTag = '2019_03_19_10_57'; % Quest '2019_03_13_14_35';
+
+% mapping of Pilot data to timestamps
+% '2019_03_27_10_49' = Pilot 12
+data_timestamp = '2019_03_27_10_49'; 
 
 % location of .csv files to output
-csvPath = '../data/test/';
-fileNameWithoutExt = 'Quest_test_long_office';
+csvPath = 'data/Pilot12/';
+fileNameWithoutExt = 'pilot12';
 
 %% FIRA.ecodes data
 [topNode, FIRA] = ...
     topsTreeNodeTopNode.loadRawData(studyTag,...
-    sessionTag);
+    data_timestamp);
 T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
 writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
 
 %% Frames data
+rawDataFolder = '/Users/adrian/data/';
+matFileWithPath = [rawDatFolder,data_timestamp,'/',...
+    data_timestamp,'_topsDataLog.mat'];
 
 The_Data_Log = topsDataLog.theDataLog(true);
 topsDataLog.readDataFile(matFileWithPath);
