@@ -27,7 +27,7 @@ writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
 
 %% Frames data
 rawDataFolder = '/Users/adrian/data/';
-matFileWithPath = [rawDatFolder,data_timestamp,'/',...
+matFileWithPath = [rawDataFolder,data_timestamp,'/',...
     data_timestamp,'_topsDataLog.mat'];
 
 The_Data_Log = topsDataLog.theDataLog(true);
