@@ -9,11 +9,11 @@ clear
 %% Folders and path variables
 
 studyTag = 'SingleCP_DotsReversal';
-sessionTag = '2019_03_13_16_06'; % Quest '2019_03_13_14_35';
+sessionTag = '2019_03_19_10_57'; % Quest '2019_03_13_14_35';
 
 % location of .csv files to output
-csvPath = ['../data/test/'];
-
+csvPath = '../data/test/';
+fileNameWithoutExt = 'Quest_test_long_office';
 
 %% FIRA.ecodes data
 [topNode, FIRA] = ...
