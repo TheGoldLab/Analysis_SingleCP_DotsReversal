@@ -1,7 +1,9 @@
+% This script uses Quest+ to fit a psychometric curve to data collected 
+% in the Quest node of our task
 %% load the Quest structure from the first node
 clear
 studyTag = 'SingleCP_DotsReversal';
-sessionTag = '2019_03_26_14_19'; % Quest in office;
+sessionTag = '2019_03_27_10_49'; % corresponds to pilot12 data
 
 [topNode, FIRA] = ...
     topsTreeNodeTopNode.loadRawData(studyTag,...
