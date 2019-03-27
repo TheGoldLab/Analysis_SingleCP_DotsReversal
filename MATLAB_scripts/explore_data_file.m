@@ -1,56 +1,55 @@
-% read pilot1.mat file to find out whether it contains the dots stimulus
-%full path: /Users/adrian/SingleCP_DotsReversal/topsDataLog/pilot1.mat
+%% load the Quest structure from the first node
 clear
-inFilename = 'data_2019_01_28_10_22.mat';
-taskName = 'SingleCP_DotsReversal';
+studyTag = 'SingleCP_DotsReversal';
+sessionTag = '2019_03_26_14_19'; % Quest in office;
 
-%contents = who('-file',fileWithPath);
-[topNode, FIRA] = topsTreeNodeTopNode.getDataFromFile(inFilename, taskName);
+[topNode, FIRA] = ...
+    topsTreeNodeTopNode.loadRawData(studyTag,...
+    sessionTag);
+T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
 
-% the lines below illustrate how to access a specific group in the
-% topsDataLog from the .mat file
-fileWithPath = ['/Users/adrian/',taskName,'/topsDataLog/',inFilename];
-The_Data_Log = topsDataLog.theDataLog(true);
-topsDataLog.readDataFile(fileWithPath);
-info_frames = The_Data_Log.getAllItemsFromGroup('frameInfo');
+questData = topNode.children{1}.quest;
+%equivalent way to access same data:
+%otherQuestData = topNode.children{2}.settings.useQuest.quest;
+%isequaln(questData,otherQuestData)
 
+%% Get estimated parameters, fitted parameters and plot corresponding ...
+% psychometric function with data
 
-% count number of frames actually drawn
-numFrames=1;
-if isempty(info_frames{end})
-    while ~isempty(info_frames{numFrames})
-        numFrames = numFrames+1;
-    end
-    numFrames = numFrames - 1; % correct for last increment of while loop
-else
-    numFrames = length(info_frames);
+% source of inspiration: qpQuestPlusPaperSimpleExamplesDemo
+psiParamsIndex = qpListMaxArg(questData.posterior); % essentially performs argmax operation in index space
+psiParamsQuest = questData.psiParamsDomain(psiParamsIndex,:);
+
+% Maximum likelihood fit.  Use psiParams from QUEST+ as the starting
+% parameter for the search, and impose as parameter bounds the range
+% provided to QUEST+.
+
+psiParamsFit = qpFit(questData.trialData,@qpPFStandardWeibull,psiParamsQuest,questData.nOutcomes,...
+    'lowerBounds', min(questData.psiParamsDomain), ...
+    'upperBounds', max(questData.psiParamsDomain));
+% fprintf('Maximum likelihood fit parameters: %0.1f, %0.1f, %0.1f, %0.2f\n', ...
+%     psiParamsFit(1),psiParamsFit(2),psiParamsFit(3),psiParamsFit(4));
+
+% Plot with data
+figure; clf; hold on
+stimCounts = qpCounts(qpData(questData.trialData),questData.nOutcomes);
+stim = [stimCounts.stim];
+stimFine = questData.stimParamsDomain;
+plotProportionsEst = qpPFStandardWeibull(stimFine,psiParamsQuest);
+plotProportionsFit = qpPFStandardWeibull(stimFine,psiParamsFit);
+for cc = 1:length(stimCounts)
+    nTrials(cc) = sum(stimCounts(cc).outcomeCounts);
+    pCorrect(cc) = stimCounts(cc).outcomeCounts(2)/nTrials(cc);
 end
-
-colNames = {...
-        'frameIdx', ...
-        'onsetTime', ...
-        'onsetFrame', ...
-        'swapTime', ...
-        'isTight'};
-numCols = length(colNames);
-% build matrix that will be converted to a table at the end
-dataMatrix = zeros(numFrames,numCols);
-
-for frameIdx = 1:numFrames
-    currFrame = info_frames{frameIdx};
-       
-    % prepare all but last 3 cols of the 'standard row' to fill
-    standardRow = [frameIdx, currFrame.onsetTime, currFrame.onsetFrame,...
-        currFrame.swapTime, currFrame.isTight];
-    
-    dataMatrix(frameIdx,:) = standardRow;
+for cc = 1:length(stimCounts)
+    h = scatter(stim(cc),pCorrect(cc),100,'o','MarkerEdgeColor',[0 0 1],'MarkerFaceColor',[0 0 1],...
+        'MarkerFaceAlpha',nTrials(cc)/max(nTrials),'MarkerEdgeAlpha',nTrials(cc)/max(nTrials));
 end
-
-
-
-framesDataAsTable=array2table(dataMatrix, 'VariableNames', colNames);
-writetable(framesDataAsTable,...
-    ['/Users/adrian/SingleCP_DotsReversal/pilot4',...
-    '_framesInfo.csv'],'WriteRowNames',true)
-
-
+p1=plot(stimFine,plotProportionsEst(:,2),'-','Color',[1 0.2 0.0],'LineWidth',3);
+p2=plot(stimFine,plotProportionsFit(:,2),'-','Color',[0.0 0.2 1.0],'LineWidth',3);
+xlabel('coherence');
+ylabel('Proportion Correct');
+xlim([0 100]); ylim([0 1]);
+title({'QUEST+ Weibull (threshold and lapse)', ''});
+legend([h,p1,p2], 'data', 'estimate', 'MLE fit')
+drawnow;
