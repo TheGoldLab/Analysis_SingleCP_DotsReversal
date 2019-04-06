@@ -27,6 +27,25 @@ loadPilotCSV <- function(pilotNumber, dataFolder, dataTag) {
 }
 
 # ARGS:
+#   pilotNumbers list of integers representing the versions of the pilot data to load
+#   dataFolder   path to folder where data is stored
+#   dataTag      type of data = string representing the last part of the csv filename
+# RETURNS:
+#   dataTable    data.table corresponding to a concatenation of the csv files. A pilotID column is added
+# NOTE: data.table package should be loaded before calling the function
+loadMultiplePilotCSV <- function(pilotNumbers, dataFolder, dataTag) {
+    list_of_tables <- list()
+    # we append the data.tables one by one, calling loadPilotCSV
+    for (n in pilotNumbers) {
+        individual_pilot <- loadPilotCSV(n, dataFolder, dataTag)
+        individual_pilot[,pilotID:=n]
+        list_of_tables <- c(list_of_tables, list(individual_pilot))
+        }
+  return(rbindlist(list_of_tables))
+}
+
+
+# ARGS:
 #   dataFolder   path to folder where data is stored
 #   dataTag      type of data = string representing the last part of the csv filename
 # RETURNS:
