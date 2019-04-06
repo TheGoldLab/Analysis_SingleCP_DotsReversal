@@ -8,15 +8,19 @@ clear
 
 %% Folders and path variables
 
-studyTag = 'SingleCP_DotsReversal';
+studyTag = 'SingleCP_DotsReversal'; 
 
 % mapping of Pilot data to timestamps
+% ======  DO NOT ERASE!! ======
 % '2019_03_27_10_49' = Pilot 12
-data_timestamp = '2019_03_27_10_49'; 
+% '2019_04_04_16_59' = Pilot 13
+% '2019_04_04_18_00' = Pilot 14
+% =============================
+data_timestamp = '2019_04_04_16_59'; 
 
 % location of .csv files to output
-csvPath = 'data/Pilot12/';
-fileNameWithoutExt = 'pilot12';
+csvPath = 'data/Pilot13/';
+fileNameWithoutExt = 'pilot13';
 
 %% FIRA.ecodes data
 [topNode, FIRA] = ...
