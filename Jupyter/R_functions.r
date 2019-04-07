@@ -8,7 +8,7 @@ getFreq <- function(initTable, groupVarNames) {
   df <- initTable[, ..groupVarNames]
   totTrials <- nrow(df)
   # create other data table which counts trials with similar indep. vars. values (freq. column)
-  combFactors <- df[, .(numTrials=.N, proportion=.N/totTrials), by=names(df)]
+  combFactors <- df[, .(numTrials=.N, percent=as.integer(100*(.N/totTrials))), by=names(df)]
 #   setnames(combFactors, c(groupVarNames, "numTrials"))
   return(combFactors)
 }
