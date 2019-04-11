@@ -74,12 +74,12 @@ loadTestCSV <- function(dataFolder, dataTag) {
 #   applies logistic function, after transforming the input with a given
 #   linear functional
 # ARGS:
-#   x_vals       vector of scalars
-#   linear_func  R function that accepts vector as input
+#   x_vals       	vector of scalars
+#   linear_functional  	R function that accepts vector as input; typically, this is the output of linear_func() defined below
 # RETURNS:
 #   a vector
-my_logistic <- function(x_vals, linear_func) {
-    return(exp(linear_func(x_vals))/(1+exp(linear_func(x_vals))))
+my_logistic <- function(x_vals, linear_functional) {
+    return(exp(linear_functional(x_vals))/(1+exp(linear_functional(x_vals))))
 }
 
 
@@ -100,12 +100,14 @@ linear_func <- function(coefs) {
 # DESCR:
 #   Fits a logistic regression model with a single predictor and produces plot
 #   Uses R's glm
+#   This function is not very modular...
 # ARGS:
 #   datatable        a data.table
 #   response         name of variable in datatable that contains the response (this is NOT a string), simply pass in the column name, without quotes.
 #   response_value   whatever value that the binomial model should consider as a "success"; it can be "right" if response is choice, or TRUE if response is correct 
 #   predictor        name of variable in datatable that glm should use as a predictor
 # RETURNS:
+#   call to ggplot()
 fit_logistic_single_pred <- function(datatable, response, response_value, predictor) {
     logistic_fit <- substitute(glm(response ~ predictor, family=binomial(), data=datatable))
     print(summary(eval(logistic_fit)))
@@ -126,4 +128,31 @@ fit_logistic_single_pred <- function(datatable, response, response_value, predic
         ylim(0,1)
         )
     return(eval(g))
+}
+
+
+# DESCR:
+#   Standard Weibull
+# ARGS:
+#   x           vector of stimulus values (should be positive)
+#   params      a 4-element vector with the following names: 'guess' 'threshold' 'lapse' 'slope'
+# RETURNS:
+#   a vector of scalars between 0 and 1
+weibull <- function(x, params){
+    return(1-exp(-(x/params[['threshold']])^params[['slope']]))
+}
+
+
+# DESCR:
+#   Applies standard transformation to sensory performance function
+# ARGS:
+#   perf_func   a function with signature perf_func(x, params), with params defined below
+#   params      a 4-element vector with the following names: 'guess' 'threshold' 'lapse' 'slope'
+# RETURNS:
+#   a function of stimulus values
+psi_corr <- function(perf_func, params){
+    psychometric <- function(x){
+        return(params[['guess']]+(1-params[['guess']]-params[['lapse']])*perf_func(x, params))
+    }
+    return(psychometric)
 }
