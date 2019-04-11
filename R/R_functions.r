@@ -1,3 +1,9 @@
+#---------------------------------------------------------------------
+#
+# 		FUNCTIONS TO PROCESS FIRST-STAGE CSV FILES
+#
+#---------------------------------------------------------------------
+
 # ARGS:
 #   initTable       initial data.table object
 #   groupVarNames   vector of column names to use for grouping
@@ -55,4 +61,69 @@ loadTestCSV <- function(dataFolder, dataTag) {
     datafile <- paste(dataFolder,'test','/test2_',dataTag,".csv",sep='')
     dataTable <- fread(file=datafile, header=TRUE, sep=",")
   return(dataTable)
+}
+
+
+#---------------------------------------------------------------------
+#
+#       	FUNCTIONS TO PROCESS PSYCHOMETRIC CSV FILES
+#
+#---------------------------------------------------------------------
+
+# DESCR:
+#   applies logistic function, after transforming the input with a given
+#   linear functional
+# ARGS:
+#   x_vals       vector of scalars
+#   linear_func  R function that accepts vector as input
+# RETURNS:
+#   a vector
+my_logistic <- function(x_vals, linear_func) {
+    return(exp(linear_func(x_vals))/(1+exp(linear_func(x_vals))))
+}
+
+
+# DESCR:
+#   creates a linear functional
+# ARGS:
+#   coefs  vector of two scalars
+# RETURNS:
+#   a function that can take vector as argument
+linear_func <- function(coefs) {
+    f <- function(x) {
+        return(coefs[1]+coefs[2]*x)
+    }
+    return(f)
+}
+
+
+# DESCR:
+#   Fits a logistic regression model with a single predictor and produces plot
+#   Uses R's glm
+# ARGS:
+#   datatable        a data.table
+#   response         name of variable in datatable that contains the response (this is NOT a string), simply pass in the column name, without quotes.
+#   response_value   whatever value that the binomial model should consider as a "success"; it can be "right" if response is choice, or TRUE if response is correct 
+#   predictor        name of variable in datatable that glm should use as a predictor
+# RETURNS:
+fit_logistic_single_pred <- function(datatable, response, response_value, predictor) {
+    logistic_fit <- substitute(glm(response ~ predictor, family=binomial(), data=datatable))
+    print(summary(eval(logistic_fit)))
+    betas <- coef(eval(logistic_fit))
+#     print(betas)
+    x <- substitute(
+        unique(datatable[order(predictor),.(predictor),by=.(predictor)][,predictor])
+        )
+    fit_prop <- my_logistic(eval(x), linear_func(betas))
+    fitted_curve <- data.table(x=eval(x), y=fit_prop)
+    
+    # control output figure size
+    options(repr.plot.width=8, repr.plot.height=4)
+    g <- substitute(
+        ggplot(datatable[,.(prop=sum(response==response_value)/.N),by=predictor], aes(x=predictor, y=prop)) + 
+        geom_point() +
+        geom_line(aes(x=x, y=y),data=fitted_curve,inherit.aes=FALSE) +
+        ylim(0,1)
+        )
+    return(eval(g))
 }
