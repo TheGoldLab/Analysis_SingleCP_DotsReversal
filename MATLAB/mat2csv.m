@@ -8,25 +8,31 @@ clear
 
 %% Folders and path variables
 
-fileNameWithoutExt = 'pilot11'; 
-taskName = 'SingleCP_DotsReversal';
+studyTag = 'SingleCP_DotsReversal'; 
 
-% single .mat file outputted by our task
-matFileWithPath = ['/Users/adrian/',taskName,'/topsDataLog/',...
-    fileNameWithoutExt,'.mat'];
+% mapping of Pilot data to timestamps
+% ======  DO NOT ERASE!! ======
+% '2019_03_27_10_49' = Pilot 12
+% '2019_04_04_16_59' = Pilot 13
+% '2019_04_04_18_00' = Pilot 14
+% =============================
+data_timestamp = '2019_04_04_18_00'; 
 
 % location of .csv files to output
-csvPath = ['/Users/adrian/',taskName,'/'];
-
+csvPath = 'data/Pilot14/';
+fileNameWithoutExt = 'pilot14';
 
 %% FIRA.ecodes data
 [topNode, FIRA] = ...
-    topsTreeNodeTopNode.getDataFromFile([fileNameWithoutExt,'.mat'],...
-    taskName);
+    topsTreeNodeTopNode.loadRawData(studyTag,...
+    data_timestamp);
 T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
 writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
 
 %% Frames data
+rawDataFolder = '/Users/adrian/data/';
+matFileWithPath = [rawDataFolder,data_timestamp,'/',...
+    data_timestamp,'_topsDataLog.mat'];
 
 The_Data_Log = topsDataLog.theDataLog(true);
 topsDataLog.readDataFile(matFileWithPath);
