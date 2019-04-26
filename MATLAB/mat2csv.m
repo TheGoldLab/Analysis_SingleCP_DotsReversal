@@ -15,8 +15,10 @@ studyTag = 'SingleCP_DotsReversal';
 % '2019_03_27_10_49' = Pilot 12
 % '2019_04_04_16_59' = Pilot 13
 % '2019_04_04_18_00' = Pilot 14
+% '2019_04_26_12_05' = test dots dump in office, no dots info in dataset
+% '2019_04_26_13_17' = 2nd test of dots dump in office, there is dots info
 % =============================
-data_timestamp = '2019_04_04_18_00'; 
+data_timestamp = '2019_04_26_13_17'; 
 
 % location of .csv files to output
 csvPath = 'data/Pilot14/';
