@@ -1,19 +1,32 @@
 [
-	{	
-		"name": "SingleCP_DotsReversal_DataAnalysis",
+    	{
+        	"name": "SingleCP_DotsReversal_DataAnalysis",
 		"type": "git",
 		"url": "https://github.com/aernesto/SingleCP_DotsReversal_DataAnalysis.git",
-	    "update": "never"
+		"update": "never"
+    	},
+	{	
+		"name": "Task_SingleCP_DotsReversal",
+		"type": "git",
+		"url": "https://github.com/TheGoldLab/Task_SingleCP_DotsReversal.git",
+	        "update": "never",
+		"toolboxRoot": "#Task_SingleCP_DotsReversal"
 	},
-    {
-        "name": "SingleCP_DotsReversal_Task",
-        "type": "git",
-        "url": "https://github.com/TheGoldLab/SingleCP_DotsReversal_Task.git",
-        "update": "never"
-    },
-    {
-        "name": "Lab-Matlab-Control",
-        "type": "include",
-        "pathPlacement": "append"
-    }
+	{
+		"name": "Lab_Matlab_Control",
+		"type": "git",
+		"pathPlacement": "append",
+		"url": "https://github.com/aernesto/Lab_Matlab_Control.git"
+	},
+	{
+		"name": "mgl",
+		"type": "git",
+		"url": "https://github.com/justingardner/mgl.git"
+	},
+	{
+		"name": "mQUESTPlus",
+		"pathPlacement": "append",
+		"type": "git",
+		"url": "https://github.com/brainardlab/mQUESTPlus.git"
+	}
 ]
