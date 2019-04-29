@@ -20,11 +20,11 @@ studyTag = 'SingleCP_DotsReversal';
 % '2019_04_29_11_04' = Pilot 15
 % '2019_04_29_14_07' = Pilot 16
 % =============================
-data_timestamp = '2019_04_29_11_04'; 
+data_timestamp = '2019_04_29_14_07'; 
 
 % location of .csv files to output
-csvPath = 'data/Pilot15/';
-fileNameWithoutExt = 'pilot15';
+csvPath = 'data/Pilot16/';
+fileNameWithoutExt = 'pilot16';
 
 %% FIRA.ecodes data
 [topNode, FIRA] = ...
