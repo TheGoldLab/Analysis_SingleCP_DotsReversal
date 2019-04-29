@@ -3,7 +3,7 @@
 %% load the Quest structure from the first node
 clear
 studyTag = 'SingleCP_DotsReversal';
-sessionTag = '2019_04_29_11_04'; % corresponds to pilot15 data
+sessionTag = '2019_04_29_14_07'; % corresponds to pilot16 data
 
 [topNode, FIRA] = ...
     topsTreeNodeTopNode.loadRawData(studyTag,...
@@ -53,5 +53,5 @@ xlabel('coherence');
 ylabel('Proportion Correct');
 xlim([0 100]); ylim([0 1]);
 title({'QUEST+ Weibull (threshold and lapse)', ''});
-legend([h,p1,p2], 'data', 'estimate', 'MLE fit')
+legend([h,p1,p2], 'data', 'estimate', 'MLE fit', 'Location', 'southwest')
 drawnow;
