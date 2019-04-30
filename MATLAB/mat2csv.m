@@ -1,10 +1,10 @@
 % this script is the standard pre-processing step to convert the data that
 % we need for our analysis from .mat to .csv format.
-
+% 
 clear all
-clear classes
-clear mex
-clear
+% clear classes
+% clear mex
+% clear
 
 %% Folders and path variables
 
@@ -19,12 +19,15 @@ studyTag = 'SingleCP_DotsReversal';
 % '2019_04_26_13_17' = 2nd test of dots dump in office, there is dots info
 % '2019_04_29_11_04' = Pilot 15
 % '2019_04_29_14_07' = Pilot 16
+% '2019_04_30_10_33' = Pilot 17
+% '2019_04_30_14_54' = Pilot 18
+% '2019_04_30_15_51' = Pilot 19
 % =============================
-data_timestamp = '2019_04_29_14_07'; 
+data_timestamp = '2019_04_30_10_33'; 
 
 % location of .csv files to output
-csvPath = 'data/Pilot16/';
-fileNameWithoutExt = 'pilot16';
+csvPath = 'data/Pilot17/';
+fileNameWithoutExt = 'pilot17';
 
 %% FIRA.ecodes data
 [topNode, FIRA] = ...
