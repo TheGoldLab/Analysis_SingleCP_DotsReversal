@@ -3,7 +3,7 @@
 % 
 clear all
 tbUseProject('SingleCP_DotsReversal_DataAnalysis');
-pilot_number = '15'; % should be a string
+pilot_number = '19'; % should be a string
 % clear classes
 % clear mex
 % clear
