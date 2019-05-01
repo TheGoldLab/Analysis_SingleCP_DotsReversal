@@ -3,7 +3,7 @@
 %% load the Quest structure from the first node
 clear
 studyTag = 'SingleCP_DotsReversal';
-sessionTag = '2019_04_29_14_07'; % corresponds to pilot16 data
+sessionTag = '2019_04_30_15_51'; % corresponds to pilot19 data
 
 [topNode, FIRA] = ...
     topsTreeNodeTopNode.loadRawData(studyTag,...
