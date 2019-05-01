@@ -2,6 +2,8 @@
 % we need for our analysis from .mat to .csv format.
 % 
 clear all
+tbUseProject('SingleCP_DotsReversal_DataAnalysis');
+pilot_number = '15'; % should be a string
 % clear classes
 % clear mex
 % clear
@@ -23,15 +25,67 @@ studyTag = 'SingleCP_DotsReversal';
 % '2019_04_30_14_54' = Pilot 18
 % '2019_04_30_15_51' = Pilot 19
 % =============================
-data_timestamp = '2019_04_30_15_51'; 
+timestamp.pilot12 = '2019_03_27_10_49';
+timestamp.pilot13 = '2019_04_04_16_59';
+timestamp.pilot14 = '2019_04_04_18_00';
+timestamp.pilot15 = '2019_04_29_11_04';
+timestamp.pilot16 = '2019_04_29_14_07';
+timestamp.pilot17 = '2019_04_30_10_33';
+timestamp.pilot18 = '2019_04_30_14_54';
+timestamp.pilot19 = '2019_04_30_15_51';
+
+data_timestamp = timestamp.(['pilot',pilot_number]); 
 
 % location of .csv files to output
-csvPath = 'data/Pilot19/';
-fileNameWithoutExt = 'pilot19';
+csvPath = ['data/Pilot',pilot_number,'/'];
+fileNameWithoutExt = ['pilot',pilot_number];
 
 %% FIRA.ecodes data
 [topNode, FIRA] = ...
     topsTreeNodeTopNode.loadRawData(studyTag,...
     data_timestamp);
-T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
-writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
+% T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
+% writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
+
+%% Dots data
+% columns of following matrix represent the following variables
+dotsColNames = {...
+    'xpos', ...
+    'ypos', ...
+    'isActive', ...
+    'isCoherent', ...
+    'frameDumpTime', ...
+    'pilotID', ...
+    'taskID'};
+fullMatrix = zeros(0,length(dotsColNames));
+
+for taskID=1:length(topNode.children)
+    taskNode = topNode.children{taskID};
+    numTrials=length(taskNode.dotsInfo.dotsPositions);
+    if numTrials ~= length(taskNode.dotsInfo.dumpTime)
+        error('dumpTime and dotsPositions have distinct length')
+    end
+    
+    
+    end_block = 0;
+    
+    for trial = 1:numTrials
+        dotsPositions = taskNode.dotsInfo.dotsPositions{trial};
+        dumpTime = taskNode.dotsInfo.dumpTime{trial};
+        numDotsFrames = size(dotsPositions,3);
+        
+        for frame = 1:numDotsFrames
+            numDots = size(dotsPositions,2);
+            
+            start_block = end_block + 1;
+            end_block = start_block + numDots - 1;
+            
+            fullMatrix(start_block:end_block,:) = [...
+                squeeze(dotsPositions(:,:,frame)'),...
+                repmat([dumpTime,str2double(pilot_number),taskID],numDots,1)];
+        end
+   end
+end
+U=array2table(fullMatrix, 'VariableNames', dotsColNames);
+writetable(U,[csvPath,fileNameWithoutExt,'_dotsPositions.csv'],...
+    'WriteRowNames',true)
