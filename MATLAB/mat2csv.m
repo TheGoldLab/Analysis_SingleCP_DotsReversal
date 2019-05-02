@@ -59,7 +59,9 @@ dotsColNames = {...
     'seqDumpTime', ...  % time at which whole sequence of frames was dumped; recall that this is done once per trial, right before exiting the state machine.
     'pilotID', ...
     'taskID'};
+
 fullMatrix = zeros(0,length(dotsColNames));
+end_block = 0;
 
 for taskID=1:length(topNode.children)
     taskNode = topNode.children{taskID};
@@ -67,10 +69,7 @@ for taskID=1:length(topNode.children)
     if numTrials ~= length(taskNode.dotsInfo.dumpTime)
         error('dumpTime and dotsPositions have distinct length')
     end
-    
-    
-    end_block = 0;
-    
+        
     for trial = 1:numTrials
         dotsPositions = taskNode.dotsInfo.dotsPositions{trial};
         dumpTime = taskNode.dotsInfo.dumpTime{trial};
