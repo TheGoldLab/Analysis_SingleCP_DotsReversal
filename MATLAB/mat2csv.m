@@ -3,7 +3,7 @@
 % 
 clear all
 tbUseProject('SingleCP_DotsReversal_DataAnalysis');
-pilot_number = '18';               % should be a string
+pilot_number = '15';               % should be a string
 npilot = str2double(pilot_number); % pilot number as double
 % clear classes
 % clear mex
