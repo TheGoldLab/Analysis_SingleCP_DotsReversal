@@ -1,0 +1,3 @@
+[submodule "motion_energy_Adrian"]
+	path = motion_energy_Adrian
+	url = https://github.com/aernesto/motion_energy_Adrian.git
