@@ -1,5 +1,4 @@
 *.html
-*.mat
 !code_hiding.html
 Jupyter/.ipynb_checkpoints/*
 Jupyter/Pilot11/.ipynb_checkpoints/*
@@ -14,3 +13,7 @@ Jupyter/Pilot16/.ipynb_checkpoints/*
 Jupyter/Pilot17/.ipynb_checkpoints/*
 Jupyter/Pilot18/.ipynb_checkpoints/*
 Jupyter/Pilot19/.ipynb_checkpoints/*
+figures/*
+*.csv
+*.mat
+*.h5
