@@ -1,4 +1,4 @@
-%% AIM: write a script that displays the dots stimulus from a specific trial
+%% AIM: run script that generates the dots frames based on task parameters and seed values
 
 %% get data from the task (currently who-MEX bug)
 clear all
@@ -8,7 +8,7 @@ clear all
 studyTag = 'SingleCP_DotsReversal';
 sessionTag = '2019_06_07_14_32';
 [topNode, FIRA] = topsTreeNodeTopNode.loadRawData(studyTag, sessionTag);
-trialNumber=10; % different from trialIndex in FIRA
+
 
 % NOTE: the topNode object defined above is the topNode used for the task
 % Hence, the topsTreeNodeTask object corresponding to the task is a child
@@ -33,7 +33,6 @@ trialNumber=10; % different from trialIndex in FIRA
 % endDirection
 % presenceCP
 % timeCP
-% randSeedBase
 % coherenceSTD
 % dotsOff-dotsOn
 
@@ -53,6 +52,7 @@ col.coherence = find(strcmp(FIRA.ecodes.name, 'coherence'),1);
 col.dotsDuration = find(strcmp(FIRA.ecodes.name, 'viewingDuration'),1);
 col.randSeedBase = find(strcmp(FIRA.ecodes.name, 'randSeedBase'),1);
 
+trialNumber=10; % different from trialIndex in FIRA
 % get actual parameter values from FIRA.ecodes.data matrix
 dotsParams.direction = FIRA.ecodes.data(trialNumber, col.direction);
 dotsParams.coherence = FIRA.ecodes.data(trialNumber, col.coherence);
