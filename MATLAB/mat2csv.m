@@ -1,10 +1,13 @@
 % this script is the standard pre-processing step to convert the data that
 % we need for our analysis from .mat to .csv format.
-
+% 
 clear all
-clear classes
-clear mex
-clear
+tbUseProject('SingleCP_DotsReversal_DataAnalysis');
+pilot_number = '18';               % should be a string
+npilot = str2double(pilot_number); % pilot number as double
+% clear classes
+% clear mex
+% clear
 
 %% Folders and path variables
 
@@ -17,80 +20,35 @@ studyTag = 'SingleCP_DotsReversal';
 % '2019_04_04_18_00' = Pilot 14
 % '2019_04_26_12_05' = test dots dump in office, no dots info in dataset
 % '2019_04_26_13_17' = 2nd test of dots dump in office, there is dots info
+% '2019_04_29_11_04' = Pilot 15
+% '2019_04_29_14_07' = Pilot 16
+% '2019_04_30_10_33' = Pilot 17
+% '2019_04_30_14_54' = Pilot 18
+% '2019_04_30_15_51' = Pilot 19
 % =============================
-data_timestamp = '2019_04_26_13_17'; 
+timestamp.pilot12 = '2019_03_27_10_49';
+timestamp.pilot13 = '2019_04_04_16_59';
+timestamp.pilot14 = '2019_04_04_18_00';
+timestamp.pilot15 = '2019_04_29_11_04';
+timestamp.pilot16 = '2019_04_29_14_07';
+timestamp.pilot17 = '2019_04_30_10_33';
+timestamp.pilot18 = '2019_04_30_14_54';
+timestamp.pilot19 = '2019_04_30_15_51';
+
+data_timestamp = timestamp.(['pilot',pilot_number]); 
 
 % location of .csv files to output
-csvPath = 'data/Pilot14/';
-fileNameWithoutExt = 'pilot14';
+csvPath = ['data/Pilot',pilot_number,'/'];
+fileNameWithoutExt = ['pilot',pilot_number];
 
 %% FIRA.ecodes data
 [topNode, FIRA] = ...
     topsTreeNodeTopNode.loadRawData(studyTag,...
     data_timestamp);
-T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
-writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
-
-%% Frames data
-rawDataFolder = '/Users/adrian/data/';
-matFileWithPath = [rawDataFolder,data_timestamp,'/',...
-    data_timestamp,'_topsDataLog.mat'];
-
-The_Data_Log = topsDataLog.theDataLog(true);
-topsDataLog.readDataFile(matFileWithPath);
-info_frames = The_Data_Log.getAllItemsFromGroup('frameInfo');
-
-% count number of frames actually drawn
-numFrames=1;
-if isempty(info_frames{end})
-    while ~isempty(info_frames{numFrames})
-        numFrames = numFrames+1;
-    end
-    numFrames = numFrames - 1; % correct for last increment of while loop
-else
-    numFrames = length(info_frames);
-end
-
-colNames = {...
-        'frameTotCount', ...
-        'onsetTime', ...
-        'onsetFrame', ...
-        'swapTime', ...
-        'isTight', ...
-        'trialIndex'};
-numCols = length(colNames);
-
-% build matrix that will be converted to a table at the end
-dataMatrix = zeros(0,numCols);
-realRowIdx = 1;
-for frameTotCount = 1:numFrames
-    currFrame = info_frames{frameTotCount};
-       
-    if isempty(currFrame.trialIndex)
-        continue
-    end
-    
-    standardRow = [...
-        frameTotCount, ...
-        currFrame.onsetTime, ...
-        currFrame.onsetFrame, ...
-        currFrame.swapTime, ...
-        currFrame.isTight, ...
-        currFrame.trialIndex];
-    
-    dataMatrix(realRowIdx,:) = standardRow;
-    realRowIdx = realRowIdx + 1;
-end
-
-framesDataAsTable=array2table(dataMatrix, 'VariableNames', colNames);
-writetable(framesDataAsTable,...
-    [csvPath,fileNameWithoutExt,'_framesInfo.csv'],'WriteRowNames',true)
+% T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
+% writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
 
 %% Dots data
-
-taskNode = topNode.children{1};
-numTrials=length(taskNode.dotsPositions);
-
 % columns of following matrix represent the following variables
 dotsColNames = {...
     'xpos', ...
@@ -98,22 +56,36 @@ dotsColNames = {...
     'isActive', ...
     'isCoherent', ...
     'frameIdx', ...
-    'trialCount'};
+    'seqDumpTime', ...  % time at which whole sequence of frames was dumped; recall that this is done once per trial, right before exiting the state machine.
+    'pilotID', ...
+    'taskID'};
+
 fullMatrix = zeros(0,length(dotsColNames));
 end_block = 0;
-for trial = 1:numTrials
-    dotsPositions = taskNode.dotsPositions{trial};
-    numDotsFrames = size(dotsPositions,3);
-    for frame = 1:numDotsFrames
-        numDots = size(dotsPositions,2);
-        
-        start_block = end_block + 1;
-        end_block = start_block + numDots - 1;
-        
-        fullMatrix(start_block:end_block,:) = [...
-            squeeze(dotsPositions(:,:,frame)'),...
-            repmat([frame, trial],numDots,1)];
+
+for taskID=1:length(topNode.children)
+    taskNode = topNode.children{taskID};
+    numTrials=length(taskNode.dotsInfo.dotsPositions);
+    if numTrials ~= length(taskNode.dotsInfo.dumpTime)
+        error('dumpTime and dotsPositions have distinct length')
     end
+        
+    for trial = 1:numTrials
+        dotsPositions = taskNode.dotsInfo.dotsPositions{trial};
+        dumpTime = taskNode.dotsInfo.dumpTime{trial};
+        numDotsFrames = size(dotsPositions,3);
+        
+        for frame = 1:numDotsFrames
+            numDots = size(dotsPositions,2);
+            
+            start_block = end_block + 1;
+            end_block = start_block + numDots - 1;
+            
+            fullMatrix(start_block:end_block,:) = [...
+                squeeze(dotsPositions(:,:,frame)'),...
+                repmat([frame,dumpTime,npilot,taskID],numDots,1)];
+        end
+   end
 end
 U=array2table(fullMatrix, 'VariableNames', dotsColNames);
 writetable(U,[csvPath,fileNameWithoutExt,'_dotsPositions.csv'],...

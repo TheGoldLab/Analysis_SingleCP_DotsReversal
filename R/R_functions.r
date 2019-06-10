@@ -26,8 +26,8 @@ getFreq <- function(initTable, groupVarNames) {
 # RETURNS:
 #   dataTable    data.table corresponding to the csv file
 # NOTE: data.table package should be loaded before calling the function
-loadPilotCSV <- function(pilotNumber, dataFolder, dataTag) {
-    datafile <- paste(dataFolder,'Pilot',pilotNumber,"/pilot",pilotNumber,"_",dataTag,".csv",sep='')
+loadPilotCSV <- function(pilotNumber, dataFolder, dataTag, suffix) {
+    datafile <- paste(dataFolder,'Pilot',pilotNumber,"/pilot",pilotNumber,"_",dataTag,suffix,".csv",sep='')
     dataTable <- fread(file=datafile, header=TRUE, sep=",")
   return(dataTable)
 }
@@ -39,11 +39,11 @@ loadPilotCSV <- function(pilotNumber, dataFolder, dataTag) {
 # RETURNS:
 #   dataTable    data.table corresponding to a concatenation of the csv files. A pilotID column is added
 # NOTE: data.table package should be loaded before calling the function
-loadMultiplePilotCSV <- function(pilotNumbers, dataFolder, dataTag) {
+loadMultiplePilotCSV <- function(pilotNumbers, dataFolder, dataTag, suffix) {
     list_of_tables <- list()
     # we append the data.tables one by one, calling loadPilotCSV
     for (n in pilotNumbers) {
-        individual_pilot <- loadPilotCSV(n, dataFolder, dataTag)
+        individual_pilot <- loadPilotCSV(n, dataFolder, dataTag, suffix)
         individual_pilot[,pilotID:=n]
         list_of_tables <- c(list_of_tables, list(individual_pilot))
         }
