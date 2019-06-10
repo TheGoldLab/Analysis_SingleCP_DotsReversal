@@ -3,9 +3,11 @@
 %% get data from the task (currently who-MEX bug)
 clear all
 
-filename = 'pilot2.mat';
-taskName = 'SingleCP_DotsReversal';
-[topNode, FIRA] = topsTreeNodeTopNode.getDataFromFile(filename, taskName);
+% filename = 'raw/2019_06_07_14_32/2019_06_07_14_32_topsDataLog.mat';
+% taskName = 'SingleCP_DotsReversal';
+studyTag = 'SingleCP_DotsReversal';
+sessionTag = '2019_06_07_14_32';
+[topNode, FIRA] = topsTreeNodeTopNode.loadRawData(studyTag, sessionTag);
 trialNumber=10; % different from trialIndex in FIRA
 
 % NOTE: the topNode object defined above is the topNode used for the task
