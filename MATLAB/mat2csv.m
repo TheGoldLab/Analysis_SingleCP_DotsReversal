@@ -1,52 +1,34 @@
 % this script is the standard pre-processing step to convert the data that
 % we need for our analysis from .mat to .csv format.
-% 
+% Since the loading of a .mat file currently causes MATLAB to crash on
+% every second attempt, the script can only load one .mat file in a given
+% MATLAB session. For this reason, metadata about the loading/dumping is
+% stored in another file named metaDump.csv
+% The present script reads off the subject and session number to load and
+% dump in the current execution, and if everything succeeds, the
+% metaDump.csv file is updated (a new row is appended).
+
 clear all
-tbUseProject('SingleCP_DotsReversal_DataAnalysis');
-pilot_number = '18';               % should be a string
-npilot = str2double(pilot_number); % pilot number as double
-% clear classes
-% clear mex
-% clear
+tbUseProject('Analysis_SingleCP_DotsReversal');
 
-%% Folders and path variables
+%% Load metadata
+metadata = loadjson('subj_metadata.json');
+subjects = fieldnames(metadata); % 5x1 cell of strings
 
-studyTag = 'SingleCP_DotsReversal'; 
+metadump = readtable('metaDump.csv');  % required to know which subject and session to load
+subjNumber = metadump.subject(end);
+curr_session = metadump.session(end);
+subjStruct = metadata.(subjects{subjNumber});
+sessions = fieldnames(subjStruct);  % session names for 
 
-% mapping of Pilot data to timestamps
-% ======  DO NOT ERASE!! ======
-% '2019_03_27_10_49' = Pilot 12
-% '2019_04_04_16_59' = Pilot 13
-% '2019_04_04_18_00' = Pilot 14
-% '2019_04_26_12_05' = test dots dump in office, no dots info in dataset
-% '2019_04_26_13_17' = 2nd test of dots dump in office, there is dots info
-% '2019_04_29_11_04' = Pilot 15
-% '2019_04_29_14_07' = Pilot 16
-% '2019_04_30_10_33' = Pilot 17
-% '2019_04_30_14_54' = Pilot 18
-% '2019_04_30_15_51' = Pilot 19
-% =============================
-timestamp.pilot12 = '2019_03_27_10_49';
-timestamp.pilot13 = '2019_04_04_16_59';
-timestamp.pilot14 = '2019_04_04_18_00';
-timestamp.pilot15 = '2019_04_29_11_04';
-timestamp.pilot16 = '2019_04_29_14_07';
-timestamp.pilot17 = '2019_04_30_10_33';
-timestamp.pilot18 = '2019_04_30_14_54';
-timestamp.pilot19 = '2019_04_30_15_51';
-
-data_timestamp = timestamp.(['pilot',pilot_number]); 
-
-% location of .csv files to output
-csvPath = ['data/Pilot',pilot_number,'/'];
-fileNameWithoutExt = ['pilot',pilot_number];
+timestamp = subjStruct.(sessions{curr_session}).sessionTag;
+datapath = ['data/paidSubjects/raw/',timestamp,'/'];
+filename = [timestamp, '_topsDataLog.mat'];
 
 %% FIRA.ecodes data
-[topNode, FIRA] = ...
-    topsTreeNodeTopNode.loadRawData(studyTag,...
-    data_timestamp);
-% T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
-% writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
+[topNode, FIRA] = load_SingleCP_file(datapath,filename);
+T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
+writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
 
 %% Dots data
 % columns of following matrix represent the following variables
