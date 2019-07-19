@@ -18,17 +18,21 @@ subjects = fieldnames(metadata); % 5x1 cell of strings
 metadump = readtable('metaDump.csv');  % required to know which subject and session to load
 subjNumber = metadump.subject(end);
 curr_session = metadump.session(end);
+
 subjStruct = metadata.(subjects{subjNumber});
 sessions = fieldnames(subjStruct);  % session names for 
 
 timestamp = subjStruct.(sessions{curr_session}).sessionTag;
-datapath = ['data/paidSubjects/raw/',timestamp,'/'];
+datapath = ['/Users/adrian/SingleCP_DotsReversal/raw/',timestamp,'/'];
 filename = [timestamp, '_topsDataLog.mat'];
 
+
+csvPath = datapath;
+fileNameWithoutExt = timestamp;
 %% FIRA.ecodes data
 [topNode, FIRA] = load_SingleCP_file(datapath,filename);
-T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
-writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
+
+writetable(FIRA,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
 
 %% Dots data
 % columns of following matrix represent the following variables
@@ -65,10 +69,20 @@ for taskID=1:length(topNode.children)
             
             fullMatrix(start_block:end_block,:) = [...
                 squeeze(dotsPositions(:,:,frame)'),...
-                repmat([frame,dumpTime,npilot,taskID],numDots,1)];
+                repmat([frame,dumpTime,subjNumber,taskID],numDots,1)];
         end
    end
 end
 U=array2table(fullMatrix, 'VariableNames', dotsColNames);
 writetable(U,[csvPath,fileNameWithoutExt,'_dotsPositions.csv'],...
     'WriteRowNames',true)
+%% Update 
+if curr_session < length(sessions)
+    metadump(end+1,:) = {subjNumber, curr_session+1};
+    writetable(metadump, 'metaDump.csv', 'WriteRowNames',false);
+elseif subjNumber < length(subjects)
+    metadump(end+1, :) = {subjNumber + 1, 1};
+    writetable(metadump, 'metaDump.csv', 'WriteRowNames',false);
+else
+    disp('all dumped, for all subjects and all sessions')
+end
