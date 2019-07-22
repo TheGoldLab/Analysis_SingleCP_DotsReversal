@@ -11,14 +11,16 @@ mainTreeNodeStruct = topsDataLog.getTaggedData('mainTreeNode', ...
 topNode = mainTreeNodeStruct.item;
 
 FIRA =table;
+disp('FIRA defined')
 
-numChildren = length(topNode);
+numChildren = length(topNode.children);
 for c = 1:numChildren
     task = topNode.children{c};
     trials = task.trialData;
     if length(trials) == 1 || strcmp(task.name(1:3), 'Tut')
         continue
     else
+        disp('in the loop')
         FIRA = [FIRA; struct2table(trials)];
     end
 end

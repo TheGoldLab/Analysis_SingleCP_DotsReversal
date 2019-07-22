@@ -9,7 +9,7 @@
         "name": "Task_SingleCP_DotsReversal",
         "type": "git",
         "url": "https://github.com/TheGoldLab/Task_SingleCP_DotsReversal.git",
-        "flavor": "e7d7bd4" 
+        "flavor": "dev" 
     },
     {
 		"name": "Lab_Matlab_Control",
