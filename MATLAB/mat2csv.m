@@ -14,18 +14,18 @@ tbUseProject('Analysis_SingleCP_DotsReversal');
 %% Load metadata
 metadata = loadjson('subj_metadata.json');
 subjects = fieldnames(metadata); % 5x1 cell of strings
-
+disp(subjects)
 metadump = readtable('metaDump.csv');  % required to know which subject and session to load
 subjNumber = metadump.subject(end);
 curr_session = metadump.session(end);
 
 subjStruct = metadata.(subjects{subjNumber});
 sessions = fieldnames(subjStruct);  % session names for 
-
+disp(sessions)
 timestamp = subjStruct.(sessions{curr_session}).sessionTag;
 datapath = ['/Users/adrian/SingleCP_DotsReversal/raw/',timestamp,'/'];
 filename = [timestamp, '_topsDataLog.mat'];
-
+disp(datapath)
 
 csvPath = datapath;
 fileNameWithoutExt = timestamp;
@@ -33,7 +33,7 @@ fileNameWithoutExt = timestamp;
 [topNode, FIRA] = load_SingleCP_file(datapath,filename);
 
 writetable(FIRA,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
-
+disp('FIRA written')
 %% Dots data
 % columns of following matrix represent the following variables
 dotsColNames = {...
@@ -76,13 +76,16 @@ end
 U=array2table(fullMatrix, 'VariableNames', dotsColNames);
 writetable(U,[csvPath,fileNameWithoutExt,'_dotsPositions.csv'],...
     'WriteRowNames',true)
+disp('dots written')
 %% Update 
 if curr_session < length(sessions)
     metadump(end+1,:) = {subjNumber, curr_session+1};
     writetable(metadump, 'metaDump.csv', 'WriteRowNames',false);
+    disp('updated session number in metaDump.csv')
 elseif subjNumber < length(subjects)
     metadump(end+1, :) = {subjNumber + 1, 1};
     writetable(metadump, 'metaDump.csv', 'WriteRowNames',false);
+    disp('updated subject number in metaDump.csv')
 else
     disp('all dumped, for all subjects and all sessions')
 end

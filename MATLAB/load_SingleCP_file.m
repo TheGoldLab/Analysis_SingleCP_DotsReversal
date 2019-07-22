@@ -12,7 +12,8 @@ topNode = mainTreeNodeStruct.item;
 
 FIRA =table;
 disp('FIRA defined')
-
+disp(pathname)
+disp(filename)
 numChildren = length(topNode.children);
 for c = 1:numChildren
     task = topNode.children{c};
@@ -22,7 +23,8 @@ for c = 1:numChildren
     else
         disp('in the loop')
         FIRA = [FIRA; struct2table(trials)];
+	disp(task.name)
     end
 end
-
+disp('exiting load_SingleCP_file')
 end
