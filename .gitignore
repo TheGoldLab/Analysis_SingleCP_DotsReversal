@@ -15,5 +15,6 @@ Jupyter/Pilot18/.ipynb_checkpoints/*
 Jupyter/Pilot19/.ipynb_checkpoints/*
 figures/*
 *.csv
+!MATLAB/metaDump.csv
 *.mat
 *.h5
