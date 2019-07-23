@@ -10,12 +10,12 @@
 
 clear all
 tbUseProject('Analysis_SingleCP_DotsReversal');
-
+dump_path = '/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/MATLAB/metaDump.csv';
 %% Load metadata
 metadata = loadjson('subj_metadata.json');
 subjects = fieldnames(metadata); % 5x1 cell of strings
 disp(subjects)
-metadump = readtable('metaDump.csv');  % required to know which subject and session to load
+metadump = readtable(dump_path);  % required to know which subject and session to load
 subjNumber = metadump.subject(end);
 curr_session = metadump.session(end);
 
@@ -80,11 +80,11 @@ disp('dots written')
 %% Update 
 if curr_session < length(sessions)
     metadump(end+1,:) = {subjNumber, curr_session+1};
-    writetable(metadump, 'metaDump.csv', 'WriteRowNames',false);
+    writetable(metadump, dump_path, 'WriteRowNames',false);
     disp('updated session number in metaDump.csv')
 elseif subjNumber < length(subjects)
     metadump(end+1, :) = {subjNumber + 1, 1};
-    writetable(metadump, 'metaDump.csv', 'WriteRowNames',false);
+    writetable(metadump, dump_path, 'WriteRowNames',false);
     disp('updated subject number in metaDump.csv')
 else
     disp('all dumped, for all subjects and all sessions')
