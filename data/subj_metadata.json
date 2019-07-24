@@ -1,0 +1,1270 @@
+{
+	"c577366758027956b21fcb95a8db0d1e": {
+		"session1": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_20_12_54",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 20
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [18.5,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 10
+			}
+		},
+		"session2": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_20_13_27",
+			"Tut1": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 10
+			}
+		},
+		"session3": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_20_13_45",
+			"Tut1": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 1
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 1
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 20
+			},
+			"Block3": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block4": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block5": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			}
+		},
+		"session4": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_21_13_08",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 20
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [34.5,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			}
+		},
+		"session5": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_21_13_34",
+			"Tut1": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block3": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block4": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block5": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block6": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			}
+		},
+		"session6": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_21_14_25",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 1
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 1
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block4": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block5": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block6": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block7": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			}
+		},
+		"session7": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_27_11_33",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 20
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [48.5,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 204
+			},
+			"Tut3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block5": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block6": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block7": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block8": {
+				"completed": 0,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 204
+			},
+			"Block9": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block10": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			}
+		}
+	},
+	"x30bdd3d8ad24d522dc158030fb5c18d7": {
+		"session1": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_24_12_38",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 20
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [24.5,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 10
+			}
+		},
+		"session2": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_24_13_06",
+			"Tut1": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 10
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 113
+			}
+		},
+		"session3": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_24_13_31",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 1
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 1
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block3": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block4": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block5": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			}
+		},
+		"session4": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_25_13_24",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 5
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [22,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 10
+			}
+		},
+		"session5": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_06_25_14_06",
+			"Tut1": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 1
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 7
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block4": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block5": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block6": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block7": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block8": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 160
+			}
+		},
+		"session6": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_03_15_03",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 13
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [33.5,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 10
+			},
+			"Block2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 204
+			},
+			"Tut3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block4": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block5": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 1
+			},
+			"Block6": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block7": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block8": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block9": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block10": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block11": {
+				"completed": 0,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 204
+			}
+		},
+		"session7": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_03_16_32",
+			"Tut1": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block4": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			}
+		}
+	},
+	"c71c3808bc33ba05928e1bc5f93a9078": {
+		"session1": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_08_17_13",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 20
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [51.5,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 10
+			},
+			"Block2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 204
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 8
+			},
+			"Block3": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block4": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block5": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			}
+		},
+		"session2": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_10_17_19",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 6
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [34,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 4
+			},
+			"Block2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 204
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 2
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			}
+		},
+		"session3": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_10_17_40",
+			"Tut1": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block4": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			}
+		},
+		"session4": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_10_17_42",
+			"Tut1": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Quest": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block2": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Tut3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block4": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block5": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block6": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block7": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block8": {
+				"completed": 0,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 204
+			}
+		},
+		"session5": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_17_17_17",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 4
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [26.5,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 2
+			},
+			"Block2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 204
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 2
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block4": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block5": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block6": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block7": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block8": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block9": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block10": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block11": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			}
+		}
+	},
+	"x5f5dbb54ed21cfeb4ac045e0328181cc": {
+		"session1": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_09_11_02",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 20
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [30.5,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 10
+			},
+			"Block2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 204
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 12
+			},
+			"Block3": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block4": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block5": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block6": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block7": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			}
+		},
+		"session2": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_10_12_18",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 4
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [30.5,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 3
+			},
+			"Block2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 204
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 3
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block4": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block5": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block6": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block7": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block8": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block9": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block10": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block11": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			}
+		}
+	},
+	"x648f9ad78ad1211c172d1a1cd2c5af3f": {
+		"session1": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_11_11_21",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 20
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [100,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 10
+			},
+			"Block2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 204
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 11
+			},
+			"Block3": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block4": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block5": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block6": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			}
+		},
+		"session2": {
+			"trialFolder": "Blocks003",
+			"sessionTag": "2019_07_12_11_11",
+			"Tut1": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 4
+			},
+			"Quest": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 80,
+				"QuestFit": [62,2,0.5,0.001]
+			},
+			"Tut2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 0,
+				"numTrials": 10
+			},
+			"Block2": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 2,
+				"numTrials": 204
+			},
+			"Tut3": {
+				"completed": 1,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 3
+			},
+			"Block3": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block4": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block5": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block6": {
+				"completed": 0,
+				"aborted": 1,
+				"reward": 0,
+				"numTrials": 0
+			},
+			"Block7": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block8": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block9": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block10": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			},
+			"Block11": {
+				"completed": 1,
+				"aborted": 0,
+				"reward": 4,
+				"numTrials": 204
+			}
+		}
+	}
+}
+
