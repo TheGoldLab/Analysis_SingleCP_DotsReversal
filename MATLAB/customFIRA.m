@@ -1,7 +1,7 @@
 %% test section
 tbUseProject('Analysis_SingleCP_DotsReversal');
-filename = '2019_06_21_14_25_topsDataLog.mat';
-pathname = '/Users/adrian/SingleCP_DotsReversal/raw/2019_06_21_14_25/';
+filename = '2019_06_24_12_38_topsDataLog.mat';
+pathname = '/Users/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/';
 D = topsDataLog.readDataFile([pathname,filename]);
 LD = length(D);
 trial_groups = {};  % one group per block in the task
