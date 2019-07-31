@@ -22,7 +22,7 @@ curr_session = metadump.session(end);
 subjStruct = metadata.(subjects{subjNumber});
 sessions = fieldnames(subjStruct);  % session names for 
 disp(sessions)
-timestamp='2019_07_10_12_18';
+timestamp='2019_07_09_11_02';
 datapath = ['/Users/adrian/SingleCP_DotsReversal/raw/',timestamp,'/'];
 filename = [timestamp, '_topsDataLog.mat'];
 disp(datapath)
