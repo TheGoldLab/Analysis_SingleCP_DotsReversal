@@ -73,7 +73,7 @@ DB_NAMES = {
         'files': ['url', 'path', 'filename', 'checksum', 'format'],
         'code': ['url', 'repo', 'commit'],
         'code_params': [],
-        'documents': ['title', 'description'],
+        'documents': ['title', 'description', 'is_note', 'is_question'],
         'figures': ['title', 'description'],
         'data': [],
         'code_to_code': [],
@@ -91,7 +91,14 @@ DB_NAMES = {
         'file_to_data': [],
     }
 }
-assert len(DB_NAMES['fields']) == len(DB_NAMES['collections'])
+
+
+assert set(DB_NAMES['fields'].keys()) == set(DB_NAMES['collections'].keys())
+assert set(DB_NAMES['collections_descriptions'].keys()) == set(DB_NAMES['collections'].keys())
+
+
+def describe_collections():
+    pprint.pprint(DB_NAMES['collections_descriptions'])
 
 
 def list_coll_names(as_in_arangodb=False):
@@ -312,6 +319,12 @@ def display(elements, title, separator='==========', hide_privates=True, only_fi
         print(separator)
 
 
+"""------------------ start of class definitions -------------------"""
+
+
+"""------------------ projects-related classes -------------------"""
+
+
 class Projects(pcl.Collection):
     """
     Document collection for pyArango corresponding to projects
@@ -342,6 +355,63 @@ class ProjectsGraph(Graph):
                                        fromCollections=[DB_NAMES['collections']['projects']],
                                        toCollections=[DB_NAMES['collections']['projects']])]
     _orphanedCollections = []
+
+
+"""------------------ non projects-related classes -------------------"""
+
+
+class Data(pcl.Collection):
+    _properties = {
+        "keyOptions": {
+            "allowUserKeys": False,
+            "type": "autoincrement",
+        }
+    }
+
+
+class Code(pcl.Collection):
+    _properties = {
+        "keyOptions": {
+            "allowUserKeys": False,
+            "type": "autoincrement",
+        }
+    }
+
+
+class Documents(pcl.Collection):
+    _properties = {
+        "keyOptions": {
+            "allowUserKeys": False,
+            "type": "autoincrement",
+        }
+    }
+
+
+class Figs(pcl.Collection):
+    _properties = {
+        "keyOptions": {
+            "allowUserKeys": False,
+            "type": "autoincrement",
+        }
+    }
+
+
+class CodeParams(pcl.Collection):
+    _properties = {
+        "keyOptions": {
+            "allowUserKeys": False,
+            "type": "autoincrement",
+        }
+    }
+
+
+class File(pcl.Collection):
+    _properties = {
+        "keyOptions": {
+            "allowUserKeys": False,
+            "type": "autoincrement",
+        }
+    }
 
 
 class CodeToCode(pcl.Edges):
@@ -439,33 +509,6 @@ class TheGraphWithEverything(Graph):
                        toCollections=[DB_NAMES['collections']['data']]),
     ]
     _orphanedCollections = []
-
-
-class Data(pcl.Collection):
-    _properties = {
-        "keyOptions": {
-            "allowUserKeys": False,
-            "type": "autoincrement",
-        }
-    }
-
-
-class Code(pcl.Collection):
-    _properties = {
-        "keyOptions": {
-            "allowUserKeys": False,
-            "type": "autoincrement",
-        }
-    }
-
-
-class Documents(pcl.Collection):
-    _properties = {
-        "keyOptions": {
-            "allowUserKeys": False,
-            "type": "autoincrement",
-        }
-    }
 
 
 class UserInterface:
@@ -644,7 +687,8 @@ class UserInterface:
         """
         assert coll in DB_NAMES['collections'].keys()
         assert coll != DB_NAMES['collections']['projects'], 'use create_project to create a project'
-
+        for k in content.keys():
+            assert k in DB_NAMES['fields'][coll], "key from content not present in DB_NAMES['fields']"
         doc = self.everything.createVertex(
             DB_NAMES['collections'][coll],
             content
@@ -666,42 +710,20 @@ class UserInterface:
 
         simple_query = self.db[DB_NAMES['collections'][coll]].fetchAll()
 
-        display(simple_query, title=f'LIST OF {simple_query.count} EXPERIMENTS IN DB')
+        display(simple_query, title=f'LIST OF {simple_query.count} {coll} IN DB')
 
     def set_link(self, source_doc, target_doc):
         self.everything.link(get_relation_name(source_doc, target_doc), source_doc, target_doc, {})
 
 
-# def doc_in_list(document, list_of_docs):
-#     doc_id = document['_id']
-#     id_list = [d['_id'] for d in list_of_docs]
-#     return doc_id in id_list
-#
-#
-# def subproject_link_exists(db, project1, project2):
-#     out_edges = db[COLL_NAMES['subproject_links']].getOutEdges(project1)
-#     in_edges = db[COLL_NAMES['subproject_links']].getInEdges(project2)
-#     return any([doc_in_list(o, in_edges) for o in out_edges])
-#
-#
-# def create_subproject_link(db, project1, project2):
-#     """
+def list_questions(config='default'):
+    with session(config=config) as db:
+        # todo: build and send appropriate query
+        q_str = f"FOR doc IN {DB_NAMES['collections']['documents']}" \
+                f"FILTER doc.is_question == 'True' " \
+                f"RETURN doc"
 
-#     :param db:
-#     :param project1: project obj
-#     :param project2: project obj
-#     :return:
-#     """
-#     if subproject_link_exists(db, project1, project2):
-#         print('subproject link exists, link creation aborted')
-#         return None
-#
-#     link = db[COLL_NAMES['subproject_links']].createEdge()
-#     link['_from'] = project1['_id']
-#     link['_to'] = project2['_id']
-#
-#     link.save()
-#     return link
+        display(db.AQLQuery(q_str, rawResults=False), title='list of questions in DB')
 
 
 if __name__ == "__main__":
