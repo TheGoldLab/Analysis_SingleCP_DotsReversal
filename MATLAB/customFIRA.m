@@ -1,6 +1,6 @@
 %% test section
 tbUseProject('Analysis_SingleCP_DotsReversal');
-timestamp='2019_03_03_22_12';
+timestamp='2019_07_09_11_02';
 filename = [timestamp,'_topsDataLog.mat'];
 pathname = ['/Users/adrian/SingleCP_DotsReversal/raw/',timestamp,'/'];
 D = topsDataLog.readDataFile([pathname,filename]);
