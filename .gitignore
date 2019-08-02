@@ -18,3 +18,4 @@ figures/*
 !MATLAB/metaDump.csv
 *.mat
 *.h5
+*.bak
