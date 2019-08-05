@@ -1,0 +1,56 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2016 The MathWorks, Inc.
+               R2016a Update 7 (9.0.0.960322) 64-bit (maci64)
+                             September 20, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+Resetting path to factory state.
+Adding "ToolboxToolbox" to path at "/Users/adrian/Documents/MATLAB/ToolboxToolbox".
+    ----------------------------------------------------
+	Your MATLAB license will expire in 37 days.
+	Please contact your system administrator or
+	MathWorks to renew this license.
+    ----------------------------------------------------
+
+	Academic License
+
+>> >> Locating project "Analysis_SingleCP_DotsReversal" within "/Users/adrian/Documents/MATLAB/projects".
+  Found at "/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal".
+Local copy of ToolboxToolbox is up to date.
+Updating "ToolboxRegistry".
+Already up to date.
+Found "Analysis_SingleCP_DotsReversal" and skipping update.
+Updating "Task_SingleCP_DotsReversal_dev".
+From https://github.com/TheGoldLab/Task_SingleCP_DotsReversal
+ * branch            dev        -> FETCH_HEAD
+Already up to date.
+Updating "Lab_Matlab_Control_stable".
+From https://github.com/TheGoldLab/Lab_Matlab_Control
+ * branch            stable     -> FETCH_HEAD
+Already up to date.
+Updating "Lab_Matlab_Utilities".
+Already up to date.
+Updating "mgl".
+Already up to date.
+Updating "mQUESTPlus".
+Already up to date.
+Resetting path to factory state.
+Adding "ToolboxToolbox" to path at "/Users/adrian/Documents/MATLAB/ToolboxToolbox".
+Adding "Analysis_SingleCP_DotsReversal" to path at "/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal".
+Adding "Task_SingleCP_DotsReversal_dev" to path at "/Users/adrian/Documents/MATLAB/toolboxes/Task_SingleCP_DotsReversal_dev".
+Adding "Lab_Matlab_Control_stable" to path at "/Users/adrian/Documents/MATLAB/toolboxes/Lab_Matlab_Control_stable".
+Adding "Lab_Matlab_Utilities" to path at "/Users/adrian/Documents/MATLAB/toolboxes/Lab_Matlab_Utilities".
+Adding "mgl" to path at "/Users/adrian/Documents/MATLAB/toolboxes/mgl".
+Adding "mQUESTPlus" to path at "/Users/adrian/Documents/MATLAB/toolboxes/mQUESTPlus".
+Checking for "Analysis_SingleCP_DotsReversal" local hook.
+Checking for "Task_SingleCP_DotsReversal_dev" local hook.
+Checking for "Lab_Matlab_Control_stable" local hook.
+Checking for "Lab_Matlab_Utilities" local hook.
+Checking for "mgl" local hook.
+Checking for "mQUESTPlus" local hook.
+Looks good: 6 resolved toolboxes deployed OK.
+>> >> >> >> >> >> >> >> >> >> 
