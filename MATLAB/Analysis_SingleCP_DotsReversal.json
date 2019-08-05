@@ -1,0 +1,37 @@
+[
+    {
+       	"name": "Analysis_SingleCP_DotsReversal",
+        "type": "git",
+        "url": "https://github.com/TheGoldLab/Analysis_SingleCP_DotsReversal.git",
+        "update": "never"
+    },
+    {	
+        "name": "Task_SingleCP_DotsReversal",
+        "type": "git",
+        "url": "https://github.com/TheGoldLab/Task_SingleCP_DotsReversal.git",
+        "flavor": "dev" 
+    },
+    {
+		"name": "Lab_Matlab_Control",
+		"type": "git",
+                "flavor": "stable",
+		"url": "https://github.com/TheGoldLab/Lab_Matlab_Control.git",
+		"pathPlacement": "append"
+    },
+    {
+		"name": "Lab_Matlab_Utilities",
+		"type": "include",
+                "pathPlacement": "append"
+    },
+    {
+		"name": "mgl",
+		"type": "git",
+		"url": "https://github.com/justingardner/mgl.git",
+		"pathPlacement": "append"
+    },
+    {  
+		"name": "mQUESTPlus",
+		"pathPlacement": "append",
+		"type": "include"
+    }
+]

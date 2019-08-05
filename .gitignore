@@ -1,5 +1,4 @@
 *.html
-*.mat
 !code_hiding.html
 Jupyter/.ipynb_checkpoints/*
 Jupyter/Pilot11/.ipynb_checkpoints/*
@@ -16,3 +15,9 @@ Jupyter/Pilot18/.ipynb_checkpoints/*
 Jupyter/Pilot19/.ipynb_checkpoints/*
 Python/.idea/*
 Python/__pycache__/*
+figures/*
+*.csv
+!MATLAB/metaDump.csv
+*.mat
+*.h5
+*.bak

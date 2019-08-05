@@ -1,0 +1,65 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2016 The MathWorks, Inc.
+               R2016a Update 7 (9.0.0.960322) 64-bit (maci64)
+                             September 20, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+Resetting path to factory state.
+Adding "ToolboxToolbox" to path at "/Users/adrian/Documents/MATLAB/ToolboxToolbox".
+    ----------------------------------------------------
+	Your MATLAB license will expire in 40 days.
+	Please contact your system administrator or
+	MathWorks to renew this license.
+    ----------------------------------------------------
+
+	Academic License
+
+>> >> >> >> >> >> >> >> >> >> >> >> Locating project "Analysis_SingleCP_DotsReversal" within "/Users/adrian/Documents/MATLAB/projects".
+  Found at "/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal".
+Local copy of ToolboxToolbox is up to date.
+Updating "ToolboxRegistry".
+Already up to date.
+Found "Analysis_SingleCP_DotsReversal" and skipping update.
+Updating "Task_SingleCP_DotsReversal_e7d7bd4".
+fatal: couldn't find remote ref e7d7bd4
+Updating "Lab_Matlab_Control_stable".
+From https://github.com/TheGoldLab/Lab_Matlab_Control
+ * branch            stable     -> FETCH_HEAD
+Already up to date.
+Updating "Lab_Matlab_Utilities".
+Already up to date.
+Updating "mgl".
+Already up to date.
+Updating "mQUESTPlus".
+Already up to date.
+Resetting path to factory state.
+Adding "ToolboxToolbox" to path at "/Users/adrian/Documents/MATLAB/ToolboxToolbox".
+Adding "Analysis_SingleCP_DotsReversal" to path at "/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal".
+Adding "Task_SingleCP_DotsReversal_e7d7bd4" to path at "/Users/adrian/Documents/MATLAB/toolboxes/Task_SingleCP_DotsReversal_e7d7bd4".
+Adding "Lab_Matlab_Control_stable" to path at "/Users/adrian/Documents/MATLAB/toolboxes/Lab_Matlab_Control_stable".
+Adding "Lab_Matlab_Utilities" to path at "/Users/adrian/Documents/MATLAB/toolboxes/Lab_Matlab_Utilities".
+Adding "mgl" to path at "/Users/adrian/Documents/MATLAB/toolboxes/mgl".
+Adding "mQUESTPlus" to path at "/Users/adrian/Documents/MATLAB/toolboxes/mQUESTPlus".
+Checking for "Analysis_SingleCP_DotsReversal" local hook.
+Checking for "Task_SingleCP_DotsReversal_e7d7bd4" local hook.
+Checking for "Lab_Matlab_Control_stable" local hook.
+Checking for "Lab_Matlab_Utilities" local hook.
+Checking for "mgl" local hook.
+Checking for "mQUESTPlus" local hook.
+Error: "Task_SingleCP_DotsReversal" had status 1, message "fatal: couldn't find remote ref e7d7bd4"
+Something went wrong with resolved toolboxes, please see above.
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> {Insufficient number of outputs from right hand side of equal sign to satisfy
+assignment.
+
+Error in load_SingleCP_file (line 11)
+topNode = mainTreeNodeStruct.item;
+} 
+>> >> {Undefined function or variable 'FIRA'.
+} 
+>> >> >> >> >> >> >> >> >> {Undefined variable "topNode" or class "topNode.children".
+} 
+>> >> >> >> >> 
