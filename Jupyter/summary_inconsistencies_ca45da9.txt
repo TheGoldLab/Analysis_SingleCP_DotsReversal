@@ -1,0 +1,21 @@
+Diagnostics of the inconsistencies.txt file:
+
+1/ in the data files that do not end in customFIRA.csv, no data exist about the Tut blocks
+--> let's forget about tutorials data -- done
+
+2/ the only reason why the trialIndex column in a data file is not a "pure counter" is because
+   of repeated trials, never because of NaNs nor the minimum not being 1
+--> checked
+
+3/ for data files ending in _FIRA.csv, in several occasions the data contains blocks not present
+   in the metadata. I see no pattern as to which blocks are concerned.
+
+4/ for most "customFIRA" data files, there are blocks reported in the metadata file not appearing
+   in the data file. This is worrying as this actually is missing data.
+
+5/ in many data files (both FIRA and customFIRA), the trial count is inconsistent with the 
+   metadata file. 
+--> currently, output is written whenever none is np.nan nor 0
+
+Next step is thus to check the actual sequence of stimulus properties presented in each block
+and compare it to the theoretical sequences.  

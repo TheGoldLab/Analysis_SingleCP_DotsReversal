@@ -1,25 +1,25 @@
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_20_12_54/2019_06_20_12_54_FIRA.csv
 
-          Quest  Block2  Tut1  Tut2      _merge
-type                                           
-data         80   204.0   NaN   NaN   left_only
-metadata     80     NaN  20.0  10.0  right_only
+          Quest  Block2
+type                   
+data         80   204.0
+metadata     80     NaN
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_08/2019_06_21_13_08_FIRA.csv
 
-          Quest  Block2  Tut1  Tut2      _merge
-type                                           
-data         80   204.0   NaN   NaN   left_only
-metadata     80     NaN  20.0   0.0  right_only
+          Quest  Block2
+type                   
+data         80   204.0
+metadata     80     NaN
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/2019_06_24_12_38_FIRA.csv
 
-          Quest  Block2  Tut1  Tut2      _merge
-type                                           
-data         80   204.0   NaN   NaN   left_only
-metadata     80     NaN  20.0  10.0  right_only
+          Quest  Block2
+type                   
+data         80   204.0
+metadata     80     NaN
 
 vector Tut1 distinct from pure counter diagnosing ...
   repeated trial indices: [1]
@@ -28,26 +28,27 @@ vector Quest distinct from pure counter diagnosing ...
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/2019_06_24_12_38customFIRA.csv
 
-          Tut1  Quest  Tut2      _merge
-type                                   
-data        20     80    10   left_only
-metadata    20     80    10  right_only
+          Quest
+type           
+data         80
+metadata     80
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_25_13_24/2019_06_25_13_24_FIRA.csv
 
-          Quest  Block2  Tut1  Tut2      _merge
-type                                           
-data         80   204.0   NaN   NaN   left_only
-metadata     80     NaN   5.0  10.0  right_only
+          Quest  Block2
+type                   
+data         80   204.0
+metadata     80     NaN
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_03_15_03/2019_07_03_15_03_FIRA.csv
 
-          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11  Tut1  Tut2  Tut3      _merge
-type                                                                                                                           
-metadata     80     204       0       0       1       0       0       0     204      204      204  13.0  10.0   0.0  right_only
-data         80     204     204     204     204     204     204     204     204      204      204   NaN   NaN   NaN   left_only
+in Block5, metadata trial_num = 1, data trial_num = 204
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
+type                                                                                             
+metadata     80     204       0       0       1       0       0       0     204      204      204
+data         80     204     204     204     204     204     204     204     204      204      204
 
 vector Block3 distinct from pure counter diagnosing ...
   repeated trial indices: [31, 97, 176, 182]
@@ -58,34 +59,34 @@ vector Block5 distinct from pure counter diagnosing ...
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_09_11_02/2019_07_09_11_02customFIRA.csv
 
-          Tut1  Quest  Tut2  Block2  Tut3  Block3  Block4  Block5  Block6  Block7      _merge
-type                                                                                         
-metadata    20     80    10     204    12     204     204     204     204   204.0  right_only
-data        20     80    10     204    13     204     204     204     204     NaN   left_only
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7
+type                                                           
+metadata     80     204     204     204     204     204   204.0
+data         80     204     204     204     204     204     NaN
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_40/2019_07_10_17_40_FIRA.csv
 
-          Quest  Block2  Block3  Block4  Tut1  Tut2  Tut3      _merge
-type                                                                 
-metadata      0       0       0       0   0.0   0.0   0.0  right_only
-data         80     204     204     204   NaN   NaN   NaN   left_only
+          Quest  Block2  Block3  Block4
+type                                   
+metadata      0       0       0       0
+data         80     204     204     204
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_12_11_11/2019_07_12_11_11_FIRA.csv
 
-          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11  Tut1  Tut2  Tut3      _merge
-type                                                                                                                           
-metadata     80     204       0       0       0       0     204     204     204      204      204   4.0  10.0   3.0  right_only
-data         80     204     204     204     204     204     204     204     204      204      204   NaN   NaN   NaN   left_only
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
+type                                                                                             
+metadata     80     204       0       0       0       0     204     204     204      204      204
+data         80     204     204     204     204     204     204     204     204      204      204
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_27/2019_06_20_13_27_FIRA.csv
 
-          Quest  Block2  Tut1  Tut2      _merge
-type                                           
-metadata      0     NaN   0.0  10.0  right_only
-data         80   204.0   NaN   NaN   left_only
+          Quest  Block2
+type                   
+metadata      0     NaN
+data         80   204.0
 
 vector Tut1 distinct from pure counter diagnosing ...
   repeated trial indices: [1]
@@ -94,18 +95,19 @@ vector Block3 distinct from pure counter diagnosing ...
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_34/2019_06_21_13_34customFIRA.csv
 
-          Tut1  Quest  Tut2  Block2  Tut3  Block3  Block4  Block5  Block6      _merge
-type                                                                                 
-metadata     0      0     0       0     0     204   204.0     0.0     0.0  right_only
-data         1      1     1       1     1     204     NaN     NaN     NaN   left_only
+          Quest  Block2  Block3  Block4  Block5  Block6
+type                                                   
+metadata      0       0     204   204.0     0.0     0.0
+data          1       1     204     NaN     NaN     NaN
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_06/2019_06_24_13_06_FIRA.csv
 
-          Quest  Block2  Block3  Tut1  Tut2  Tut3      _merge
-type                                                         
-metadata      0       0     113   0.0   0.0  10.0  right_only
-data         80     204     204   NaN   NaN   NaN   left_only
+in Block3, metadata trial_num = 113, data trial_num = 204
+          Quest  Block2  Block3
+type                           
+metadata      0       0     113
+data         80     204     204
 
 vector Tut3 distinct from pure counter diagnosing ...
   repeated trial indices: [6]
@@ -118,42 +120,42 @@ vector Block7 distinct from pure counter diagnosing ...
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_25_14_06/2019_06_25_14_06customFIRA.csv
 
-          Block2  Tut3  Block5  Block6  Block7  Tut1  Quest  Tut2  Block3  Block4  Block8      _merge
-type                                                                                                 
-metadata       1     7     204     204     204   0.0    0.0   0.0     0.0     0.0   160.0  right_only
-data           1     8     204     204     204   NaN    NaN   NaN     NaN     NaN     NaN   left_only
+          Block2  Block5  Block6  Block7  Quest  Block3  Block4  Block8
+type                                                                   
+metadata       1     204     204     204    0.0     0.0     0.0   160.0
+data           1     204     204     204    NaN     NaN     NaN     NaN
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_03_16_32/2019_07_03_16_32_FIRA.csv
 
-          Quest  Block2  Block3  Block4  Tut1  Tut2  Tut3      _merge
-type                                                                 
-metadata      0       0       0       0   0.0   0.0   0.0  right_only
-data         80     204     204     204   NaN   NaN   NaN   left_only
+          Quest  Block2  Block3  Block4
+type                                   
+metadata      0       0       0       0
+data         80     204     204     204
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_10_12_18/2019_07_10_12_18_FIRA.csv
 
-          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11  Tut1  Tut2  Tut3      _merge
-type                                                                                                                           
-metadata     80     204       0       0       0       0       0     204     204      204      204   4.0   3.0   3.0  right_only
-data         80     204     204     204     204     204     204     204     204      204      204   NaN   NaN   NaN   left_only
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
+type                                                                                             
+metadata     80     204       0       0       0       0       0     204     204      204      204
+data         80     204     204     204     204     204     204     204     204      204      204
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_42/2019_07_10_17_42customFIRA.csv
 
-          Block6  Block7  Tut1  Quest  Tut2  Block2  Tut3  Block3  Block4  Block5  Block8      _merge
-type                                                                                                 
-data         204     204   NaN    NaN   NaN     NaN   NaN     NaN     NaN     NaN     NaN   left_only
-metadata     204     204   0.0    0.0   0.0     0.0   0.0     0.0     0.0     0.0   204.0  right_only
+          Block6  Block7  Quest  Block2  Block3  Block4  Block5  Block8
+type                                                                   
+data         204     204    NaN     NaN     NaN     NaN     NaN     NaN
+metadata     204     204    0.0     0.0     0.0     0.0     0.0   204.0
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_17_17_17/2019_07_17_17_17_FIRA.csv
 
-          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11  Tut1  Tut2  Tut3      _merge
-type                                                                                                                           
-metadata     80     204       0       0       0       0       0     204     204      204      204   4.0   2.0   2.0  right_only
-data         80     204     204     204     204     204     204     204     204      204      204   NaN   NaN   NaN   left_only
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
+type                                                                                             
+metadata     80     204       0       0       0       0       0     204     204      204      204
+data         80     204     204     204     204     204     204     204     204      204      204
 
 vector Tut3 distinct from pure counter diagnosing ...
   repeated trial indices: [3, 6, 9]
@@ -164,28 +166,29 @@ vector Block4 distinct from pure counter diagnosing ...
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_45/2019_06_20_13_45customFIRA.csv
 
-          Tut1  Quest  Block2  Tut3  Block3  Block4  Tut2  Block5      _merge
-type                                                                         
-metadata     0      1       1    20     204     204   0.0   204.0  right_only
-data         1      1       1    20     204     204   NaN     NaN   left_only
+          Quest  Block2  Block3  Block4  Block5
+type                                           
+metadata      1       1     204     204   204.0
+data          1       1     204     204     NaN
 
 vector Block6 distinct from pure counter diagnosing ...
   repeated trial indices: [1, 168]
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_21_14_25/2019_06_21_14_25customFIRA.csv
 
-          Tut1  Quest  Block4  Block6  Tut2  Block2  Tut3  Block3  Block5  Block7      _merge
-type                                                                                         
-metadata     1      1       0     204   0.0     0.0   0.0     0.0     0.0   204.0  right_only
-data         1      1       1     204   NaN     NaN   NaN     NaN     NaN     NaN   left_only
+          Quest  Block4  Block6  Block2  Block3  Block5  Block7
+type                                                           
+metadata      1       0     204     0.0     0.0     0.0   204.0
+data          1       1     204     NaN     NaN     NaN     NaN
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_31/2019_06_24_13_31_FIRA.csv
 
-          Quest  Block2  Block3  Block4  Block5  Tut1  Tut2  Tut3      _merge
-type                                                                         
-metadata      1       0     204     204       0   1.0   0.0   0.0  right_only
-data         80     204     204     204     204   NaN   NaN   NaN   left_only
+in Quest, metadata trial_num = 1, data trial_num = 80
+          Quest  Block2  Block3  Block4  Block5
+type                                           
+metadata      1       0     204     204       0
+data         80     204     204     204     204
 
 vector Tut1 distinct from pure counter diagnosing ...
   repeated trial indices: [1]
@@ -200,10 +203,10 @@ vector Block7 distinct from pure counter diagnosing ...
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_27_11_33/2019_06_27_11_33customFIRA.csv
 
-          Tut1  Quest  Block2  Block6  Block7  Tut2  Tut3  Block5  Block8  Block9  Block10      _merge
-type                                                                                                  
-metadata    20     80     204       0       0   0.0   0.0     0.0   204.0   204.0    204.0  right_only
-data        20     80     204     204     204   NaN   NaN     NaN     NaN     NaN      NaN   left_only
+          Quest  Block2  Block6  Block7  Block5  Block8  Block9  Block10
+type                                                                    
+metadata     80     204       0       0     0.0   204.0   204.0    204.0
+data         80     204     204     204     NaN     NaN     NaN      NaN
 
 vector Quest distinct from pure counter diagnosing ...
   repeated trial indices: [61]
@@ -214,18 +217,18 @@ vector Block4 distinct from pure counter diagnosing ...
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_08_17_13/2019_07_08_17_13customFIRA.csv
 
-          Tut1  Quest  Tut2  Block2  Tut3  Block3  Block4  Block5      _merge
-type                                                                         
-metadata    20     80    10     204     8     204     204   204.0  right_only
-data        20     80    10     204     9     204     204     NaN   left_only
+          Quest  Block2  Block3  Block4  Block5
+type                                           
+metadata     80     204     204     204   204.0
+data         80     204     204     204     NaN
 
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_19/2019_07_10_17_19_FIRA.csv
 
-          Quest  Block2  Block3  Tut1  Tut2  Tut3      _merge
-type                                                         
-metadata     80     204       0   6.0   4.0   2.0  right_only
-data         80     204     204   NaN   NaN   NaN   left_only
+          Quest  Block2  Block3
+type                           
+metadata     80     204       0
+data         80     204     204
 
 vector Tut1 distinct from pure counter diagnosing ...
   repeated trial indices: [1]
@@ -236,8 +239,7 @@ vector Block5 distinct from pure counter diagnosing ...
 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_11_11_21/2019_07_11_11_21customFIRA.csv
 
-          Tut1  Quest  Tut2  Block2  Tut3  Block3  Block4  Block5  Block6      _merge
-type                                                                                 
-metadata    20     80    10     204    11     204     204     204   204.0  right_only
-data        20     80    10     204    12     204     204     204     NaN   left_only
-
+          Quest  Block2  Block3  Block4  Block5  Block6
+type                                                   
+metadata     80     204     204     204     204   204.0
+data         80     204     204     204     204     NaN
