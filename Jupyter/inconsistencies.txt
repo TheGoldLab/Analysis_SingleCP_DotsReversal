@@ -1,0 +1,98 @@
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_20_12_54/2019_06_20_12_54_FIRA.csv
+{'Quest': 80, 'Block2': 204}
+{'Tut1': 20, 'Quest': 80, 'Tut2': 10}
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_08/2019_06_21_13_08_FIRA.csv
+{'Quest': 80, 'Block2': 204}
+{'Tut1': 20, 'Quest': 80, 'Tut2': 0}
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/2019_06_24_12_38_FIRA.csv
+{'Quest': 80, 'Block2': 204}
+{'Tut1': 20, 'Quest': 80, 'Tut2': 10}
+vector distinct from pure counter
+vector distinct from pure counter
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/2019_06_24_12_38customFIRA.csv
+{'Tut1': 24, 'Quest': 81, 'Tut2': 10}
+{'Tut1': 20, 'Quest': 80, 'Tut2': 10}
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_25_13_24/2019_06_25_13_24_FIRA.csv
+{'Quest': 80, 'Block2': 204}
+{'Tut1': 5, 'Quest': 80, 'Tut2': 10}
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_03_15_03/2019_07_03_15_03_FIRA.csv
+{'Quest': 80, 'Block2': 204, 'Block3': 204, 'Block4': 204, 'Block5': 204, 'Block6': 204, 'Block7': 204, 'Block8': 204, 'Block9': 204, 'Block10': 204, 'Block11': 204}
+{'Tut1': 13, 'Quest': 80, 'Tut2': 10, 'Block2': 204, 'Tut3': 0, 'Block3': 0, 'Block4': 0, 'Block5': 1, 'Block6': 0, 'Block7': 0, 'Block8': 0, 'Block9': 204, 'Block10': 204, 'Block11': 204}
+vector distinct from pure counter
+vector distinct from pure counter
+vector distinct from pure counter
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_09_11_02/2019_07_09_11_02customFIRA.csv
+{'Tut1': 20, 'Quest': 80, 'Tut2': 10, 'Block2': 204, 'Tut3': 13, 'Block3': 209, 'Block4': 205, 'Block5': 206, 'Block6': 204}
+{'Tut1': 20, 'Quest': 80, 'Tut2': 10, 'Block2': 204, 'Tut3': 12, 'Block3': 204, 'Block4': 204, 'Block5': 204, 'Block6': 204, 'Block7': 204}
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_40/2019_07_10_17_40_FIRA.csv
+{'Quest': 80, 'Block2': 204, 'Block3': 204, 'Block4': 204}
+{'Tut1': 0, 'Quest': 0, 'Tut2': 0, 'Block2': 0, 'Tut3': 0, 'Block3': 0, 'Block4': 0}
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_12_11_11/2019_07_12_11_11_FIRA.csv
+{'Quest': 80, 'Block2': 204, 'Block3': 204, 'Block4': 204, 'Block5': 204, 'Block6': 204, 'Block7': 204, 'Block8': 204, 'Block9': 204, 'Block10': 204, 'Block11': 204}
+{'Tut1': 4, 'Quest': 80, 'Tut2': 10, 'Block2': 204, 'Tut3': 3, 'Block3': 0, 'Block4': 0, 'Block5': 0, 'Block6': 0, 'Block7': 204, 'Block8': 204, 'Block9': 204, 'Block10': 204, 'Block11': 204}
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_27/2019_06_20_13_27_FIRA.csv
+{'Quest': 80, 'Block2': 204}
+{'Tut1': 0, 'Quest': 0, 'Tut2': 10}
+vector distinct from pure counter
+vector distinct from pure counter
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_34/2019_06_21_13_34customFIRA.csv
+{'Tut1': 2, 'Quest': 1, 'Tut2': 1, 'Block2': 1, 'Tut3': 1, 'Block3': 208}
+{'Tut1': 0, 'Quest': 0, 'Tut2': 0, 'Block2': 0, 'Tut3': 0, 'Block3': 204, 'Block4': 204, 'Block5': 0, 'Block6': 0}
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_06/2019_06_24_13_06_FIRA.csv
+{'Quest': 80, 'Block2': 204, 'Block3': 204}
+{'Tut1': 0, 'Quest': 0, 'Tut2': 0, 'Block2': 0, 'Tut3': 10, 'Block3': 113}
+vector distinct from pure counter
+vector distinct from pure counter
+vector distinct from pure counter
+vector distinct from pure counter
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_25_14_06/2019_06_25_14_06customFIRA.csv
+{'Block2': 1, 'Tut3': 9, 'Block5': 206, 'Block6': 212, 'Block7': 216}
+{'Tut1': 0, 'Quest': 0, 'Tut2': 0, 'Block2': 1, 'Tut3': 7, 'Block3': 0, 'Block4': 0, 'Block5': 204, 'Block6': 204, 'Block7': 204, 'Block8': 160}
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_03_16_32/2019_07_03_16_32_FIRA.csv
+{'Quest': 80, 'Block2': 204, 'Block3': 204, 'Block4': 204}
+{'Tut1': 0, 'Quest': 0, 'Tut2': 0, 'Block2': 0, 'Tut3': 0, 'Block3': 0, 'Block4': 0}
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_12_18/2019_07_10_12_18_FIRA.csv
+{'Quest': 80, 'Block2': 204, 'Block3': 204, 'Block4': 204, 'Block5': 204, 'Block6': 204, 'Block7': 204, 'Block8': 204, 'Block9': 204, 'Block10': 204, 'Block11': 204}
+{'Tut1': 4, 'Quest': 80, 'Tut2': 3, 'Block2': 204, 'Tut3': 3, 'Block3': 0, 'Block4': 0, 'Block5': 0, 'Block6': 0, 'Block7': 0, 'Block8': 204, 'Block9': 204, 'Block10': 204, 'Block11': 204}
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_42/2019_07_10_17_42customFIRA.csv
+{'Block6': 204, 'Block7': 204}
+{'Tut1': 0, 'Quest': 0, 'Tut2': 0, 'Block2': 0, 'Tut3': 0, 'Block3': 0, 'Block4': 0, 'Block5': 0, 'Block6': 204, 'Block7': 204, 'Block8': 204}
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_17_17_17/2019_07_17_17_17_FIRA.csv
+{'Quest': 80, 'Block2': 204, 'Block3': 204, 'Block4': 204, 'Block5': 204, 'Block6': 204, 'Block7': 204, 'Block8': 204, 'Block9': 204, 'Block10': 204, 'Block11': 204}
+{'Tut1': 4, 'Quest': 80, 'Tut2': 2, 'Block2': 204, 'Tut3': 2, 'Block3': 0, 'Block4': 0, 'Block5': 0, 'Block6': 0, 'Block7': 0, 'Block8': 204, 'Block9': 204, 'Block10': 204, 'Block11': 204}
+vector distinct from pure counter
+vector distinct from pure counter
+vector distinct from pure counter
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_45/2019_06_20_13_45customFIRA.csv
+{'Tut1': 1, 'Quest': 1, 'Block2': 1, 'Tut3': 23, 'Block3': 207, 'Block4': 207}
+{'Tut1': 0, 'Quest': 1, 'Tut2': 0, 'Block2': 1, 'Tut3': 20, 'Block3': 204, 'Block4': 204, 'Block5': 204}
+vector distinct from pure counter
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_14_25/2019_06_21_14_25customFIRA.csv
+{'Tut1': 1, 'Quest': 1, 'Block4': 1, 'Block6': 216}
+{'Tut1': 1, 'Quest': 1, 'Tut2': 0, 'Block2': 0, 'Tut3': 0, 'Block3': 0, 'Block4': 0, 'Block5': 0, 'Block6': 204, 'Block7': 204}
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_31/2019_06_24_13_31_FIRA.csv
+{'Quest': 80, 'Block2': 204, 'Block3': 204, 'Block4': 204, 'Block5': 204}
+{'Tut1': 1, 'Quest': 1, 'Tut2': 0, 'Block2': 0, 'Tut3': 0, 'Block3': 204, 'Block4': 204, 'Block5': 0}
+vector distinct from pure counter
+vector distinct from pure counter
+vector distinct from pure counter
+vector distinct from pure counter
+vector distinct from pure counter
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_27_11_33/2019_06_27_11_33customFIRA.csv
+{'Tut1': 22, 'Quest': 81, 'Block2': 206, 'Block6': 211, 'Block7': 231}
+{'Tut1': 20, 'Quest': 80, 'Tut2': 0, 'Block2': 204, 'Tut3': 0, 'Block5': 0, 'Block6': 0, 'Block7': 0, 'Block8': 204, 'Block9': 204, 'Block10': 204}
+vector distinct from pure counter
+vector distinct from pure counter
+vector distinct from pure counter
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_08_17_13/2019_07_08_17_13customFIRA.csv
+{'Tut1': 20, 'Quest': 81, 'Tut2': 10, 'Block2': 204, 'Tut3': 9, 'Block3': 205, 'Block4': 206}
+{'Tut1': 20, 'Quest': 80, 'Tut2': 10, 'Block2': 204, 'Tut3': 8, 'Block3': 204, 'Block4': 204, 'Block5': 204}
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_19/2019_07_10_17_19_FIRA.csv
+{'Quest': 80, 'Block2': 204, 'Block3': 204}
+{'Tut1': 6, 'Quest': 80, 'Tut2': 4, 'Block2': 204, 'Tut3': 2, 'Block3': 0}
+vector distinct from pure counter
+vector distinct from pure counter
+vector distinct from pure counter
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_11_11_21/2019_07_11_11_21customFIRA.csv
+{'Tut1': 24, 'Quest': 80, 'Tut2': 10, 'Block2': 208, 'Tut3': 12, 'Block3': 204, 'Block4': 204, 'Block5': 205}
+{'Tut1': 20, 'Quest': 80, 'Tut2': 10, 'Block2': 204, 'Tut3': 11, 'Block3': 204, 'Block4': 204, 'Block5': 204, 'Block6': 204}
