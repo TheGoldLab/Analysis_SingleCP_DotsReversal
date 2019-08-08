@@ -21,3 +21,7 @@ figures/*
 *.mat
 *.h5
 *.bak
+Jupyter/old/Pilot12/.ipynb_checkpoints/
+Jupyter/old/Pilot13-14/.ipynb_checkpoints/
+Jupyter/old/Pilot15-19/.ipynb_checkpoints/
+Jupyter/old/Pilot15/.ipynb_checkpoints/
