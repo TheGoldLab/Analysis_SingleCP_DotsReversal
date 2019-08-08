@@ -17,5 +17,8 @@ Diagnostics of the inconsistencies.txt file:
    metadata file. 
 --> currently, output is written whenever none is np.nan nor 0
 
+6/ I just realized that my table_to_print doesn't even contain all the columns from the data!!!
+   See 2019_06_24_13_31_FIRA.csv for instance :(
+
 Next step is thus to check the actual sequence of stimulus properties presented in each block
 and compare it to the theoretical sequences.  

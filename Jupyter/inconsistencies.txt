@@ -1,3 +1,4 @@
+
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_20_12_54/2019_06_20_12_54_FIRA.csv
 
           Quest  Block2
@@ -198,6 +199,8 @@ vector Block2 distinct from pure counter diagnosing ...
   repeated trial indices: [113, 195]
 vector Block6 distinct from pure counter diagnosing ...
   repeated trial indices: [33, 42, 47, 97]
+block Block6
+inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
 vector Block7 distinct from pure counter diagnosing ...
   repeated trial indices: [5, 92, 136, 191, 193]
 
@@ -243,3 +246,4 @@ vector Block5 distinct from pure counter diagnosing ...
 type                                                   
 metadata     80     204     204     204     204   204.0
 data         80     204     204     204     204     NaN
+
