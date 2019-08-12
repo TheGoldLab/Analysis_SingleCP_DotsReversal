@@ -3,18 +3,14 @@
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_20_12_54/2019_06_20_12_54_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
           Quest  Block2
 type                   
 data         80   204.0
@@ -25,18 +21,14 @@ metadata     80     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_08/2019_06_21_13_08_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
           Quest  Block2
 type                   
 data         80   204.0
@@ -47,18 +39,14 @@ metadata     80     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/2019_06_24_12_38_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
           Quest  Block2
 type                   
 data         80   204.0
@@ -69,10 +57,18 @@ metadata     80     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/2019_06_24_12_38customFIRA.csv
 
 
+---- processing taskID 1 -----
+
 vector Tut1 distinct from pure counter diagnosing ...
   repeated trial indices: [1]
+
+---- processing taskID 2 -----
+
 vector Quest distinct from pure counter diagnosing ...
   repeated trial indices: [14]
+
+---- processing taskID 3 -----
+
           Quest
 type           
 data         80
@@ -83,18 +79,14 @@ metadata     80
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_25_13_24/2019_06_25_13_24_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
           Quest  Block2
 type                   
 data         80   204.0
@@ -105,128 +97,248 @@ metadata     80     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_03_15_03/2019_07_03_15_03_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
 match fail for Block3
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block6
+row 0: trialStart is NaN
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
 match fail for Block4
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block7
+row 0: trialStart is NaN
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block9
+row 0: trialStart is NaN
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
 match fail for Block5
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+row 1: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-trialStart is NaN
+
+comparing with theoretical Block8
+row 1: trialStart is NaN
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+
+comparing with theoretical Block11
+row 0: ('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
 match fail for Block6
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block3
+row 0: trialStart is NaN
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
 match fail for Block7
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block4
+row 0: trialStart is NaN
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block9
+row 0: trialStart is NaN
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+---- processing taskID 11 -----
+
+
+comparing with theoretical Block8
 match fail for Block8
-dirChoice is NaN
+row 0: dirChoice is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-dirChoice is NaN
+
+comparing with theoretical Block5
+row 0: dirChoice is NaN
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-dirChoice is NaN
-match fail for Block9
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-('100', 33.5) not found in [('0', 0), ('th', 33.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-('0', 33.5) not found in [('0', 0), ('th', 33.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-match fail for Block10
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-('0', 33.5) not found in [('0', 0), ('th', 33.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 33.5) not found in [('0', 0), ('th', 33.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-match fail for Block11
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
+
+comparing with theoretical Block11
+row 0: dirChoice is NaN
+
+---- processing taskID 12 -----
+
+
+comparing with theoretical Block9
+MATCH FOUND!!!!!
+
+---- processing taskID 13 -----
+
+
+comparing with theoretical Block10
+MATCH FOUND!!!!!
+
+---- processing taskID 14 -----
+
+
+comparing with theoretical Block11
+MATCH FOUND!!!!!
 in Block5, metadata trial_num = 1, data trial_num = 204
           Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
 type                                                                                             
@@ -238,72 +350,53 @@ data         80     204     204     204     204     204     204     204     204 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_09_11_02/2019_07_09_11_02customFIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+---- processing taskID 1 -----
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 3 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 5 -----
+
+
+---- processing taskID 6 -----
+
 vector Block3 distinct from pure counter diagnosing ...
   repeated trial indices: [31, 97, 176, 182]
-match fail for Block3
-('0', 30.5) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 30.5) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
 vector Block4 distinct from pure counter diagnosing ...
   repeated trial indices: [79]
-match fail for Block4
-('th', 0.0) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-('th', 0.0) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
+
+---- processing taskID 8 -----
+
 vector Block5 distinct from pure counter diagnosing ...
   repeated trial indices: [93]
-match fail for Block5
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('th', 0.0) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-match fail for Block6
-('100', 30.5) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-('0', 30.5) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(300, 0.1) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block5
+MATCH FOUND!!!!!
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
+MATCH FOUND!!!!!
           Quest  Block2  Block3  Block4  Block5  Block6  Block7
 type                                                           
 metadata     80     204     204     204     204     204   204.0
@@ -314,41 +407,115 @@ data         80     204     204     204     204     204     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_40/2019_07_10_17_40_FIRA.csv
 
 
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
 match fail for Block2
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
 match fail for Block3
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block6
+row 0: trialStart is NaN
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
 match fail for Block4
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block7
+row 0: trialStart is NaN
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block9
+row 0: trialStart is NaN
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
           Quest  Block2  Block3  Block4
 type                                   
@@ -360,128 +527,188 @@ data         80     204     204     204
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_12_11_11/2019_07_12_11_11_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
 match fail for Block3
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block6
+row 0: trialStart is NaN
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
 match fail for Block4
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block7
+row 0: trialStart is NaN
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block9
+row 0: trialStart is NaN
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
 match fail for Block5
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-trialStart is NaN
+
+comparing with theoretical Block8
+row 0: trialStart is NaN
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-trialStart is NaN
+
+comparing with theoretical Block11
+row 0: trialStart is NaN
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
 match fail for Block6
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block3
+row 0: trialStart is NaN
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-match fail for Block7
-('0', 62.0) not found in [('0', 0), ('th', 62), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-(400, 0.1) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-match fail for Block8
-('th', 0.0) not found in [('0', 0), ('th', 62), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-match fail for Block9
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-('100', 62.0) not found in [('0', 0), ('th', 62), ('100', 100)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-('0', 62.0) not found in [('0', 0), ('th', 62), ('100', 100)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-match fail for Block10
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-('0', 62.0) not found in [('0', 0), ('th', 62), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 62.0) not found in [('0', 0), ('th', 62), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-match fail for Block11
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
+MATCH FOUND!!!!!
+
+---- processing taskID 11 -----
+
+
+comparing with theoretical Block8
+MATCH FOUND!!!!!
+
+---- processing taskID 12 -----
+
+
+comparing with theoretical Block9
+MATCH FOUND!!!!!
+
+---- processing taskID 13 -----
+
+
+comparing with theoretical Block10
+MATCH FOUND!!!!!
+
+---- processing taskID 14 -----
+
+
+comparing with theoretical Block11
+MATCH FOUND!!!!!
           Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
 type                                                                                             
 metadata     80     204       0       0       0       0     204     204     204      204      204
@@ -492,18 +719,14 @@ data         80     204     204     204     204     204     204     204     204 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_27/2019_06_20_13_27_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
           Quest  Block2
 type                   
 metadata      0     NaN
@@ -514,24 +737,30 @@ data         80   204.0
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_34/2019_06_21_13_34customFIRA.csv
 
 
+---- processing taskID 1 -----
+
 vector Tut1 distinct from pure counter diagnosing ...
   repeated trial indices: [1]
-pb with number of coherence values in data file
-invalid number of coherence values [0.]
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 3 -----
+
+
+---- processing taskID 4 -----
+
+
+---- processing taskID 5 -----
+
+
+---- processing taskID 6 -----
+
 vector Block3 distinct from pure counter diagnosing ...
   repeated trial indices: [15, 28]
-match fail for Block3
-('0', 34.5) not found in [('0', 0), ('th', 34.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 34.5) not found in [('0', 0), ('th', 34.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
           Quest  Block2  Block3  Block4  Block5  Block6
 type                                                   
 metadata      0       0     204   204.0     0.0     0.0
@@ -542,29 +771,79 @@ data          1       1     204     NaN     NaN     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_06/2019_06_24_13_06_FIRA.csv
 
 
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
 match fail for Block2
-dirChoice is NaN
+row 0: dirChoice is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
 match fail for Block3
-('0', 24.5) not found in [('0', 0), ('th', 24.5), ('100', 100)]
+row 113: trialEnd is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 24.5) not found in [('0', 0), ('th', 24.5), ('100', 100)]
+
+comparing with theoretical Block6
+row 0: (False, 1.0) not found in [(True, 1.0), (False, 0.0)]
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
+
+comparing with theoretical Block10
+row 0: ('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
 in Block3, metadata trial_num = 113, data trial_num = 204
           Quest  Block2  Block3
@@ -577,52 +856,37 @@ data         80     204     204
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_25_14_06/2019_06_25_14_06customFIRA.csv
 
 
-pb with number of coherence values in data file
-invalid number of coherence values [0]
+---- processing taskID 4 -----
+
+
+---- processing taskID 5 -----
+
 vector Tut3 distinct from pure counter diagnosing ...
   repeated trial indices: [6]
+
+---- processing taskID 8 -----
+
 vector Block5 distinct from pure counter diagnosing ...
   repeated trial indices: [1, 135]
-match fail for Block5
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('th', 0.0) not found in [('0', 0), ('th', 22), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+
+comparing with theoretical Block5
+MATCH FOUND!!!!!
+
+---- processing taskID 9 -----
+
 vector Block6 distinct from pure counter diagnosing ...
   repeated trial indices: [29, 37, 54, 107, 130, 140]
-match fail for Block6
-('100', 22.0) not found in [('0', 0), ('th', 22), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-('0', 22.0) not found in [('0', 0), ('th', 22), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(300, 0.1) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block6
+MATCH FOUND!!!!!
+
+---- processing taskID 10 -----
+
 vector Block7 distinct from pure counter diagnosing ...
   repeated trial indices: [9, 20, 29, 57, 95, 96, 110, 112, 200]
-match fail for Block7
-('0', 22.0) not found in [('0', 0), ('th', 22), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-(400, 0.1) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block7
+MATCH FOUND!!!!!
           Block2  Block5  Block6  Block7  Quest  Block3  Block4  Block8
 type                                                                   
 metadata       1     204     204     204    0.0     0.0     0.0   160.0
@@ -633,41 +897,115 @@ data           1     204     204     204    NaN     NaN     NaN     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_03_16_32/2019_07_03_16_32_FIRA.csv
 
 
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
 match fail for Block2
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
 match fail for Block3
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block6
+row 0: trialStart is NaN
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
 match fail for Block4
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block7
+row 0: trialStart is NaN
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block9
+row 0: trialStart is NaN
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
           Quest  Block2  Block3  Block4
 type                                   
@@ -679,128 +1017,218 @@ data         80     204     204     204
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_10_12_18/2019_07_10_12_18_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
 match fail for Block3
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block6
+row 0: trialStart is NaN
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
 match fail for Block4
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block7
+row 0: trialStart is NaN
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block9
+row 0: trialStart is NaN
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
 match fail for Block5
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-trialStart is NaN
+
+comparing with theoretical Block8
+row 0: trialStart is NaN
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-trialStart is NaN
+
+comparing with theoretical Block11
+row 0: trialStart is NaN
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
 match fail for Block6
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block3
+row 0: trialStart is NaN
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
 match fail for Block7
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block4
+row 0: trialStart is NaN
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block9
+row 0: trialStart is NaN
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-match fail for Block8
-('th', 0.0) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-match fail for Block9
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-('100', 30.5) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-('0', 30.5) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-match fail for Block10
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-('0', 30.5) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 30.5) not found in [('0', 0), ('th', 30.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-match fail for Block11
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
+
+---- processing taskID 11 -----
+
+
+comparing with theoretical Block8
+MATCH FOUND!!!!!
+
+---- processing taskID 12 -----
+
+
+comparing with theoretical Block9
+MATCH FOUND!!!!!
+
+---- processing taskID 13 -----
+
+
+comparing with theoretical Block10
+MATCH FOUND!!!!!
+
+---- processing taskID 14 -----
+
+
+comparing with theoretical Block11
+MATCH FOUND!!!!!
           Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
 type                                                                                             
 metadata     80     204       0       0       0       0       0     204     204      204      204
@@ -811,30 +1239,17 @@ data         80     204     204     204     204     204     204     204     204 
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_42/2019_07_10_17_42customFIRA.csv
 
 
-match fail for Block6
-('100', 34.0) not found in [('0', 0), ('th', 34), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-('0', 34.0) not found in [('0', 0), ('th', 34), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(300, 0.1) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-match fail for Block7
-('0', 34.0) not found in [('0', 0), ('th', 34), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-(400, 0.1) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
+MATCH FOUND!!!!!
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
+MATCH FOUND!!!!!
           Block6  Block7  Quest  Block2  Block3  Block4  Block5  Block8
 type                                                                   
 data         204     204    NaN     NaN     NaN     NaN     NaN     NaN
@@ -845,128 +1260,218 @@ metadata     204     204    0.0     0.0     0.0     0.0     0.0   204.0
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_17_17_17/2019_07_17_17_17_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
 match fail for Block3
-dirChoice is NaN
+row 0: dirChoice is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-dirChoice is NaN
+
+comparing with theoretical Block6
+row 0: dirChoice is NaN
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-dirChoice is NaN
+
+comparing with theoretical Block10
+row 0: dirChoice is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
 match fail for Block4
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block7
+row 0: trialStart is NaN
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block9
+row 0: trialStart is NaN
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
 match fail for Block5
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-trialStart is NaN
+
+comparing with theoretical Block8
+row 0: trialStart is NaN
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-trialStart is NaN
+
+comparing with theoretical Block11
+row 0: trialStart is NaN
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
 match fail for Block6
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block3
+row 0: trialStart is NaN
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
 match fail for Block7
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block4
+row 0: trialStart is NaN
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-trialStart is NaN
+
+comparing with theoretical Block9
+row 0: trialStart is NaN
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-match fail for Block8
-('th', 0.0) not found in [('0', 0), ('th', 26.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-match fail for Block9
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-('100', 26.5) not found in [('0', 0), ('th', 26.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-('0', 26.5) not found in [('0', 0), ('th', 26.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-match fail for Block10
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-('0', 26.5) not found in [('0', 0), ('th', 26.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 26.5) not found in [('0', 0), ('th', 26.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-match fail for Block11
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-(400, 0.3) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
+
+---- processing taskID 11 -----
+
+
+comparing with theoretical Block8
+MATCH FOUND!!!!!
+
+---- processing taskID 12 -----
+
+
+comparing with theoretical Block9
+MATCH FOUND!!!!!
+
+---- processing taskID 13 -----
+
+
+comparing with theoretical Block10
+MATCH FOUND!!!!!
+
+---- processing taskID 14 -----
+
+
+comparing with theoretical Block11
+MATCH FOUND!!!!!
           Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
 type                                                                                             
 metadata     80     204       0       0       0       0       0     204     204      204      204
@@ -977,38 +1482,35 @@ data         80     204     204     204     204     204     204     204     204 
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_45/2019_06_20_13_45customFIRA.csv
 
 
-pb with number of coherence values in data file
-invalid number of coherence values [0.]
+---- processing taskID 1 -----
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+---- processing taskID 5 -----
+
 vector Tut3 distinct from pure counter diagnosing ...
   repeated trial indices: [3, 6, 9]
+
+---- processing taskID 6 -----
+
 vector Block3 distinct from pure counter diagnosing ...
   repeated trial indices: [55, 107, 199]
-match fail for Block3
-('0', 18.5) not found in [('0', 0), ('th', 18.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 18.5) not found in [('0', 0), ('th', 18.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
 vector Block4 distinct from pure counter diagnosing ...
   repeated trial indices: [1, 94, 174]
-match fail for Block4
-('th', 0.0) not found in [('0', 0), ('th', 18.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-('th', 0.0) not found in [('0', 0), ('th', 18.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
           Quest  Block2  Block3  Block4  Block5
 type                                           
 metadata      1       1     204     204   204.0
@@ -1019,22 +1521,22 @@ data          1       1     204     204     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_21_14_25/2019_06_21_14_25customFIRA.csv
 
 
-pb with number of coherence values in data file
-invalid number of coherence values [0.]
+---- processing taskID 1 -----
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 7 -----
+
+
+---- processing taskID 9 -----
+
 vector Block6 distinct from pure counter diagnosing ...
   repeated trial indices: [1, 168]
-match fail for Block6
-('100', 34.5) not found in [('0', 0), ('th', 34.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-('0', 34.5) not found in [('0', 0), ('th', 34.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(300, 0.1) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block6
+MATCH FOUND!!!!!
           Quest  Block4  Block6  Block2  Block3  Block5  Block7
 type                                                           
 metadata      1       0     204     0.0     0.0     0.0   204.0
@@ -1045,54 +1547,92 @@ data          1       1     204     NaN     NaN     NaN     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_31/2019_06_24_13_31_FIRA.csv
 
 
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
 match fail for Block2
-dirChoice is NaN
+row 0: dirChoice is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-match fail for Block3
-('0', 24.5) not found in [('0', 0), ('th', 24.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 24.5) not found in [('0', 0), ('th', 24.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-match fail for Block4
-('th', 0.0) not found in [('0', 0), ('th', 24.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-('th', 0.0) not found in [('0', 0), ('th', 24.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
 match fail for Block5
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-trialStart is NaN
+
+comparing with theoretical Block8
+row 0: trialStart is NaN
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-trialStart is NaN
+
+comparing with theoretical Block11
+row 0: trialStart is NaN
 in Quest, metadata trial_num = 1, data trial_num = 80
           Quest  Block2  Block3  Block4  Block5
 type                                           
@@ -1104,51 +1644,102 @@ data         80     204     204     204     204
 /home/adrian/SingleCP_DotsReversal/raw/2019_06_27_11_33/2019_06_27_11_33customFIRA.csv
 
 
+---- processing taskID 1 -----
+
 vector Tut1 distinct from pure counter diagnosing ...
   repeated trial indices: [1]
+
+---- processing taskID 2 -----
+
 vector Quest distinct from pure counter diagnosing ...
   repeated trial indices: [75]
+
+---- processing taskID 4 -----
+
 vector Block2 distinct from pure counter diagnosing ...
   repeated trial indices: [113, 195]
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 9 -----
+
 vector Block6 distinct from pure counter diagnosing ...
   repeated trial indices: [33, 42, 47, 97]
+
+comparing with theoretical Block6
 match fail for Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+
+comparing with theoretical Block5
+row 1: ('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('th', 0.0) not found in [('0', 0), ('th', 48.5), ('100', 100)]
+
+comparing with theoretical Block8
+
+match found with block Block8
+
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+
+comparing with theoretical Block11
+row 0: ('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+
+---- processing taskID 10 -----
+
 vector Block7 distinct from pure counter diagnosing ...
   repeated trial indices: [5, 92, 136, 191, 193]
+
+comparing with theoretical Block7
 match fail for Block7
-('0', 48.5) not found in [('0', 0), ('th', 48.5), ('100', 100)]
+row 0: (100, 0.4) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
+
+comparing with theoretical Block3
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-('100', 48.5) not found in [('0', 0), ('th', 48.5), ('100', 100)]
+
+comparing with theoretical Block4
+row 0: ('0', 48.5) not found in [('0', 0), ('th', 48.5), ('100', 100)]
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block6
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
+
+comparing with theoretical Block9
+
+match found with block Block9
+
+
+comparing with theoretical Block10
 inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
           Quest  Block2  Block6  Block7  Block5  Block8  Block9  Block10
 type                                                                    
@@ -1160,48 +1751,41 @@ data         80     204     204     204     NaN     NaN     NaN      NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_08_17_13/2019_07_08_17_13customFIRA.csv
 
 
+---- processing taskID 1 -----
+
+
+---- processing taskID 2 -----
+
 vector Quest distinct from pure counter diagnosing ...
   repeated trial indices: [61]
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+
+---- processing taskID 3 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 5 -----
+
+
+---- processing taskID 6 -----
+
 vector Block3 distinct from pure counter diagnosing ...
   repeated trial indices: [139]
-match fail for Block3
-('0', 51.5) not found in [('0', 0), ('th', 51.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-('100', 51.5) not found in [('0', 0), ('th', 51.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
 vector Block4 distinct from pure counter diagnosing ...
   repeated trial indices: [72, 107]
-match fail for Block4
-('th', 0.0) not found in [('0', 0), ('th', 51.5), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-('th', 0.0) not found in [('0', 0), ('th', 51.5), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
           Quest  Block2  Block3  Block4  Block5
 type                                           
 metadata     80     204     204     204   204.0
@@ -1212,29 +1796,49 @@ data         80     204     204     204     NaN
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_19/2019_07_10_17_19_FIRA.csv
 
 
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
 match fail for Block3
-trialStart is NaN
+row 0: trialStart is NaN
+
 trying to match with other blocks
+
+comparing with theoretical Block2
 inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
+
+comparing with theoretical Block4
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block5
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block6
+row 0: trialStart is NaN
+
+comparing with theoretical Block7
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
+
+comparing with theoretical Block8
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
+
+comparing with theoretical Block9
 inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-trialStart is NaN
+
+comparing with theoretical Block10
+row 0: trialStart is NaN
+
+comparing with theoretical Block11
 inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
           Quest  Block2  Block3
 type                           
@@ -1246,60 +1850,47 @@ data         80     204     204
 /home/adrian/SingleCP_DotsReversal/raw/2019_07_11_11_21/2019_07_11_11_21customFIRA.csv
 
 
+---- processing taskID 1 -----
+
 vector Tut1 distinct from pure counter diagnosing ...
   repeated trial indices: [1]
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 3 -----
+
+
+---- processing taskID 4 -----
+
 vector Block2 distinct from pure counter diagnosing ...
   repeated trial indices: [84, 179, 181]
-match fail for Block2
-('right', 180.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.0
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.0
-match fail for Block3
-('0', 100.0) not found in [('0', 0), ('th', 100), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-inconsistency with condProbCP. Theo= 0.625, Emp= 0.25
-(False, 1.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.25
-match fail for Block4
-('th', 0.0) not found in [('0', 0), ('th', 100), ('100', 100)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-(True, 0.0) not found in [(True, 1.0), (False, 0.0)]
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
-('th', 0.0) not found in [('0', 0), ('th', 100), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.25, Emp= 0.625
-inconsistency with condProbCP. Theo= 1.0, Emp= 0.625
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 5 -----
+
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
+
+---- processing taskID 8 -----
+
 vector Block5 distinct from pure counter diagnosing ...
   repeated trial indices: [35]
-match fail for Block5
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
-trying to match with other blocks
-inconsistency with condProbCP. Theo= 0.0, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-('th', 0.0) not found in [('0', 0), ('th', 100), ('100', 100)]
-inconsistency with condProbCP. Theo= 0.625, Emp= 1.0
-inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
-('left', 0.0) not found in [('right', 0.0), ('left', 180.0)]
+
+comparing with theoretical Block5
+MATCH FOUND!!!!!
           Quest  Block2  Block3  Block4  Block5  Block6
 type                                                   
 metadata     80     204     204     204     204   204.0

@@ -156,7 +156,7 @@ def consistency_log(fname, files_data, meta_data, ref_hashes, mapping_task_type_
                     
                     f.write('\n --------------------------- new file -------------------------\n')
                     print(filename)
-                    f.write('\n\n')
+                    f.write('\n')
                     
                     table = pd.read_csv(filename)
 
@@ -172,6 +172,9 @@ def consistency_log(fname, files_data, meta_data, ref_hashes, mapping_task_type_
                     num_trials_data = []  # filled in incrementally in for loop below
 
                     for tid in task_ids:
+                        print()
+                        print(f'---- processing taskID {tid} -----')
+                        print()
 
                         sub_table = table[table['taskID'] == tid].copy()
                         num_trials = len(sub_table)
@@ -210,12 +213,13 @@ def consistency_log(fname, files_data, meta_data, ref_hashes, mapping_task_type_
                             # todo: even if trialIndex behaves as a pure counter, confirm that the stimulus
                             #       presented on each trial has the same properties as the planned one (from Blocki.csv)
                             block_name = mapping_task_type_id_name[tid]
-                            if block_name[:5] == 'Block':
+                            if num_trials > 160:  # value of 160 arbitrarily picked to distinguish between Blocki blocks and the others
                                 try:
                                     match = compare_with_theoretical_stimulus(block_name, sub_table)
                                 except AssertionError as trial_seq_err:
                                     print(f'match fail for {block_name}')
                                     print(trial_seq_err)
+                                    print()
                                     print('trying to match with other blocks')
                                     for bname in ['Block' + str(i) for i in np.arange(2, 12) if str(i) != block_name[5]]:
                                         try:
@@ -232,7 +236,10 @@ def consistency_log(fname, files_data, meta_data, ref_hashes, mapping_task_type_
                                     print(f'pb with number of coherence values in data file')
                                     print(trial_seq_err)
                                 else:
-                                    print('match  ?', match)
+                                    if match:
+                                        print('MATCH FOUND!!!!!')
+                                    else:
+                                        print('Match NOT FOUND :( :( :(')
                         num_trials_data.append(num_trials)
 
                     # data from metadata
@@ -285,6 +292,9 @@ def compare_with_theoretical_stimulus(block_name, df):
     
     Returns True if all tests are passed and all trials match
     """
+    print()
+    print(f'comparing with theoretical {block_name}')
+
     # load theoretical stimulus corresponding to block_name
     basename = theoretical_data_folder + block_name
 
@@ -352,32 +362,33 @@ def compare_with_theoretical_stimulus(block_name, df):
         theo_count = trial_count[trialIndex] 
         curr_count = new_count[trialIndex]
         
-        assert curr_count <= theo_count, f'I count more repeats than collections.Counter'
+        assert curr_count <= theo_count, f'row {t}: I count more repeats than collections.Counter'
 
         if curr_count > 1:
             # ensures repeat trials are consecutive
-            assert last_visited == trialIndex, f'found a repeat that is not juxtaposed to the first attempt'
+            assert last_visited == trialIndex, f'row {t}: found a repeat that is not juxtaposed to the first attempt'
 
         if curr_count == theo_count:
-            theo_row = theo_stim.iloc[trialIndex]
+            theo_row = theo_stim.iloc[trialIndex - 1]  # because trialIndex starts counting at 1
             curr_dict = {}
-            assert ~np.isnan(row['trialStart']), 'trialStart is NaN'
-            assert ~np.isnan(row['trialEnd']), 'trialEnd is NaN'
-            assert ~np.isnan(row['dirChoice']), 'dirChoice is NaN'
-            assert ~np.isnan(row['dirRT']), 'dirRT is NaN'
+            assert ~np.isnan(row['trialStart']), f'row {t}: trialStart is NaN'
+            assert ~np.isnan(row['trialEnd']), f'row {t}: trialEnd is NaN'
+            assert ~np.isnan(row['dirChoice']), f'row {t}: dirChoice is NaN'
+            assert ~np.isnan(row['dirRT']), f'row {t}: dirRT is NaN'
             
             for k, v in values_match.items():
                 theo_col, data_col = colname_match[k]
                 theo_val = theo_row[theo_col]
                 data_val = row[data_col]
-                assert (theo_val, data_val) in v, f'{(theo_val, data_val)} not found in {v}'
-                curr_dict[theo_col] = data_val
+                assert (theo_val, data_val) in v, f'row {t}: {(theo_val, data_val)} not found in {v}'
+                curr_dict[theo_col] = theo_val
             
             # check change point congruent with endDirection
             if theo_row['cp']:
-                assert row['endDirection'] != row['initDirection'], f'endDirection does not respect the presence of a change-point'
+                assert row['endDirection'] != row['initDirection'], f'row {t}: endDirection does not respect the presence of a change-point'
                 
             list_dicts.append(curr_dict)
         last_visited = trialIndex
-        
-    return theo_stim.equals(pd.DataFrame(list_dicts))
+       
+    truncated_theo = theo_stim.iloc[:last_visited]
+    return truncated_theo.equals(pd.DataFrame(list_dicts))
