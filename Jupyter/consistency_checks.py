@@ -220,18 +220,18 @@ def consistency_log(fname, files_data, meta_data, ref_hashes, mapping_task_type_
                                     print(f'match fail for {block_name}')
                                     print(trial_seq_err)
                                     print()
-                                    print('trying to match with other blocks')
-                                    for bname in ['Block' + str(i) for i in np.arange(2, 12) if str(i) != block_name[5]]:
-                                        try:
-                                            new_match = compare_with_theoretical_stimulus(bname, sub_table)
-                                        except AssertionError as sub_err:
-                                            print(sub_err)
-                                            continue
-                                        else:
-                                            if new_match:
-                                                print()
-                                                print(f'match found with block {bname}')
-                                                print()
+#                                    print('trying to match with other blocks')
+#                                    for bname in ['Block' + str(i) for i in np.arange(2, 12) if str(i) != block_name[5]]:
+#                                        try:
+#                                            new_match = compare_with_theoretical_stimulus(bname, sub_table)
+#                                        except AssertionError as sub_err:
+#                                            print(sub_err)
+#                                            continue
+#                                        else:
+#                                            if new_match:
+#                                                print()
+#                                                print(f'match found with block {bname}')
+#                                                print()
                                 except ValueError as trial_seq_err:
                                     print(f'pb with number of coherence values in data file')
                                     print(trial_seq_err)
@@ -371,9 +371,9 @@ def compare_with_theoretical_stimulus(block_name, df):
         if curr_count == theo_count:
             theo_row = theo_stim.iloc[trialIndex - 1]  # because trialIndex starts counting at 1
             curr_dict = {}
-            assert ~np.isnan(row['trialStart']), f'row {t}: trialStart is NaN'
-            assert ~np.isnan(row['trialEnd']), f'row {t}: trialEnd is NaN'
-            assert ~np.isnan(row['dirChoice']), f'row {t}: dirChoice is NaN'
+            assert ~np.isnan(row['trialStart']), f"row {t}: trialStart total of {df['trialStart'].isna().sum()} NaN values"
+            assert ~np.isnan(row['trialEnd']), f"row {t}: trialEnd total of {df['trialEnd'].isna().sum()} NaN values"
+            assert ~np.isnan(row['dirChoice']), f"row {t}: dirChoice total of {df['dirChoice'].isna().sum()} NaN values"
             assert ~np.isnan(row['dirRT']), f'row {t}: dirRT is NaN'
             
             for k, v in values_match.items():
