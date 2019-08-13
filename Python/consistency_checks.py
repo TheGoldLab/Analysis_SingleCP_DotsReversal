@@ -732,8 +732,8 @@ def match_data(s, meta_data_file):
         else:
             qparam = None
 
-        block = BlockMetaData(block_name, start_time, end_time, timestamp, num_trials, subj,
-                              not in_meta, not in_file, quest_params=qparam)
+        block = make_block_dict(block_name, start_time, end_time, timestamp, num_trials, subj,
+                                not in_meta, not in_file, quest_params=qparam)
         blocks.append(block)
     dict_to_return['blocks'] = blocks
     return dict_to_return
@@ -752,23 +752,23 @@ def produce_valid_metadata(meta_data_import):
     return new_metadata
 
 
-class BlockMetaData:
+def make_block_dict(name, start, stop, date, num_trials, subject_hash, absent_meta, absent_file, quest_params=None):
     """
     object that stores metadata about a block of trials run in the experiment
     """
-    def __init__(self, name, start, stop, date, num_trials, subject_hash, absent_meta, absent_file, quest_params=None):
-        self.name = name
-        self.start = start
-        self.stop = stop
-        self.data = date
-        self.num_trials = num_trials
-        self.subject_hash = subject_hash
-        self.subject = get_name_from_hash(self.subject_hash)
-        self.task_id = NAME_TYPE_ID[self.name]
-        self.quest = quest_params
-        self.threshold = self.quest[0] if (self.quest is not None) else None
-        self.in_file_not_in_meta = absent_meta
-        self.in_meta_not_in_file = absent_file
+    return dict(
+        name=name,
+        start=start,
+        stop=stop,
+        data=date,
+        num_trials=num_trials,
+        subject_hash=subject_hash,
+        subject=get_name_from_hash(subject_hash),
+        task_id=NAME_TYPE_ID[name],
+        quest=quest_params,
+        threshold=quest_params[0] if (quest_params is not None) else None,
+        in_file_not_in_meta=absent_meta,
+        in_meta_not_in_file=absent_file)
 
 
 if __name__ == '__main__':
