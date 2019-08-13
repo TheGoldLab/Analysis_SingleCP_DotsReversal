@@ -111,6 +111,25 @@ REF_HASHES = {
     '/home/adrian/SingleCP_DotsReversal/raw/2019_07_17_17_17/2019_07_17_17_17_dotsPositions.csv': 'fd77b1add52105f0ceba419f72b515b4'
 }
 
+# de-identified hashes for each subject
+SUBJECT_HASHES = (
+    'c577366758027956b21fcb95a8db0d1e',
+    'x30bdd3d8ad24d522dc158030fb5c18d7',
+    'c71c3808bc33ba05928e1bc5f93a9078',
+    'x5f5dbb54ed21cfeb4ac045e0328181cc',
+    'x648f9ad78ad1211c172d1a1cd2c5af3f'
+)
+
+# short strings more human-readable than the hashes above
+SUBJECT_NAMES = tuple('S' + str(j) for j in range(1, len(SUBJECT_HASHES) + 1))
+
+
+def get_name_from_hash(hashh):
+    for i, h in enumerate(SUBJECT_HASHES):
+        if h == hashh:
+            return SUBJECT_NAMES[i]
+    raise ValueError('invalid subject hash')
+
 
 def md5(fname):
     """
@@ -221,7 +240,7 @@ def check_homogeneity(files):
                     counter += 1
                 assert set(new.keys()) == set(last.keys())
                 assert set(new.values()) == set(last.values())
-    print('TEST PASSED')
+    print('HOMOGENEITY TEST PASSED')
 
 
 def get_keys(timestamp, meta):
@@ -230,7 +249,7 @@ def get_keys(timestamp, meta):
     the meta_data dict appropriately to find back the session.
 
     Example:
-        >>> c, s = get_keys('2019_06_21_11_52')
+        >>> c, s = get_keys('2019_06_21_11_52', meta)
         >>> session_dict = meta[c][s]
 
     :param timestamp: (str) timestamp of session
@@ -404,15 +423,31 @@ def consistency_log(fname, dfiles, dmeta):
         sys.stdout = old_stdout  
 
 
-def compare_with_theoretical_stimulus(block_name, df):
+def compare_with_theoretical_stimulus(block_name, df, verbose=False):
     """
-    check whether the trials, presented in the order of trialIndex, and ignoring repeated trials, have the 
-    appropriate stimulus features. 
-    
-    Returns True if all tests are passed and all trials match
+    This function does the following:
+        + load theoretical stimulus corresponding to block_name
+        + check that cond_prob_cp agree between theory and empirical data
+        + check coherence values in data
+        + match trial by trial stimulus features with theoretical trial sequence
+    :param block_name: (str) e.g. 'Block3'
+    :param df: (pandas.DataFrame) should have a single value in the column 'taskID'
+    :param verbose: (bool) if True, error strings from caught AssertionErrors will be printed
+    :return: 3-tuple of the form (<integer>, <str>, <polymorph>), the first entry has the following meaning:
+            0: all went well
+            1: condProbCP col inconsistent with theoretical data
+            2: NaN values found in one of trialStart, trialEnd, dirChoice, dirRT columns
+            3: one of two things, either
+                    dataframe reconstructed from data is 'valid' but doesn't match expected theoretical dataframe, or,
+                    the wrong theoretical data file was read and mapping between 2 dataframes failed
+        The second entry is a message giving some details about the return value
+        The third entry is usually None, but if extra data needs to be returned, it is returned here
     """
-    print()
-    print(f'comparing with theoretical {block_name}')
+    if block_name == 'Quest':
+        return 0, 'Quest block: no check performed', None
+    if verbose:
+        print()
+        print(f'comparing with theoretical {block_name}')
 
     # load theoretical stimulus corresponding to block_name
     basename = THEO_DATA_FOLDER + block_name
@@ -420,17 +455,22 @@ def compare_with_theoretical_stimulus(block_name, df):
     theo_stim = pd.read_csv(basename + '.csv')
     with open(basename + '_metadata.json', 'r') as f:
         block_meta = json.load(f)
+
+    # check that cond_prob_cp agree between theory and empirical data
     theo_cond_prob_cp = block_meta['cond_prob_cp']
     
     emp_cond_prob_cps = df['condProbCP'].unique()
     assert len(emp_cond_prob_cps) == 1, f'more than one value for condProbCP found'
     emp_cond_prob_cps = emp_cond_prob_cps[0]
-    
-    assert emp_cond_prob_cps == theo_cond_prob_cp, f'inconsistency with condProbCP. Theo= {theo_cond_prob_cp}, Emp= {emp_cond_prob_cps}'
-    
-    # get trial indices that are repeated in df
-    table_trial_indices = df['trialIndex'].to_numpy()
-    
+
+    try:
+        assert emp_cond_prob_cps == theo_cond_prob_cp, f'inconsistency with condProbCP. Theo= {theo_cond_prob_cp}, Emp= {emp_cond_prob_cps}'
+    except AssertionError as err1:
+        if verbose:
+            print(err1)
+        return 1, 'disagreement between condProbCP values in theoretical stimulus and empirical data', None
+
+    # check coherence values in data
     # get threshold coherence in df
     df_coh = df['coherence'].unique()
     df_coh.sort()
@@ -438,7 +478,9 @@ def compare_with_theoretical_stimulus(block_name, df):
         th_coh = df_coh[1]
     else:
         raise ValueError(f'invalid number of coherence values {df_coh}')
-    
+
+    # match trial by trial stimulus features with theoretical trial sequence
+
     # dict with values being pairs (<column name in theoretical file>, <column name in FIRA data file>)
     # note, the FIRA data file has the extra column 'endDirection'
     colname_match = {
@@ -461,7 +503,8 @@ def compare_with_theoretical_stimulus(block_name, df):
     }
     
     assert set(values_match.keys()) == set(colname_match.keys()), f'pb in code with keys to index column names'
-    
+
+    table_trial_indices = df['trialIndex'].to_numpy()
     # trial_count is dict with k-v pairs <trialIndex value>: <number of times it appears in df>
     trial_count = Counter(table_trial_indices)
     new_count = {k: 0 for k in trial_count.keys()}  # I re-do the count
@@ -490,16 +533,25 @@ def compare_with_theoretical_stimulus(block_name, df):
         if curr_count == theo_count:
             theo_row = theo_stim.iloc[trial_index - 1]  # because trialIndex starts counting at 1
             curr_dict = {}
-            assert ~np.isnan(row['trialStart']), f"row {tt}: trialStart total of {df['trialStart'].isna().sum()} NaN values"
-            assert ~np.isnan(row['trialEnd']), f"row {tt}: trialEnd total of {df['trialEnd'].isna().sum()} NaN values"
-            assert ~np.isnan(row['dirChoice']), f"row {tt}: dirChoice total of {df['dirChoice'].isna().sum()} NaN values"
-            assert ~np.isnan(row['dirRT']), f'row {tt}: dirRT is NaN'
+            try:
+                assert ~np.isnan(row['trialStart']), f"row {tt}: trialStart total of {df['trialStart'].isna().sum()} NaN values"
+                assert ~np.isnan(row['trialEnd']), f"row {tt}: trialEnd total of {df['trialEnd'].isna().sum()} NaN values"
+                assert ~np.isnan(row['dirChoice']), f"row {tt}: dirChoice total of {df['dirChoice'].isna().sum()} NaN values"
+                assert ~np.isnan(row['dirRT']), f'row {tt}: dirRT is NaN'
+            except AssertionError as err2:
+                if verbose:
+                    print(err2)
+                return 2, 'one of trialStart, trialEnd, dirChoice or dirRT has a NaN value', tt
             
             for k, v in values_match.items():
                 theo_col, data_col = colname_match[k]
                 theo_val = theo_row[theo_col]
                 data_val = row[data_col]
-                assert (theo_val, data_val) in v, f'row {tt}: {(theo_val, data_val)} not found in {v}'
+                try:
+                    assert (theo_val, data_val) in v, f'row {tt}: {(theo_val, data_val)} not found in {v}'
+                except AssertionError as err3first:
+                    print(err3first)
+                    return 3, 'mismatch with theoretical mapping, probably wrong theoretical file used', None
                 curr_dict[theo_col] = theo_val
             
             # check change point congruent with endDirection
@@ -510,34 +562,52 @@ def compare_with_theoretical_stimulus(block_name, df):
         last_visited = trial_index
        
     truncated_theo = theo_stim.iloc[:last_visited]
-    return truncated_theo.equals(pd.DataFrame(list_dicts))
+    try:
+        assert truncated_theo.equals(pd.DataFrame(list_dicts)), 'reconstructed dataframe does not match theory'
+    except AssertionError as err3:
+        if verbose:
+            print(err3)
+        return 3, 'dataframe could be reconstructed from data, but does not match theoretical dataframe', None
+    else:
+        return 0, 'all good!', None
 
 
-def get_fira_file_from_timestamp(stamp):
+def get_fira_files_from_timestamp(stamp):
+    """
+    returns filename and hash for a given timestamp that corresponds to an experimental session.
+    Note: several FIRA files might exist
+    :param stamp: (str) of the form '2019_07_04_12_18'
+    :return: (list) of tuples of the form (<full path to file>, <hash of file>)
+    """
     all_files = get_files_and_hashes(show=False, hash_map=False)
     for ff in all_files:
         if ff['session'] == stamp:
-            file = [n[0] for n in ff['FIRA'] if n[0][-9:] == '_FIRA.csv']
-            if not file:  # if file is an empty list
-                file = ff['FIRA'][0][0]
-    return file
+            return ff['FIRA']
+    return []
 
 
 def get_block_data(name, stamp):
     """
     for a given block name and timestamp (corresponding to a session tag) returns the data in the corresponding file
+    An attempt is made to pick file with ending '_FIRA.csv" if it exists.
     :param name: (str) block name, such as 'Block2', 'Block3', etc.
     :param stamp: (str) timestamp, such as '2019_06_23_13_31'
-    :return: (pandas.DataFrame)
+    :return: (2-tuple) (<pandas.DataFrame>, <path to file>)
+             Note the dataframe is empty if the block name is not in the data
     """
     task_id = NAME_TYPE_ID[name]
-    file = get_fira_file_from_timestamp(stamp)
+    file_list = get_fira_files_from_timestamp(stamp)
+    assert len(file_list) <= 2, 'list of FIRA files has length greater than 2'
+    file = file_list[0][0]  # get first file in list
+    ending = file[-9:]
+    if ending != '_FIRA.csv' and len(file_list) > 1:
+        file = file_list[1][0]
     data = pd.read_csv(file)
     data = data[data['taskID'] == task_id]
-    return data
+    return data, file
 
 
-def match_data(s):
+def match_data(s, meta_data_file):
     """
     checks whether the session's metadata in s is congruent with data on file and that the latter is congruent with the
     theoretical sequences of trials generated prior to the experiment.
@@ -546,52 +616,159 @@ def match_data(s):
       2/ some blocks are present in data file, but are really ghost data, as trialStart (for instance) is NaN
       3/ some blocks are not present at all in the data file
       4/ some blocks are not present at all in the metadata file
-    :param s: (dict) with key-value pairs described below:
+
+    :param s: (dict) -- usually read from meta_data .json file -- with key-value pairs described below:
         if key is one of 'Tut1', 'Block2', etc., value is dict with keys 'aborted', 'completed', 'numTrials', 'reward'
             the Quest block has extra field 'QuestFit' which is a list of values.
         if key is 'sessionTag', value is timestamp as string
         if key is 'trialFolder', value is bare folder name, like 'Blocks003' where the trial data was read from
+    :param meta_data_file: (dict) bare import of .json metadata file
     :return: (dict) with following structure:
-        FIRA_files: [(<path to file1>, <hash of file1>), ...]
+        fira_file: (<path to file>, <hash of file>)
         blocks: [BlockInstance1, BlockInstance2, ...]  in order seen by subject?
-
     """
+    min_trial_num = 10  # if fewer than this number of trials, dataset is considered as absent
     timestamp = s['sessionTag']
-    to_skip = ['Tut1', 'Tut2', 'Tut3', 'sessionTag', 'trialFolder']
-    keys_to_visit = [k for k in s.keys() if k not in to_skip]
-    for block_name in keys_to_visit:
-        block_info = s[block_name]
-        block_data = get_block_data(block_name, timestamp)
+    dict_to_return = {}
+    file_not_stored = True
+    # to_skip = ['Tut1', 'Tut2', 'Tut3', 'sessionTag', 'trialFolder']
+    block_names = ['Quest'] + ['Block' + str(i) for i in range(2, 12)]
+    # block_names_in_meta = set([n for n in s.keys() if n not in to_skip])
+    # block_names_in_data =
 
-        # try:
-        #     match = compare_with_theoretical_stimulus(block_name, block_data)
-        # except AssertionError:
-        #
-        # else:
+    blocks = []
+    for block_name in block_names:
+        block_data, filename = get_block_data(block_name, timestamp)
 
-        # block = BlockMetaData(block_name, )
+        # store file info only once in outer dict
+        if file_not_stored:
+            candidate_fira_files = get_fira_files_from_timestamp(timestamp)
+            for fff, h in candidate_fira_files:
+                if fff == filename:
+                    dict_to_return['fira_file'] = (fff, h)
+                    file_not_stored = False
+                    break
+
+        in_file = block_data['trialIndex'].max() > min_trial_num
+
+        # check whether block in metadatafile
+        in_meta = block_name in s.keys() and s[block_name]['numTrials'] > min_trial_num
+
+        if in_meta or in_file:
+            subj, ___ = get_keys(timestamp, meta_data_file)
+        else:
+            continue
+
+        if in_file:
+            try:
+                match, msg, extra_data = compare_with_theoretical_stimulus(block_name, block_data, verbose=True)
+            except ValueError as val_err:
+                print()
+                print(timestamp, get_fira_files_from_timestamp(timestamp))
+                print()
+                if timestamp in {'2019_06_20_13_45', '2019_06_21_13_34'}:
+                    print(val_err)
+                    print('skipping check')
+                    continue
+                else:
+                    raise
+
+            if match not in range(4):
+                raise ValueError('unexpected returned value')
+
+            do_not_redefine = False  # ad hoc flag needed later
+            if match == 1:  # mismatch with condProbCP and theory
+                print()
+                print(timestamp, dict_to_return['fira_file'])
+                print()
+                if timestamp in {'2019_06_27_11_33'}:
+                    print('skipping check')
+                    continue
+                else:
+                    raise ValueError('inconsistency found in the condProbCP field')
+            elif match == 2:  # NaN values in key columns appeared in data
+                # re-run the function on truncated data if first NaN appeared above trial 10
+                if extra_data > min_trial_num:
+                    new_match, _, __ = compare_with_theoretical_stimulus(block_name, block_data.iloc[:extra_data])
+                    assert new_match == 0, 'even after truncation, data could not be matched to theoretical trials'
+                    block_data = block_data.iloc[:extra_data]
+                else:
+                    if not in_meta:
+                        continue
+                    else:
+                        start_time = None
+                        end_time = None
+                        num_trials = None
+                        do_not_redefine = True
+            elif match == 3:  # match failed for some reason
+                print()
+                print(timestamp, dict_to_return['fira_file'])
+                print()
+                if timestamp in {'2019_06_27_11_33'}:
+                    print('skipping check')
+                    continue
+                else:
+                    raise ValueError('data match failed')
+
+            if not do_not_redefine:
+                start_time = block_data['trialStart'].min(skipna=True)
+                end_time = block_data['trialEnd'].max(skipna=True)
+                num_trials = block_data['trialIndex'].max()
+        else:  # block data not in file
+            start_time = None
+            end_time = None
+            num_trials = None
+
+        if in_meta:
+            block_info = s[block_name]
+            if block_name == 'Quest':
+                if block_info['completed']:
+                    assert block_info['numTrials'] == 80
+                    qparam = block_info['QuestFit']
+                else:
+                    qparam = None
+            else:
+                qparam = None
+        else:
+            qparam = None
+
+        block = BlockMetaData(block_name, start_time, end_time, timestamp, num_trials, subj,
+                              not in_meta, not in_file, quest_params=qparam)
+        blocks.append(block)
+    dict_to_return['blocks'] = blocks
+    return dict_to_return
 
 
-def produce_valid_metadata():
-    for subject in meta_data:
-        for session, session_info in subject.items():
-            match_data(session_info)
+def produce_valid_metadata(meta_data_import):
+    # initial_files = get_files_and_hashes()
+    new_metadata = {}
+    for subject in meta_data_import:
+        subject_key = get_name_from_hash(subject)
+        new_metadata[subject_key] = {}
+        for session, session_info in meta_data[subject].items():
+            session_dict = match_data(session_info, meta_data_import)
+            timestamp = session_info['sessionTag']
+            new_metadata[subject_key][timestamp] = session_dict
+    return new_metadata
 
 
 class BlockMetaData:
     """
     object that stores metadata about a block of trials run in the experiment
     """
-    def __init__(self, name, start, stop, date, num_trials, subject, quest_params=None):
+    def __init__(self, name, start, stop, date, num_trials, subject_hash, absent_meta, absent_file, quest_params=None):
         self.name = name
         self.start = start
         self.stop = stop
         self.data = date
         self.num_trials = num_trials
-        self.subject = subject
+        self.subject_hash = subject_hash
+        self.subject = get_name_from_hash(self.subject_hash)
         self.task_id = NAME_TYPE_ID[self.name]
         self.quest = quest_params
         self.threshold = self.quest[0] if (self.quest is not None) else None
+        self.in_file_not_in_meta = absent_meta
+        self.in_meta_not_in_file = absent_file
 
 
 if __name__ == '__main__':
@@ -630,6 +807,10 @@ if __name__ == '__main__':
     assert num_timestamps == num_folder_on_disk, f'{num_timestamps} timestamps in module vs. {num_folder_on_disk} data folders on disk'
     assert num_metadata_sessions == num_timestamps, 'distinct number of sessions in metadata than timestamps in module'
 
-    check_homogeneity(files_data)
+    # check_homogeneity(files_data)
+    valid_meta_data = produce_valid_metadata(meta_data)
+    with open('new_metadata.json', 'w') as fp:
+        json.dump(valid_meta_data, fp)
+    pprint.pprint(valid_meta_data)
 
     print('ALL GOOD!!!!')
