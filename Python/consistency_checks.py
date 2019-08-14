@@ -1,11 +1,13 @@
+import sys
 import os.path
 import pprint
 import json
+import pickle
 import hashlib
+# from datetime import datetime
 from collections import Counter
 import pandas as pd
 import numpy as np
-import sys
 
 
 THEO_DATA_FOLDER = '/home/adrian/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/Blocks003/'
@@ -711,9 +713,9 @@ def match_data(s, meta_data_file):
                     raise ValueError('data match failed')
 
             if not do_not_redefine:
-                start_time = block_data['trialStart'].min(skipna=True)
-                end_time = block_data['trialEnd'].max(skipna=True)
-                num_trials = block_data['trialIndex'].max()
+                start_time = float(block_data['trialStart'].min(skipna=True))
+                end_time = float(block_data['trialEnd'].max(skipna=True))
+                num_trials = int(block_data['trialIndex'].max())
         else:  # block data not in file
             start_time = None
             end_time = None
@@ -760,7 +762,7 @@ def make_block_dict(name, start, stop, date, num_trials, subject_hash, absent_me
         name=name,
         start=start,
         stop=stop,
-        data=date,
+        date=date,  # to parse as datetime, use: datetime.strptime(date, '%Y_%m_%d_%H_%M')
         num_trials=num_trials,
         subject_hash=subject_hash,
         subject=get_name_from_hash(subject_hash),
@@ -809,8 +811,14 @@ if __name__ == '__main__':
 
     # check_homogeneity(files_data)
     valid_meta_data = produce_valid_metadata(meta_data)
-    with open('new_metadata.json', 'w') as fp:
-        json.dump(valid_meta_data, fp)
+    with open('new_metadata', 'w') as fp:
+        try:
+            json.dump(valid_meta_data, fp, indent=4, sort_keys=True)
+        except TypeError:
+            print('pickling')
+            pickle.dump(valid_meta_data, fp)
+
+    print()
     pprint.pprint(valid_meta_data)
 
     print('ALL GOOD!!!!')
