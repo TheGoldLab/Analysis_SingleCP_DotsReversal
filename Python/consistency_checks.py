@@ -4,14 +4,28 @@ import pprint
 import json
 import pickle
 import hashlib
-# from datetime import datetime
+import datetime as dtime
 from collections import Counter
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 THEO_DATA_FOLDER = '/home/adrian/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/Blocks003/'
 assert os.path.isdir(THEO_DATA_FOLDER)
+
+PROB_CP = {
+    'Block2': 0,
+    'Block3': 0.2,
+    'Block4': 0.5,
+    'Block5': 0.8,
+    'Block6': 0.2,
+    'Block7': 0.5,
+    'Block8': 0.8,
+    'Block9': 0.5,
+    'Block10': 0.2,
+    'Block11': 0.8,
+}
 
 TIMESTAMPS = [
     '2019_06_20_12_54',
@@ -52,10 +66,12 @@ META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsRevers
 assert os.path.exists(META_FILE)
 # hard code the first one in case file has changed
 META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'
+
+# same for clean metadata (commit 9b7968e)
 NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata.json'
-assert os.path.exists(META_FILE)
+assert os.path.exists(NEW_META_FILE)
 # hard code the first one in case file has changed
-NEW_META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'
+NEW_META_CHKSUM = '26e4181e0383eb34ceca75f52e2d4506'  # initial erroneous version was '13cdd7970ee824d96e132c99fcf5362a'
 
 # the following dict should match the row order of DefaultBlockSequence.csv
 TYPE_ID_NAME = {
@@ -774,6 +790,90 @@ def make_block_dict(name, start, stop, date, num_trials, subject_hash, absent_me
         threshold=quest_params[0] if (quest_params is not None) else None,
         in_file_not_in_meta=absent_meta,
         in_meta_not_in_file=absent_file)
+
+
+def plot_meta_data():
+    max_num_days = 1
+    # get checksum of metadata file ...
+    new_meta_chksum = md5(NEW_META_FILE)
+    assert new_meta_chksum == NEW_META_CHKSUM
+
+    with open(NEW_META_FILE, 'r') as f_:
+        metadata = json.load(f_)
+
+    for k, v in metadata.items():  # loop over subjects
+        num_sessions = len(v)
+
+        ref_day = dtime.datetime.strptime('2019_01_01_14_12', '%Y_%m_%d_%H_%M')  # arbitrary date before experiment started
+        dates_sweep = {}  # for each session, count days difference since ref_day
+        for kk, vv in v.items():  # loop over sessions
+            # first sweep before sorting dates
+            dates_sweep[kk] = (dtime.datetime.strptime(kk, '%Y_%m_%d_%H_%M') - ref_day).days  # positive integer of days
+
+            list_of_blocks = metadata[k][kk]['blocks']
+            num_blocks = len(list_of_blocks)
+            for i in range(num_blocks):  # loop over blocks
+                block = list_of_blocks[i]
+                # convert date fields to datetime objects
+                date_str = block['date']
+                block['date'] = dtime.datetime.strptime(date_str, '%Y_%m_%d_%H_%M')
+
+                if not block['in_meta_not_in_file']:
+                    # add block start and stop times as datetime objects
+                    # todo: BUG with NaN here
+                    try:
+                        block_duration = dtime.timedelta(seconds=block['stop'] - block['start'])
+                    except ValueError as val_err:
+                        print('BUG AT', date_str, block['name'])
+                        print(val_err)
+                    block['datetime_start'] = block['date']
+                    block['datetime_stop'] = block['datetime_start'] + block_duration
+
+                # add prob_cp field
+                block['prob_cp'] = PROB_CP[block['name']] if block['name'] != 'Quest' else 0
+
+        # add relative day field to each session dict;
+        # if subject did two sessions on 24 June and 26 June, rel_day will be 1 and 3
+        offset = min(dates_sweep.values()) - 1  # first day for subject starts at 1
+        all_rel_days = []
+        for kkk, vvv in dates_sweep.items():
+            all_rel_days.append(vvv - offset)
+            v[kkk]['rel_day'] = vvv - offset
+
+        # reloop over sessions to add a 'day_count' field, for axes indices below
+        unique_rel_days = np.unique(all_rel_days)
+        ranks = np.argsort(unique_rel_days)
+        rel_count_map = {d:ranks[i] for i, d in enumerate(unique_rel_days)}
+        for kk, vv in v.items():
+            vv['day_count'] = rel_count_map[vv['rel_day']]
+
+        num_days = len(np.unique(list(dates_sweep.values())))
+        if num_days > max_num_days:
+            max_num_days += 1
+
+    num_subjects = len(SUBJECT_NAMES)
+
+    # create figure
+    fig, axes = plt.subplots(num_subjects, max_num_days, figsize=(20, 16), sharey=True, sharex=True)
+    # loop through subjects
+    scount = -1
+    for k, v in metadata.items():
+        scount += 1
+        # loop through sessions
+        for kk, vv in v.items():
+            list_of_blocks = metadata[k][kk]['blocks']
+            num_blocks = len(list_of_blocks)
+            try:
+                curr_ax = axes[scount, vv['day_count']]
+            except IndexError:
+                print(scount, vv['day_count'])
+                raise
+            for block in list_of_blocks:
+                if not block['in_meta_not_in_file']:
+                    curr_ax.plot([block['datetime_start'], block['datetime_stop']],
+                                 [0, 0])
+
+    plt.show()
 
 
 if __name__ == '__main__':

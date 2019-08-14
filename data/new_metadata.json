@@ -639,28 +639,6 @@
                 "/home/adrian/SingleCP_DotsReversal/raw/2019_07_03_15_03/2019_07_03_15_03_FIRA.csv",
                 "7dc6c4e1c1dcef8e3bbacdb80e926435"
             ]
-        },
-        "2019_07_03_16_32": {
-            "blocks": [
-                {
-                    "date": "2019_07_03_16_32",
-                    "in_file_not_in_meta": true,
-                    "in_meta_not_in_file": false,
-                    "name": "Quest",
-                    "num_trials": 80,
-                    "quest": null,
-                    "start": NaN,
-                    "stop": NaN,
-                    "subject": "S2",
-                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
-                    "task_id": 2,
-                    "threshold": null
-                }
-            ],
-            "fira_file": [
-                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_03_16_32/2019_07_03_16_32_FIRA.csv",
-                "4077575d11460a76a140f3f0ee4a3153"
-            ]
         }
     },
     "S3": {
@@ -786,28 +764,6 @@
             "fira_file": [
                 "/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_19/2019_07_10_17_19_FIRA.csv",
                 "b799cb9ceea49d9d7cb8616493228183"
-            ]
-        },
-        "2019_07_10_17_40": {
-            "blocks": [
-                {
-                    "date": "2019_07_10_17_40",
-                    "in_file_not_in_meta": true,
-                    "in_meta_not_in_file": false,
-                    "name": "Quest",
-                    "num_trials": 80,
-                    "quest": null,
-                    "start": NaN,
-                    "stop": NaN,
-                    "subject": "S3",
-                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
-                    "task_id": 2,
-                    "threshold": null
-                }
-            ],
-            "fira_file": [
-                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_40/2019_07_10_17_40_FIRA.csv",
-                "e43b0bc86c6e02f957afbe335989c0e5"
             ]
         },
         "2019_07_10_17_42": {
