@@ -50,9 +50,12 @@ for t in TIMESTAMPS:
 
 META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/subj_metadata.json'
 assert os.path.exists(META_FILE)
-
 # hard code the first one in case file has changed
 META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'
+NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata.json'
+assert os.path.exists(META_FILE)
+# hard code the first one in case file has changed
+NEW_META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'
 
 # the following dict should match the row order of DefaultBlockSequence.csv
 TYPE_ID_NAME = {
