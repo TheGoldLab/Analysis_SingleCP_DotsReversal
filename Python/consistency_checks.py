@@ -9,7 +9,10 @@ from collections import Counter
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
+LINEWIDTH = 10
+MARKERSIZE = 12
 
 THEO_DATA_FOLDER = '/home/adrian/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/Blocks003/'
 assert os.path.isdir(THEO_DATA_FOLDER)
@@ -793,6 +796,9 @@ def make_block_dict(name, start, stop, date, num_trials, subject_hash, absent_me
 
 
 def plot_meta_data():
+    from pandas.plotting import register_matplotlib_converters
+    register_matplotlib_converters()
+
     max_num_days = 1
     # get checksum of metadata file ...
     new_meta_chksum = md5(NEW_META_FILE)
@@ -804,8 +810,9 @@ def plot_meta_data():
     for k, v in metadata.items():  # loop over subjects
         num_sessions = len(v)
 
-        ref_day = dtime.datetime.strptime('2019_01_01_14_12', '%Y_%m_%d_%H_%M')  # arbitrary date before experiment started
+        ref_day = dtime.datetime.strptime('2019_01_01_00_00', '%Y_%m_%d_%H_%M')  # arbitrary date before experiment started
         dates_sweep = {}  # for each session, count days difference since ref_day
+        first_session = True
         for kk, vv in v.items():  # loop over sessions
             # first sweep before sorting dates
             dates_sweep[kk] = (dtime.datetime.strptime(kk, '%Y_%m_%d_%H_%M') - ref_day).days  # positive integer of days
@@ -820,13 +827,17 @@ def plot_meta_data():
 
                 if not block['in_meta_not_in_file']:
                     # add block start and stop times as datetime objects
-                    # todo: BUG with NaN here
                     try:
                         block_duration = dtime.timedelta(seconds=block['stop'] - block['start'])
                     except ValueError as val_err:
                         print('BUG AT', date_str, block['name'])
                         print(val_err)
-                    block['datetime_start'] = block['date']
+                    if first_session:
+                        first_session = False
+                        first_start = block['start']
+                        block['datetime_start'] = block['date']
+                    else:
+                        block['datetime_start'] = block['date'] + dtime.timedelta(seconds=block['start'] - first_start)
                     block['datetime_stop'] = block['datetime_start'] + block_duration
 
                 # add prob_cp field
@@ -843,7 +854,7 @@ def plot_meta_data():
         # reloop over sessions to add a 'day_count' field, for axes indices below
         unique_rel_days = np.unique(all_rel_days)
         ranks = np.argsort(unique_rel_days)
-        rel_count_map = {d:ranks[i] for i, d in enumerate(unique_rel_days)}
+        rel_count_map = {d: ranks[i] for i, d in enumerate(unique_rel_days)}
         for kk, vv in v.items():
             vv['day_count'] = rel_count_map[vv['rel_day']]
 
@@ -854,25 +865,49 @@ def plot_meta_data():
     num_subjects = len(SUBJECT_NAMES)
 
     # create figure
-    fig, axes = plt.subplots(num_subjects, max_num_days, figsize=(20, 16), sharey=True, sharex=True)
+    fig, axes = plt.subplots(num_subjects, max_num_days, figsize=(20, 16), sharey=True)
+    all_dates = {}
+    dy_dict = {}
+    for i in range(num_subjects):
+        for j in range(max_num_days):
+            all_dates[(i, j)] = []
+            dy_dict[(i, j)] = -1
     # loop through subjects
     scount = -1
     for k, v in metadata.items():
         scount += 1
+        # print(list(zip(
+        #     list(v.keys()),
+        #     [dc['day_count'] for dc in v.values()]
+        # )))
         # loop through sessions
         for kk, vv in v.items():
             list_of_blocks = metadata[k][kk]['blocks']
             num_blocks = len(list_of_blocks)
+            day_count = vv['day_count']
             try:
-                curr_ax = axes[scount, vv['day_count']]
+                curr_ax = axes[scount, day_count]
             except IndexError:
-                print(scount, vv['day_count'])
+                print(scount, day_count)
                 raise
             for block in list_of_blocks:
                 if not block['in_meta_not_in_file']:
-                    curr_ax.plot([block['datetime_start'], block['datetime_stop']],
-                                 [0, 0])
+                    list_of_datetimes = [block['datetime_start'], block['datetime_stop']]
+                    all_dates[(scount, day_count)] += list_of_datetimes
+                    dy_dict[(scount, day_count)] += 1.3
+                    dy = dy_dict[(scount, day_count)]
+                    dates = matplotlib.dates.date2num(list_of_datetimes)
+                    curr_ax.plot_date(dates, [dy, dy],
+                                      fmt='-o', linewidth=LINEWIDTH, markersize=MARKERSIZE)
 
+    for subj in range(num_subjects):
+        for dd in range(max_num_days):
+            curr_ax = axes[subj, dd]
+            curr_ax.set_xticks = matplotlib.dates.date2num(all_dates[(subj, dd)])
+            curr_ax.set_xticklabels([f'{d.hour}:{d.minute}' for d in all_dates[(subj, dd)]])
+
+            # curr_ax.format_xdata = matplotlib.dates.DateFormatter('%H:%M')
+    # fig.autofmt_xdate()
     plt.show()
 
 
