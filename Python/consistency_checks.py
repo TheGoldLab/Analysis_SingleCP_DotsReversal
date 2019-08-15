@@ -807,7 +807,7 @@ def plot_meta_data(plot_file):
     from pandas.plotting import register_matplotlib_converters
     register_matplotlib_converters()
     import matplotlib.lines as mlines
-
+    import re
     # map probCP to colors
     colors = {
         'Quest': 'green',
@@ -822,7 +822,8 @@ def plot_meta_data(plot_file):
                                    linewidth=LINEWIDTH, color=c,
                                    marker='+', markersize=MARKERSIZE,
                                    label=f'prob CP = {p}' if not isinstance(p, str) else p))
-
+    delta_y = 3.5
+    ddy = 0
     """first we process the metadata"""
 
     max_num_days = 1
@@ -967,24 +968,31 @@ def plot_meta_data(plot_file):
                 if not block['in_meta_not_in_file']:
                     list_of_datetimes = [block['datetime_start'], block['datetime_stop']]
                     all_dates[(scount, day_count)] += list_of_datetimes
-                    dy_dict[(scount, day_count)] += 1.3
+                    dy_dict[(scount, day_count)] += delta_y
                     dy = dy_dict[(scount, day_count)]
                     dates = matplotlib.dates.date2num(list_of_datetimes)
                     curr_ax.plot_date(dates, [dy, dy],
                                       fmt='-+', linewidth=LINEWIDTH, markersize=MARKERSIZE,
                                       color=linecolor, xdate=True)
-
-    print()
-    pprint.pprint(all_dates[(0, 0)])
-    pprint.pprint(matplotlib.dates.date2num(all_dates[(0, 0)]))
-    print()
+                    # annotate block number
+                    bname = block['name']
+                    if bname not in {'Quest', 'Block2'}:
+                        bnum = re.findall('\\d+', bname)[0]
+                        # bnum = bname[-1]
+                        curr_ax.annotate(bnum + ':' + str(block['num_trials']), (dates[0], dy+.5), fontsize=SMALL_FONT)
+                    else:
+                        curr_ax.annotate(str(block['num_trials']), (dates[0], dy+.5), fontsize=SMALL_FONT)
+    # print()
+    # pprint.pprint(all_dates[(0, 0)])
+    # pprint.pprint(matplotlib.dates.date2num(all_dates[(0, 0)]))
+    # print()
+    DX = .13
     for subj in range(num_subjects):
         for dd in range(max_num_days):
+            if (subj, dd) in {(3, 2), (4, 2)}:
+                continue
             curr_ax = axes[subj, dd]
-            curr_ax.set_xticks(matplotlib.dates.date2num(all_dates[(subj, dd)]))
-            curr_ax.set_xticklabels([d.strftime('%H:%M') for d in all_dates[(subj, dd)]],
-                                    fontsize=SMALL_FONT)
-            curr_ax.grid(b=True)
+
             curr_ax.set_title('day ' + str(all_titles[(subj, dd)]))
             if dd == 0:
                 curr_ax.set_ylabel('subj ' + str(subj + 1))
@@ -998,7 +1006,14 @@ def plot_meta_data(plot_file):
             curr_ax.spines['right'].set_visible(False)
             curr_ax.spines['bottom'].set_visible(False)
             curr_ax.spines['left'].set_visible(False)
-
+            orig_y1, orig_y2 = curr_ax.get_ylim()
+            curr_ax.set_ylim(orig_y1, orig_y2 + 2*ddy)
+            orig_x1, orig_x2 = curr_ax.get_xlim()
+            curr_ax.set_xlim(orig_x1, orig_x1 + DX)
+            xticks = [matplotlib.dates.num2date(x) for x in curr_ax.get_xticks()]
+            curr_ax.set_xticklabels([d.strftime('%H:%M') for d in xticks], fontsize=SMALL_FONT)
+            # curr_ax.format_xdata = matplotlib.dates.DateFormatter('%H:%M')
+            curr_ax.grid(b=True)
     fig.delaxes(axes[3, 2])
     fig.delaxes(axes[4, 2])
     plt.legend(handles=lines, bbox_to_anchor=(1.5, 1.8), loc=2, borderaxespad=0., fontsize=2*SMALL_FONT)
