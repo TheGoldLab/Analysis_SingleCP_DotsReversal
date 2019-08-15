@@ -11,8 +11,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
-LINEWIDTH = 10
+font = {'family': 'DejaVu Sans',
+        'size'  : 22}
+
+matplotlib.rc('font', **font)
+LINEWIDTH = 3
 MARKERSIZE = 12
+SMALL_FONT = 10
 
 THEO_DATA_FOLDER = '/home/adrian/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/Blocks003/'
 assert os.path.isdir(THEO_DATA_FOLDER)
@@ -795,9 +800,30 @@ def make_block_dict(name, start, stop, date, num_trials, subject_hash, absent_me
         in_meta_not_in_file=absent_file)
 
 
-def plot_meta_data():
+def plot_meta_data(plot_file):
+    # todo: widen vert space
+    # todo: increase fontsize
+    # todo: remove box
     from pandas.plotting import register_matplotlib_converters
     register_matplotlib_converters()
+    import matplotlib.lines as mlines
+
+    # map probCP to colors
+    colors = {
+        'Quest': 'green',
+        0: 'blue',
+        .2: 'purple',
+        .5: 'red',
+        .8: 'gray'
+    }
+    lines = []
+    for p, c in colors.items():
+        lines.append(mlines.Line2D([], [],
+                                   linewidth=LINEWIDTH, color=c,
+                                   marker='+', markersize=MARKERSIZE,
+                                   label=f'prob CP = {p}' if not isinstance(p, str) else p))
+
+    """first we process the metadata"""
 
     max_num_days = 1
     # get checksum of metadata file ...
@@ -807,41 +833,18 @@ def plot_meta_data():
     with open(NEW_META_FILE, 'r') as f_:
         metadata = json.load(f_)
 
-    for k, v in metadata.items():  # loop over subjects
+    # loop over subjects
+    for k, v in metadata.items():
         num_sessions = len(v)
 
-        ref_day = dtime.datetime.strptime('2019_01_01_00_00', '%Y_%m_%d_%H_%M')  # arbitrary date before experiment started
+        # arbitrary date before experiment started
+        ref_day = dtime.datetime.strptime('2019_01_01_00_00', '%Y_%m_%d_%H_%M')
         dates_sweep = {}  # for each session, count days difference since ref_day
-        first_session = True
-        for kk, vv in v.items():  # loop over sessions
+
+        # loop over sessions
+        for kk in v.keys():
             # first sweep before sorting dates
             dates_sweep[kk] = (dtime.datetime.strptime(kk, '%Y_%m_%d_%H_%M') - ref_day).days  # positive integer of days
-
-            list_of_blocks = metadata[k][kk]['blocks']
-            num_blocks = len(list_of_blocks)
-            for i in range(num_blocks):  # loop over blocks
-                block = list_of_blocks[i]
-                # convert date fields to datetime objects
-                date_str = block['date']
-                block['date'] = dtime.datetime.strptime(date_str, '%Y_%m_%d_%H_%M')
-
-                if not block['in_meta_not_in_file']:
-                    # add block start and stop times as datetime objects
-                    try:
-                        block_duration = dtime.timedelta(seconds=block['stop'] - block['start'])
-                    except ValueError as val_err:
-                        print('BUG AT', date_str, block['name'])
-                        print(val_err)
-                    if first_session:
-                        first_session = False
-                        first_start = block['start']
-                        block['datetime_start'] = block['date']
-                    else:
-                        block['datetime_start'] = block['date'] + dtime.timedelta(seconds=block['start'] - first_start)
-                    block['datetime_stop'] = block['datetime_start'] + block_duration
-
-                # add prob_cp field
-                block['prob_cp'] = PROB_CP[block['name']] if block['name'] != 'Quest' else 0
 
         # add relative day field to each session dict;
         # if subject did two sessions on 24 June and 26 June, rel_day will be 1 and 3
@@ -852,25 +855,86 @@ def plot_meta_data():
             v[kkk]['rel_day'] = vvv - offset
 
         # reloop over sessions to add a 'day_count' field, for axes indices below
+        # so, for same example as above, session from 24 June has day_count=0 and 26 June, day_count=1
         unique_rel_days = np.unique(all_rel_days)
         ranks = np.argsort(unique_rel_days)
         rel_count_map = {d: ranks[i] for i, d in enumerate(unique_rel_days)}
         for kk, vv in v.items():
             vv['day_count'] = rel_count_map[vv['rel_day']]
 
+        # dict with key-val = <date_str>:<datetime object>
+        sessions_dates = {s: dtime.datetime.strptime(s, '%Y_%m_%d_%H_%M') for s in v.keys()}
+
+        # dict with key-val = <session's date>:<bool>
+        first_session = {s:False for s in sessions_dates.keys()}
+
+        # now find the actual first session of each day, for this subject
+        for d in range(len(unique_rel_days)):
+            sessions_this_day_count = [sn for sn in sessions_dates.keys() if v[sn]['day_count'] == d]
+            first_session_name = sessions_this_day_count[0]
+            first_session_as_datetime = sessions_dates[first_session_name]
+            if len(sessions_this_day_count) > 1:
+                for s in sessions_this_day_count[1:]:
+                    if sessions_dates[s] < first_session_as_datetime:
+                        first_session_as_datetime = sessions_dates[s]
+                        first_session_name = s
+            first_session[first_session_name] = True
+
+        # loop over sessions one last time
+        for kk, vv in v.items():
+
+            list_of_blocks = metadata[k][kk]['blocks']
+            num_blocks = len(list_of_blocks)
+
+            # loop over blocks
+            for i in range(num_blocks):
+                block = list_of_blocks[i]
+
+                # convert date fields to datetime objects
+                date_str = block['date']
+                block['date'] = dtime.datetime.strptime(date_str, '%Y_%m_%d_%H_%M')  # time of session start
+
+                if not block['in_meta_not_in_file']:  # ensure block's data is on file
+
+                    # add block start and stop times as datetime objects
+                    try:
+                        block_duration = dtime.timedelta(seconds=block['stop'] - block['start'])
+                    except ValueError as val_err:
+                        print('BUG AT', date_str, block['name'])
+                        print(val_err)
+
+                    if first_session[date_str]:
+                        if block['name'] == 'Quest':
+                            first_start = block['start']
+                            block['datetime_start'] = block['date']
+                        else:
+                            block['datetime_start'] = block['date'] + dtime.timedelta(
+                                seconds=block['start'] - first_start)
+                    else:
+                        block['datetime_start'] = block['date'] + dtime.timedelta(seconds=block['start'] - first_start)
+                    block['datetime_stop'] = block['datetime_start'] + block_duration
+
+                # add prob_cp field
+                block['prob_cp'] = PROB_CP[block['name']] if block['name'] != 'Quest' else 0
+
+        # here we anticipate the numbe of columns in the subplots layout
         num_days = len(np.unique(list(dates_sweep.values())))
         if num_days > max_num_days:
             max_num_days += 1
 
     num_subjects = len(SUBJECT_NAMES)
 
+    """actual plotting"""
+
     # create figure
-    fig, axes = plt.subplots(num_subjects, max_num_days, figsize=(20, 16), sharey=True)
+    fig, axes = plt.subplots(num_subjects, max_num_days, figsize=(20, 16), sharey=True, sharex=False)
     all_dates = {}
+    all_titles = {}
     dy_dict = {}
     for i in range(num_subjects):
         for j in range(max_num_days):
             all_dates[(i, j)] = []
+            all_titles[(i, j)] = 0
             dy_dict[(i, j)] = -1
     # loop through subjects
     scount = -1
@@ -885,12 +949,21 @@ def plot_meta_data():
             list_of_blocks = metadata[k][kk]['blocks']
             num_blocks = len(list_of_blocks)
             day_count = vv['day_count']
+            all_titles[(scount, day_count)] = vv['rel_day']
             try:
                 curr_ax = axes[scount, day_count]
             except IndexError:
                 print(scount, day_count)
                 raise
+
+            # loop over blocks
             for block in list_of_blocks:
+
+                if block['name'] == 'Quest':
+                    linecolor = colors[block['name']]
+                else:
+                    linecolor = colors[PROB_CP[block['name']]]
+
                 if not block['in_meta_not_in_file']:
                     list_of_datetimes = [block['datetime_start'], block['datetime_stop']]
                     all_dates[(scount, day_count)] += list_of_datetimes
@@ -898,65 +971,102 @@ def plot_meta_data():
                     dy = dy_dict[(scount, day_count)]
                     dates = matplotlib.dates.date2num(list_of_datetimes)
                     curr_ax.plot_date(dates, [dy, dy],
-                                      fmt='-o', linewidth=LINEWIDTH, markersize=MARKERSIZE)
+                                      fmt='-+', linewidth=LINEWIDTH, markersize=MARKERSIZE,
+                                      color=linecolor, xdate=True)
 
+    print()
+    pprint.pprint(all_dates[(0, 0)])
+    pprint.pprint(matplotlib.dates.date2num(all_dates[(0, 0)]))
+    print()
     for subj in range(num_subjects):
         for dd in range(max_num_days):
             curr_ax = axes[subj, dd]
-            curr_ax.set_xticks = matplotlib.dates.date2num(all_dates[(subj, dd)])
-            curr_ax.set_xticklabels([f'{d.hour}:{d.minute}' for d in all_dates[(subj, dd)]])
+            curr_ax.set_xticks(matplotlib.dates.date2num(all_dates[(subj, dd)]))
+            curr_ax.set_xticklabels([d.strftime('%H:%M') for d in all_dates[(subj, dd)]],
+                                    fontsize=SMALL_FONT)
+            curr_ax.grid(b=True)
+            curr_ax.set_title('day ' + str(all_titles[(subj, dd)]))
+            if dd == 0:
+                curr_ax.set_ylabel('subj ' + str(subj + 1))
+            curr_ax.tick_params(
+                axis='y',  # changes apply to the x-axis
+                which='both',  # both major and minor ticks are affected
+                left=False,  # ticks along the bottom edge are off
+                right=False,  # ticks along the top edge are off
+                labelleft=False)  # labels along the bottom edge are off
+            curr_ax.spines['top'].set_visible(False)
+            curr_ax.spines['right'].set_visible(False)
+            curr_ax.spines['bottom'].set_visible(False)
+            curr_ax.spines['left'].set_visible(False)
 
-            # curr_ax.format_xdata = matplotlib.dates.DateFormatter('%H:%M')
-    # fig.autofmt_xdate()
-    plt.show()
+    fig.delaxes(axes[3, 2])
+    fig.delaxes(axes[4, 2])
+    plt.legend(handles=lines, bbox_to_anchor=(1.5, 1.8), loc=2, borderaxespad=0., fontsize=2*SMALL_FONT)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=.7)
+
+    plt.savefig(plot_file)
+    # plt.show()
 
 
 if __name__ == '__main__':
-    files_data, latest_hashes = get_files_and_hashes(show=False, hash_map=True)
-
-    assert latest_hashes == REF_HASHES, 'latest hashes do not match reference hashes'
-    # pprint.pprint(latest_hashes)
     """
-    Recall: files_data is a list of dicts with fields 'FIRA', 'dots' and 'session'. The values are as follows:
-        FIRA: list of pairs of the form (<path to .csv file>, <MD5 checksum for this file>)
-        dots: same as for FIRA, but for dots data
-        session: single string representing the timestamp of the session, in the format YYYY_MM_DD_HH_mm
-
-        for the values corresponding to the FIRA and dots keys, the absence of any file is encoded as an empty list
+    When called from the command line, this script must have one argument. If the arg is 
+    'check': checks are performed on the data
+    'log': a log file is written to disc
+    'plot': a plot summarizing valid metadata is saved to file
     """
-    # get checksum of metadata file ...
-    meta_chksum = md5(META_FILE)
-    assert meta_chksum == META_CHKSUM
+    _, arg = sys.argv
 
-    num_folder_on_disk = len([i for i in os.listdir(DATA_FOLDER) if i[:5] == '2019_'])
+    if arg == 'check':
+        files_data, latest_hashes = get_files_and_hashes(show=False, hash_map=True)
 
-    # number of timestamps in notebook variable
-    num_timestamps = len(TIMESTAMPS)
+        assert latest_hashes == REF_HASHES, 'latest hashes do not match reference hashes'
+        # pprint.pprint(latest_hashes)
+        """
+        Recall: files_data is a list of dicts with fields 'FIRA', 'dots' and 'session'. The values are as follows:
+            FIRA: list of pairs of the form (<path to .csv file>, <MD5 checksum for this file>)
+            dots: same as for FIRA, but for dots data
+            session: single string representing the timestamp of the session, in the format YYYY_MM_DD_HH_mm
+    
+            for the values corresponding to the FIRA and dots keys, the absence of any file is encoded as an empty list
+        """
+        # get checksum of metadata file ...
+        meta_chksum = md5(META_FILE)
+        assert meta_chksum == META_CHKSUM
 
-    # number of timestamps in metadafile
-    with open(META_FILE, 'r') as f:
-        meta_data = json.load(f)
-    # recall: meta_data is a dict. Its keys are hash codes for subjects.
-    # its values are themselves dicts, with keys session names and values dicts with session info.
-    # So, to access the session info corresponding to the first session of the the first subject, do:
-    # meta_data[<subj code>]['session1']
-    num_metadata_sessions = 0
-    for v in meta_data.values():
-        num_metadata_sessions += len(v)
+        num_folder_on_disk = len([i for i in os.listdir(DATA_FOLDER) if i[:5] == '2019_'])
 
-    assert num_timestamps == num_folder_on_disk, f'{num_timestamps} timestamps in module vs. {num_folder_on_disk} data folders on disk'
-    assert num_metadata_sessions == num_timestamps, 'distinct number of sessions in metadata than timestamps in module'
+        # number of timestamps in notebook variable
+        num_timestamps = len(TIMESTAMPS)
 
-    # check_homogeneity(files_data)
-    valid_meta_data = produce_valid_metadata(meta_data)
-    with open('new_metadata', 'w') as fp:
-        try:
-            json.dump(valid_meta_data, fp, indent=4, sort_keys=True)
-        except TypeError:
-            print('pickling')
-            pickle.dump(valid_meta_data, fp)
+        # number of timestamps in metadafile
+        with open(META_FILE, 'r') as f:
+            meta_data = json.load(f)
+        # recall: meta_data is a dict. Its keys are hash codes for subjects.
+        # its values are themselves dicts, with keys session names and values dicts with session info.
+        # So, to access the session info corresponding to the first session of the the first subject, do:
+        # meta_data[<subj code>]['session1']
+        num_metadata_sessions = 0
+        for v in meta_data.values():
+            num_metadata_sessions += len(v)
 
-    print()
-    pprint.pprint(valid_meta_data)
+        assert num_timestamps == num_folder_on_disk, f'{num_timestamps} timestamps in module vs. {num_folder_on_disk} data folders on disk'
+        assert num_metadata_sessions == num_timestamps, 'distinct number of sessions in metadata than timestamps in module'
 
-    print('ALL GOOD!!!!')
+        check_homogeneity(files_data)
+
+    elif arg == 'log':
+        valid_meta_data = produce_valid_metadata(meta_data)
+        with open('new_metadata', 'w') as fp:
+            try:
+                json.dump(valid_meta_data, fp, indent=4, sort_keys=True)
+            except TypeError:
+                print('pickling')
+                pickle.dump(valid_meta_data, fp)
+
+        print()
+        pprint.pprint(valid_meta_data)
+
+        print('ALL GOOD!!!!')
+    elif arg == 'plot':
+        plot_meta_data('metaplot.png')
