@@ -1,0 +1,1337 @@
+{
+    "S1": {
+        "2019_06_20_12_54": {
+            "blocks": [
+                {
+                    "date": "2019_06_20_12_54",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        18.5,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 769481.0784527459,
+                    "stop": 769851.7170241559,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 2,
+                    "threshold": 18.5
+                },
+                {
+                    "date": "2019_06_20_12_54",
+                    "in_file_not_in_meta": true,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 769917.2100533929,
+                    "stop": 770873.21111764,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 4,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_20_12_54/2019_06_20_12_54_FIRA.csv",
+                "046ca06830aeebb62194e3c8d2e97046"
+            ]
+        },
+        "2019_06_20_13_27": {
+            "blocks": [
+                {
+                    "date": "2019_06_20_13_27",
+                    "in_file_not_in_meta": true,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": null,
+                    "start": 771307.5419729209,
+                    "stop": 771313.729217188,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 2,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_20_13_27",
+                    "in_file_not_in_meta": true,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 771419.4816719879,
+                    "stop": 772258.721650471,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 4,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_27/2019_06_20_13_27_FIRA.csv",
+                "8b945181914a9f1c6a4784c8899d72ed"
+            ]
+        },
+        "2019_06_20_13_45": {
+            "blocks": [
+                {
+                    "date": "2019_06_20_13_45",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block3",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 772771.993114808,
+                    "stop": 774074.115465798,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 6,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_20_13_45",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block4",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 774226.876777355,
+                    "stop": 775438.59622384,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 7,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_20_13_45",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block5",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 8,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_45/2019_06_20_13_45customFIRA.csv",
+                "9efef45496b9be2f0c914c47a9a40284"
+            ]
+        },
+        "2019_06_21_13_08": {
+            "blocks": [
+                {
+                    "date": "2019_06_21_13_08",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        34.5,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 856711.332534163,
+                    "stop": 857048.719227396,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 2,
+                    "threshold": 34.5
+                },
+                {
+                    "date": "2019_06_21_13_08",
+                    "in_file_not_in_meta": true,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 857126.4124866971,
+                    "stop": 858021.975282819,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 4,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_08/2019_06_21_13_08_FIRA.csv",
+                "41485cf9922b03cd5176824887a2c99a"
+            ]
+        },
+        "2019_06_21_13_34": {
+            "blocks": [
+                {
+                    "date": "2019_06_21_13_34",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block3",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 858584.9726600391,
+                    "stop": 859729.852689752,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 6,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_21_13_34",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block4",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 7,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_34/2019_06_21_13_34customFIRA.csv",
+                "daa4d2be5663975a4d788f8a5187e93c"
+            ]
+        },
+        "2019_06_21_14_25": {
+            "blocks": [
+                {
+                    "date": "2019_06_21_14_25",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block6",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 861233.3201239691,
+                    "stop": 862402.233335657,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 9,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_21_14_25",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block7",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 10,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_14_25/2019_06_21_14_25customFIRA.csv",
+                "319ad81fe1c5e8bc4303ea0d57e9ce3d"
+            ]
+        },
+        "2019_06_27_11_33": {
+            "blocks": [
+                {
+                    "date": "2019_06_27_11_33",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        48.5,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 382.35325218400004,
+                    "stop": 746.484986992,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 2,
+                    "threshold": 48.5
+                },
+                {
+                    "date": "2019_06_27_11_33",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 841.9032298000001,
+                    "stop": 1736.879182267,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 4,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_27_11_33",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block8",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 11,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_27_11_33",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block9",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 12,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_27_11_33",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block10",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S1",
+                    "subject_hash": "c577366758027956b21fcb95a8db0d1e",
+                    "task_id": 13,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_27_11_33/2019_06_27_11_33customFIRA.csv",
+                "71f4944fe2829eba04e14afe556f80f9"
+            ]
+        }
+    },
+    "S2": {
+        "2019_06_24_12_38": {
+            "blocks": [
+                {
+                    "date": "2019_06_24_12_38",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        24.5,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 1114130.12209248,
+                    "stop": 1114482.28617043,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 2,
+                    "threshold": 24.5
+                },
+                {
+                    "date": "2019_06_24_12_38",
+                    "in_file_not_in_meta": true,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 1114601.64473142,
+                    "stop": 1115448.14015334,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 4,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/2019_06_24_12_38_FIRA.csv",
+                "20102a1b8e7d68305455bacccd6fc5cb"
+            ]
+        },
+        "2019_06_24_13_06": {
+            "blocks": [
+                {
+                    "date": "2019_06_24_13_06",
+                    "in_file_not_in_meta": true,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": null,
+                    "start": 1115619.52636332,
+                    "stop": 1115625.87882075,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 2,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_24_13_06",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block3",
+                    "num_trials": 113,
+                    "quest": null,
+                    "start": 1115982.71667005,
+                    "stop": 1116695.4010325,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 6,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_06/2019_06_24_13_06_FIRA.csv",
+                "c8423313d1e47ba799be602d3642e4eb"
+            ]
+        },
+        "2019_06_24_13_31": {
+            "blocks": [
+                {
+                    "date": "2019_06_24_13_31",
+                    "in_file_not_in_meta": true,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": null,
+                    "start": 1117155.15792814,
+                    "stop": 1117159.68251395,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 2,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_24_13_31",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block3",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 1117216.65975971,
+                    "stop": 1118585.73706592,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 6,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_24_13_31",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block4",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 1118647.39630867,
+                    "stop": 1119888.93734323,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 7,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_31/2019_06_24_13_31_FIRA.csv",
+                "78daa9667716d994f0d75f7fb87e93b4"
+            ]
+        },
+        "2019_06_25_13_24": {
+            "blocks": [
+                {
+                    "date": "2019_06_25_13_24",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        22,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 1204185.724467,
+                    "stop": 1204500.49575357,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 2,
+                    "threshold": 22
+                },
+                {
+                    "date": "2019_06_25_13_24",
+                    "in_file_not_in_meta": true,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 1204687.7013288,
+                    "stop": 1205490.81480494,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 4,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_25_13_24/2019_06_25_13_24_FIRA.csv",
+                "92d73437503dbc26a61e15c93b963773"
+            ]
+        },
+        "2019_06_25_14_06": {
+            "blocks": [
+                {
+                    "date": "2019_06_25_14_06",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block5",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 1205805.63102687,
+                    "stop": 1206885.47856093,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 8,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_25_14_06",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block6",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 1206955.25325405,
+                    "stop": 1208009.7032859,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 9,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_25_14_06",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block7",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 1208034.44519912,
+                    "stop": 1209099.79360426,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 10,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_06_25_14_06",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block8",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 11,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_06_25_14_06/2019_06_25_14_06customFIRA.csv",
+                "4bc9d1ff7dc836cada9d0b4455f669c6"
+            ]
+        },
+        "2019_07_03_15_03": {
+            "blocks": [
+                {
+                    "date": "2019_07_03_15_03",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        33.5,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 718.479347827,
+                    "stop": 1054.733156219,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 2,
+                    "threshold": 33.5
+                },
+                {
+                    "date": "2019_07_03_15_03",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 1106.471771207,
+                    "stop": 1945.551852914,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 4,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_03_15_03",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block9",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 2128.723243769,
+                    "stop": 3188.36129914,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 12,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_03_15_03",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block10",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 3268.433845422,
+                    "stop": 4343.305485576,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 13,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_03_15_03",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block11",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 4444.544661952,
+                    "stop": 5509.693567663,
+                    "subject": "S2",
+                    "subject_hash": "x30bdd3d8ad24d522dc158030fb5c18d7",
+                    "task_id": 14,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_03_15_03/2019_07_03_15_03_FIRA.csv",
+                "7dc6c4e1c1dcef8e3bbacdb80e926435"
+            ]
+        }
+    },
+    "S3": {
+        "2019_07_08_17_13": {
+            "blocks": [
+                {
+                    "date": "2019_07_08_17_13",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        51.5,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 440662.647321874,
+                    "stop": 440968.561241867,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 2,
+                    "threshold": 51.5
+                },
+                {
+                    "date": "2019_07_08_17_13",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 441083.646646486,
+                    "stop": 441811.109445967,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 4,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_08_17_13",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block3",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 442027.671196,
+                    "stop": 442989.896839266,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 6,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_08_17_13",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block4",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 443026.946243887,
+                    "stop": 443963.67894692294,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 7,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_08_17_13",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block5",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 8,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_08_17_13/2019_07_08_17_13customFIRA.csv",
+                "213389e2587cbf1aafa2899b5097bb10"
+            ]
+        },
+        "2019_07_10_17_19": {
+            "blocks": [
+                {
+                    "date": "2019_07_10_17_19",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        34,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 613584.4358121121,
+                    "stop": 613848.316726141,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 2,
+                    "threshold": 34
+                },
+                {
+                    "date": "2019_07_10_17_19",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 613927.3674574171,
+                    "stop": 614614.12006906,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 4,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_19/2019_07_10_17_19_FIRA.csv",
+                "b799cb9ceea49d9d7cb8616493228183"
+            ]
+        },
+        "2019_07_10_17_42": {
+            "blocks": [
+                {
+                    "date": "2019_07_10_17_42",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block6",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 614994.303593753,
+                    "stop": 615856.638570945,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 9,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_10_17_42",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block7",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 615874.183939092,
+                    "stop": 616734.196278421,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 10,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_10_17_42",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block8",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 11,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_42/2019_07_10_17_42customFIRA.csv",
+                "c6329eb3af8defd7c3d640d39e8e62c5"
+            ]
+        },
+        "2019_07_17_17_17": {
+            "blocks": [
+                {
+                    "date": "2019_07_17_17_17",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        26.5,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 109758.88449841901,
+                    "stop": 110029.54496862099,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 2,
+                    "threshold": 26.5
+                },
+                {
+                    "date": "2019_07_17_17_17",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 110085.943279369,
+                    "stop": 110789.957121395,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 4,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_17_17_17",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block8",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 110936.764896554,
+                    "stop": 111809.91710607,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 11,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_17_17_17",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block9",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 111901.706649922,
+                    "stop": 112746.349233139,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 12,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_17_17_17",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block10",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 112763.541238074,
+                    "stop": 113593.20455424699,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 13,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_17_17_17",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block11",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 114045.40446459,
+                    "stop": 114900.995586355,
+                    "subject": "S3",
+                    "subject_hash": "c71c3808bc33ba05928e1bc5f93a9078",
+                    "task_id": 14,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_17_17_17/2019_07_17_17_17_FIRA.csv",
+                "f6252353958133c4fd37aba7bc0d6570"
+            ]
+        }
+    },
+    "S4": {
+        "2019_07_09_11_02": {
+            "blocks": [
+                {
+                    "date": "2019_07_09_11_02",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        30.5,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 504783.794993671,
+                    "stop": 505113.883268996,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 2,
+                    "threshold": 30.5
+                },
+                {
+                    "date": "2019_07_09_11_02",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 505233.015844126,
+                    "stop": 505995.17486599,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 4,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_09_11_02",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block3",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 506236.88970948,
+                    "stop": 507298.43430006795,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 6,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_09_11_02",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block4",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 507380.15049594705,
+                    "stop": 508407.982951828,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 7,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_09_11_02",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block5",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 508429.8433903,
+                    "stop": 509408.824962406,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 8,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_09_11_02",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block6",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 509444.20063691604,
+                    "stop": 510431.68603366,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 9,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_09_11_02",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block7",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 10,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_09_11_02/2019_07_09_11_02customFIRA.csv",
+                "f4ddd9cdd316b0c73d0e9c93e46616d9"
+            ]
+        },
+        "2019_07_10_12_18": {
+            "blocks": [
+                {
+                    "date": "2019_07_10_12_18",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        30.5,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 595549.662212186,
+                    "stop": 595836.764872515,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 2,
+                    "threshold": 30.5
+                },
+                {
+                    "date": "2019_07_10_12_18",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 595960.068845181,
+                    "stop": 596676.705020762,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 4,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_10_12_18",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block8",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 596816.580244884,
+                    "stop": 597729.357648745,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 11,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_10_12_18",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block9",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 597754.840500917,
+                    "stop": 598673.580223837,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 12,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_10_12_18",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block10",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 598712.879952643,
+                    "stop": 599629.775995425,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 13,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_10_12_18",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block11",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 599775.704760734,
+                    "stop": 600715.219688053,
+                    "subject": "S4",
+                    "subject_hash": "x5f5dbb54ed21cfeb4ac045e0328181cc",
+                    "task_id": 14,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_12_18/2019_07_10_12_18_FIRA.csv",
+                "0e689f4bf92aa2c4f67eb74ee56f6046"
+            ]
+        }
+    },
+    "S5": {
+        "2019_07_11_11_21": {
+            "blocks": [
+                {
+                    "date": "2019_07_11_11_21",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        100,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 678592.899811277,
+                    "stop": 678871.824067291,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 2,
+                    "threshold": 100
+                },
+                {
+                    "date": "2019_07_11_11_21",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 678982.501079971,
+                    "stop": 679713.0143613571,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 4,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_11_11_21",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block3",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 679988.8612166779,
+                    "stop": 680981.5981636189,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 6,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_11_11_21",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block4",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 681091.387629154,
+                    "stop": 682053.598665387,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 7,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_11_11_21",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block5",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 682133.192528113,
+                    "stop": 683082.400075823,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 8,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_11_11_21",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": true,
+                    "name": "Block6",
+                    "num_trials": null,
+                    "quest": null,
+                    "start": null,
+                    "stop": null,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 9,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_11_11_21/2019_07_11_11_21customFIRA.csv",
+                "7ee06827cde2c98079ac757a1c0a2e4a"
+            ]
+        },
+        "2019_07_12_11_11": {
+            "blocks": [
+                {
+                    "date": "2019_07_12_11_11",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Quest",
+                    "num_trials": 80,
+                    "quest": [
+                        62,
+                        2,
+                        0.5,
+                        0.001
+                    ],
+                    "start": 752715.234834152,
+                    "stop": 752997.107601249,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 2,
+                    "threshold": 62
+                },
+                {
+                    "date": "2019_07_12_11_11",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block2",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 753086.1643375341,
+                    "stop": 753826.23633424,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 4,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_12_11_11",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block7",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 753964.435721192,
+                    "stop": 754935.756410338,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 10,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_12_11_11",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block8",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 755050.607933255,
+                    "stop": 756003.6060642779,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 11,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_12_11_11",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block9",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 756348.817079199,
+                    "stop": 757276.672030255,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 12,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_12_11_11",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block10",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 757444.140596633,
+                    "stop": 758350.4077793759,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 13,
+                    "threshold": null
+                },
+                {
+                    "date": "2019_07_12_11_11",
+                    "in_file_not_in_meta": false,
+                    "in_meta_not_in_file": false,
+                    "name": "Block11",
+                    "num_trials": 204,
+                    "quest": null,
+                    "start": 758411.650777816,
+                    "stop": 759334.3334568109,
+                    "subject": "S5",
+                    "subject_hash": "x648f9ad78ad1211c172d1a1cd2c5af3f",
+                    "task_id": 14,
+                    "threshold": null
+                }
+            ],
+            "fira_file": [
+                "/home/adrian/SingleCP_DotsReversal/raw/2019_07_12_11_11/2019_07_12_11_11_FIRA.csv",
+                "e7dd32800d1c34722fcd049f0426005d"
+            ]
+        }
+    }
+}

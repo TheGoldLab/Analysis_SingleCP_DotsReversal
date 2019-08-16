@@ -1,0 +1,970 @@
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_20_12_54/2019_06_20_12_54_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+          Quest  Block2
+type                   
+data         80   204.0
+metadata     80     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_08/2019_06_21_13_08_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+          Quest  Block2
+type                   
+data         80   204.0
+metadata     80     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/2019_06_24_12_38_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+          Quest  Block2
+type                   
+data         80   204.0
+metadata     80     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_12_38/2019_06_24_12_38customFIRA.csv
+
+
+---- processing taskID 1 -----
+
+vector Tut1 distinct from pure counter diagnosing ...
+  repeated trial indices: [1]
+
+---- processing taskID 2 -----
+
+vector Quest distinct from pure counter diagnosing ...
+  repeated trial indices: [14]
+
+---- processing taskID 3 -----
+
+          Quest
+type           
+data         80
+metadata     80
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_25_13_24/2019_06_25_13_24_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+          Quest  Block2
+type                   
+data         80   204.0
+metadata     80     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_03_15_03/2019_07_03_15_03_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+match fail for Block3
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+match fail for Block4
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
+match fail for Block5
+row 1: trialStart total of 203 NaN values
+
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
+match fail for Block6
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
+match fail for Block7
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 11 -----
+
+
+comparing with theoretical Block8
+match fail for Block8
+row 0: dirChoice total of 204 NaN values
+
+
+---- processing taskID 12 -----
+
+
+comparing with theoretical Block9
+MATCH FOUND!!!!!
+
+---- processing taskID 13 -----
+
+
+comparing with theoretical Block10
+MATCH FOUND!!!!!
+
+---- processing taskID 14 -----
+
+
+comparing with theoretical Block11
+MATCH FOUND!!!!!
+in Block5, metadata trial_num = 1, data trial_num = 204
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
+type                                                                                             
+metadata     80     204       0       0       1       0       0       0     204      204      204
+data         80     204     204     204     204     204     204     204     204      204      204
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_09_11_02/2019_07_09_11_02customFIRA.csv
+
+
+---- processing taskID 1 -----
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 3 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 5 -----
+
+
+---- processing taskID 6 -----
+
+vector Block3 distinct from pure counter diagnosing ...
+  repeated trial indices: [31, 97, 176, 182]
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
+vector Block4 distinct from pure counter diagnosing ...
+  repeated trial indices: [79]
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
+
+---- processing taskID 8 -----
+
+vector Block5 distinct from pure counter diagnosing ...
+  repeated trial indices: [93]
+
+comparing with theoretical Block5
+MATCH FOUND!!!!!
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
+MATCH FOUND!!!!!
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7
+type                                                           
+metadata     80     204     204     204     204     204   204.0
+data         80     204     204     204     204     204     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_40/2019_07_10_17_40_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+match fail for Block2
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+match fail for Block3
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+match fail for Block4
+row 0: trialStart total of 204 NaN values
+
+          Quest  Block2  Block3  Block4
+type                                   
+metadata      0       0       0       0
+data         80     204     204     204
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_12_11_11/2019_07_12_11_11_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+match fail for Block3
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+match fail for Block4
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
+match fail for Block5
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
+match fail for Block6
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
+MATCH FOUND!!!!!
+
+---- processing taskID 11 -----
+
+
+comparing with theoretical Block8
+MATCH FOUND!!!!!
+
+---- processing taskID 12 -----
+
+
+comparing with theoretical Block9
+MATCH FOUND!!!!!
+
+---- processing taskID 13 -----
+
+
+comparing with theoretical Block10
+MATCH FOUND!!!!!
+
+---- processing taskID 14 -----
+
+
+comparing with theoretical Block11
+MATCH FOUND!!!!!
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
+type                                                                                             
+metadata     80     204       0       0       0       0     204     204     204      204      204
+data         80     204     204     204     204     204     204     204     204      204      204
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_27/2019_06_20_13_27_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+          Quest  Block2
+type                   
+metadata      0     NaN
+data         80   204.0
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_34/2019_06_21_13_34customFIRA.csv
+
+
+---- processing taskID 1 -----
+
+vector Tut1 distinct from pure counter diagnosing ...
+  repeated trial indices: [1]
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 3 -----
+
+
+---- processing taskID 4 -----
+
+
+---- processing taskID 5 -----
+
+
+---- processing taskID 6 -----
+
+vector Block3 distinct from pure counter diagnosing ...
+  repeated trial indices: [15, 28]
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+          Quest  Block2  Block3  Block4  Block5  Block6
+type                                                   
+metadata      0       0     204   204.0     0.0     0.0
+data          1       1     204     NaN     NaN     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_06/2019_06_24_13_06_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+match fail for Block2
+row 0: dirChoice total of 204 NaN values
+
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+match fail for Block3
+row 113: trialEnd total of 91 NaN values
+
+in Block3, metadata trial_num = 113, data trial_num = 204
+          Quest  Block2  Block3
+type                           
+metadata      0       0     113
+data         80     204     204
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_25_14_06/2019_06_25_14_06customFIRA.csv
+
+
+---- processing taskID 4 -----
+
+
+---- processing taskID 5 -----
+
+vector Tut3 distinct from pure counter diagnosing ...
+  repeated trial indices: [6]
+
+---- processing taskID 8 -----
+
+vector Block5 distinct from pure counter diagnosing ...
+  repeated trial indices: [1, 135]
+
+comparing with theoretical Block5
+MATCH FOUND!!!!!
+
+---- processing taskID 9 -----
+
+vector Block6 distinct from pure counter diagnosing ...
+  repeated trial indices: [29, 37, 54, 107, 130, 140]
+
+comparing with theoretical Block6
+MATCH FOUND!!!!!
+
+---- processing taskID 10 -----
+
+vector Block7 distinct from pure counter diagnosing ...
+  repeated trial indices: [9, 20, 29, 57, 95, 96, 110, 112, 200]
+
+comparing with theoretical Block7
+MATCH FOUND!!!!!
+          Block2  Block5  Block6  Block7  Quest  Block3  Block4  Block8
+type                                                                   
+metadata       1     204     204     204    0.0     0.0     0.0   160.0
+data           1     204     204     204    NaN     NaN     NaN     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_03_16_32/2019_07_03_16_32_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+match fail for Block2
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+match fail for Block3
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+match fail for Block4
+row 0: trialStart total of 204 NaN values
+
+          Quest  Block2  Block3  Block4
+type                                   
+metadata      0       0       0       0
+data         80     204     204     204
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_12_18/2019_07_10_12_18_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+match fail for Block3
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+match fail for Block4
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
+match fail for Block5
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
+match fail for Block6
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
+match fail for Block7
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 11 -----
+
+
+comparing with theoretical Block8
+MATCH FOUND!!!!!
+
+---- processing taskID 12 -----
+
+
+comparing with theoretical Block9
+MATCH FOUND!!!!!
+
+---- processing taskID 13 -----
+
+
+comparing with theoretical Block10
+MATCH FOUND!!!!!
+
+---- processing taskID 14 -----
+
+
+comparing with theoretical Block11
+MATCH FOUND!!!!!
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
+type                                                                                             
+metadata     80     204       0       0       0       0       0     204     204      204      204
+data         80     204     204     204     204     204     204     204     204      204      204
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_42/2019_07_10_17_42customFIRA.csv
+
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
+MATCH FOUND!!!!!
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
+MATCH FOUND!!!!!
+          Block6  Block7  Quest  Block2  Block3  Block4  Block5  Block8
+type                                                                   
+data         204     204    NaN     NaN     NaN     NaN     NaN     NaN
+metadata     204     204    0.0     0.0     0.0     0.0     0.0   204.0
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_17_17_17/2019_07_17_17_17_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+match fail for Block3
+row 0: dirChoice total of 204 NaN values
+
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+match fail for Block4
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
+match fail for Block5
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 9 -----
+
+
+comparing with theoretical Block6
+match fail for Block6
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 10 -----
+
+
+comparing with theoretical Block7
+match fail for Block7
+row 0: trialStart total of 204 NaN values
+
+
+---- processing taskID 11 -----
+
+
+comparing with theoretical Block8
+MATCH FOUND!!!!!
+
+---- processing taskID 12 -----
+
+
+comparing with theoretical Block9
+MATCH FOUND!!!!!
+
+---- processing taskID 13 -----
+
+
+comparing with theoretical Block10
+MATCH FOUND!!!!!
+
+---- processing taskID 14 -----
+
+
+comparing with theoretical Block11
+MATCH FOUND!!!!!
+          Quest  Block2  Block3  Block4  Block5  Block6  Block7  Block8  Block9  Block10  Block11
+type                                                                                             
+metadata     80     204       0       0       0       0       0     204     204      204      204
+data         80     204     204     204     204     204     204     204     204      204      204
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_20_13_45/2019_06_20_13_45customFIRA.csv
+
+
+---- processing taskID 1 -----
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+---- processing taskID 5 -----
+
+vector Tut3 distinct from pure counter diagnosing ...
+  repeated trial indices: [3, 6, 9]
+
+---- processing taskID 6 -----
+
+vector Block3 distinct from pure counter diagnosing ...
+  repeated trial indices: [55, 107, 199]
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
+vector Block4 distinct from pure counter diagnosing ...
+  repeated trial indices: [1, 94, 174]
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
+          Quest  Block2  Block3  Block4  Block5
+type                                           
+metadata      1       1     204     204   204.0
+data          1       1     204     204     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_14_25/2019_06_21_14_25customFIRA.csv
+
+
+---- processing taskID 1 -----
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 7 -----
+
+
+---- processing taskID 9 -----
+
+vector Block6 distinct from pure counter diagnosing ...
+  repeated trial indices: [1, 168]
+
+comparing with theoretical Block6
+MATCH FOUND!!!!!
+          Quest  Block4  Block6  Block2  Block3  Block5  Block7
+type                                                           
+metadata      1       0     204     0.0     0.0     0.0   204.0
+data          1       1     204     NaN     NaN     NaN     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_31/2019_06_24_13_31_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+match fail for Block2
+row 0: dirChoice total of 204 NaN values
+
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
+
+---- processing taskID 8 -----
+
+
+comparing with theoretical Block5
+match fail for Block5
+row 0: trialStart total of 204 NaN values
+
+in Quest, metadata trial_num = 1, data trial_num = 80
+          Quest  Block2  Block3  Block4  Block5
+type                                           
+metadata      1       0     204     204       0
+data         80     204     204     204     204
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_06_27_11_33/2019_06_27_11_33customFIRA.csv
+
+
+---- processing taskID 1 -----
+
+vector Tut1 distinct from pure counter diagnosing ...
+  repeated trial indices: [1]
+
+---- processing taskID 2 -----
+
+vector Quest distinct from pure counter diagnosing ...
+  repeated trial indices: [75]
+
+---- processing taskID 4 -----
+
+vector Block2 distinct from pure counter diagnosing ...
+  repeated trial indices: [113, 195]
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 9 -----
+
+vector Block6 distinct from pure counter diagnosing ...
+  repeated trial indices: [33, 42, 47, 97]
+
+comparing with theoretical Block6
+match fail for Block6
+inconsistency with condProbCP. Theo= 0.25, Emp= 1.0
+
+
+---- processing taskID 10 -----
+
+vector Block7 distinct from pure counter diagnosing ...
+  repeated trial indices: [5, 92, 136, 191, 193]
+
+comparing with theoretical Block7
+match fail for Block7
+row 0: (100, 0.4) not found in [(100.0, 0.1), (200.0, 0.2), (300.0, 0.3), (400.0, 0.4)]
+
+          Quest  Block2  Block6  Block7  Block5  Block8  Block9  Block10
+type                                                                    
+metadata     80     204       0       0     0.0   204.0   204.0    204.0
+data         80     204     204     204     NaN     NaN     NaN      NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_08_17_13/2019_07_08_17_13customFIRA.csv
+
+
+---- processing taskID 1 -----
+
+
+---- processing taskID 2 -----
+
+vector Quest distinct from pure counter diagnosing ...
+  repeated trial indices: [61]
+
+---- processing taskID 3 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 5 -----
+
+
+---- processing taskID 6 -----
+
+vector Block3 distinct from pure counter diagnosing ...
+  repeated trial indices: [139]
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
+vector Block4 distinct from pure counter diagnosing ...
+  repeated trial indices: [72, 107]
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
+          Quest  Block2  Block3  Block4  Block5
+type                                           
+metadata     80     204     204     204   204.0
+data         80     204     204     204     NaN
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_10_17_19/2019_07_10_17_19_FIRA.csv
+
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 4 -----
+
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+match fail for Block3
+row 0: trialStart total of 204 NaN values
+
+          Quest  Block2  Block3
+type                           
+metadata     80     204       0
+data         80     204     204
+
+
+ --------------------------- new file -------------------------
+/home/adrian/SingleCP_DotsReversal/raw/2019_07_11_11_21/2019_07_11_11_21customFIRA.csv
+
+
+---- processing taskID 1 -----
+
+vector Tut1 distinct from pure counter diagnosing ...
+  repeated trial indices: [1]
+
+---- processing taskID 2 -----
+
+
+---- processing taskID 3 -----
+
+
+---- processing taskID 4 -----
+
+vector Block2 distinct from pure counter diagnosing ...
+  repeated trial indices: [84, 179, 181]
+
+comparing with theoretical Block2
+MATCH FOUND!!!!!
+
+---- processing taskID 5 -----
+
+
+---- processing taskID 6 -----
+
+
+comparing with theoretical Block3
+MATCH FOUND!!!!!
+
+---- processing taskID 7 -----
+
+
+comparing with theoretical Block4
+MATCH FOUND!!!!!
+
+---- processing taskID 8 -----
+
+vector Block5 distinct from pure counter diagnosing ...
+  repeated trial indices: [35]
+
+comparing with theoretical Block5
+MATCH FOUND!!!!!
+          Quest  Block2  Block3  Block4  Block5  Block6
+type                                                   
+metadata     80     204     204     204     204   204.0
+data         80     204     204     204     204     NaN
+
