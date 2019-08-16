@@ -5,7 +5,7 @@ import json
 import pickle
 import hashlib
 import datetime as dtime
-from collections import Counter
+from collections import Counter, OrderedDict
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -816,14 +816,34 @@ def plot_meta_data(plot_file):
         .5: 'red',
         .8: 'gray'
     }
+
+    y_values = OrderedDict(
+        {
+            'Quest': 0,
+            'Block2': 1,
+            'Block3': 2,
+            'Block4': 3,
+            'Block5': 4,
+            'Block6': 5,
+            'Block7': 6,
+            'Block8': 7,
+            'Block9': 8,
+            'Block10': 9,
+            'Block11': 10
+        }
+    )
+
     lines = []
     for p, c in colors.items():
         lines.append(mlines.Line2D([], [],
                                    linewidth=LINEWIDTH, color=c,
                                    marker='+', markersize=MARKERSIZE,
                                    label=f'prob CP = {p}' if not isinstance(p, str) else p))
-    delta_y = 3.5
-    ddy = 0
+    delta_y = 3
+    ddy = 1
+    for i, value in enumerate(y_values.keys()):
+        y_values[value] = i * delta_y
+
     """first we process the metadata"""
 
     max_num_days = 1
@@ -835,7 +855,9 @@ def plot_meta_data(plot_file):
         metadata = json.load(f_)
 
     # loop over subjects
+    block_counts = []
     for k, v in metadata.items():
+        block_counts_dict = {k: 0 for k in y_values.keys()}
         num_sessions = len(v)
 
         # arbitrary date before experiment started
@@ -896,7 +918,7 @@ def plot_meta_data(plot_file):
                 block['date'] = dtime.datetime.strptime(date_str, '%Y_%m_%d_%H_%M')  # time of session start
 
                 if not block['in_meta_not_in_file']:  # ensure block's data is on file
-
+                    block_counts_dict[block['name']] += 1
                     # add block start and stop times as datetime objects
                     try:
                         block_duration = dtime.timedelta(seconds=block['stop'] - block['start'])
@@ -917,7 +939,7 @@ def plot_meta_data(plot_file):
 
                 # add prob_cp field
                 block['prob_cp'] = PROB_CP[block['name']] if block['name'] != 'Quest' else 0
-
+        block_counts.append(block_counts_dict)
         # here we anticipate the numbe of columns in the subplots layout
         num_days = len(np.unique(list(dates_sweep.values())))
         if num_days > max_num_days:
@@ -928,7 +950,7 @@ def plot_meta_data(plot_file):
     """actual plotting"""
 
     # create figure
-    fig, axes = plt.subplots(num_subjects, max_num_days, figsize=(20, 16), sharey=True, sharex=False)
+    fig, axes = plt.subplots(num_subjects, max_num_days + 1, figsize=(20, 26), sharey='col', sharex=False)
     all_dates = {}
     all_titles = {}
     dy_dict = {}
@@ -969,7 +991,7 @@ def plot_meta_data(plot_file):
                     list_of_datetimes = [block['datetime_start'], block['datetime_stop']]
                     all_dates[(scount, day_count)] += list_of_datetimes
                     dy_dict[(scount, day_count)] += delta_y
-                    dy = dy_dict[(scount, day_count)]
+                    dy = y_values[block['name']]
                     dates = matplotlib.dates.date2num(list_of_datetimes)
                     curr_ax.plot_date(dates, [dy, dy],
                                       fmt='-+', linewidth=LINEWIDTH, markersize=MARKERSIZE,
@@ -1006,8 +1028,9 @@ def plot_meta_data(plot_file):
             curr_ax.spines['right'].set_visible(False)
             curr_ax.spines['bottom'].set_visible(False)
             curr_ax.spines['left'].set_visible(False)
-            orig_y1, orig_y2 = curr_ax.get_ylim()
-            curr_ax.set_ylim(orig_y1, orig_y2 + 2*ddy)
+            # orig_y1, orig_y2 = curr_ax.get_ylim()
+            curr_ax.set_ylim(min(y_values.values())-3*ddy, max(y_values.values())+3*ddy)
+            curr_ax.set_ylim(min(y_values.values())-3*ddy, max(y_values.values())+3*ddy)
             orig_x1, orig_x2 = curr_ax.get_xlim()
             curr_ax.set_xlim(orig_x1, orig_x1 + DX)
             xticks = [matplotlib.dates.num2date(x) for x in curr_ax.get_xticks()]
@@ -1016,9 +1039,36 @@ def plot_meta_data(plot_file):
             curr_ax.grid(b=True)
     fig.delaxes(axes[3, 2])
     fig.delaxes(axes[4, 2])
-    plt.legend(handles=lines, bbox_to_anchor=(1.5, 1.8), loc=2, borderaxespad=0., fontsize=2*SMALL_FONT)
+    plt.legend(handles=lines, bbox_to_anchor=(-1.1, 1.3), loc=2, borderaxespad=0., fontsize=2*SMALL_FONT)
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=.7)
 
+    def get_block_color(blockname):
+        if blockname == 'Quest':
+            return colors[blockname]
+        else:
+            pcp = PROB_CP[blockname]
+            return colors[pcp]
+
+    for subj in range(num_subjects):
+        curr_ax = axes[subj, max_num_days]
+        counts_dict = block_counts[subj]
+
+        # dict with key-val = <block name>:<index on x axis>
+        xindices = {k:x for x, k in enumerate(y_values.keys())}
+        # print(xindices)
+        xs, ys, cs = [], [], []  # x values, y values and color values
+        for k, v in counts_dict.items():
+            xs.append(xindices[k])
+            ys.append(v)
+            cs.append(get_block_color(k))
+        curr_ax.barh(xs, ys, color=cs)
+        curr_ax.set_yticks(list(xindices.values()))
+        yticklabels = ['Q'] + [str(i) for i in range(2,12)]
+        curr_ax.set_yticklabels(yticklabels)
+        curr_ax.set_xlabel('block count', fontsize=1.8*SMALL_FONT)
+        curr_ax.set_xlim(0, 4)
+        for label in (curr_ax.get_xticklabels() + curr_ax.get_yticklabels()):
+            label.set_fontsize(SMALL_FONT)
     plt.savefig(plot_file)
     # plt.show()
 
