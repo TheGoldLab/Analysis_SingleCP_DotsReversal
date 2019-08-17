@@ -35,6 +35,8 @@ PROB_CP = {
     'Block11': 0.8,
 }
 
+BLOCK_NAMES = ['Quest'] + list(PROB_CP.keys())
+
 TIMESTAMPS = [
     '2019_06_20_12_54',
     '2019_06_21_13_08',
@@ -149,8 +151,10 @@ SUBJECT_HASHES = (
     'x648f9ad78ad1211c172d1a1cd2c5af3f'
 )
 
+NUM_SUBJECTS = len(SUBJECT_HASHES)
+
 # short strings more human-readable than the hashes above
-SUBJECT_NAMES = tuple('S' + str(j) for j in range(1, len(SUBJECT_HASHES) + 1))
+SUBJECT_NAMES = tuple('S' + str(j) for j in range(1, NUM_SUBJECTS + 1))
 
 
 def get_name_from_hash(hashh):
@@ -800,64 +804,24 @@ def make_block_dict(name, start, stop, date, num_trials, subject_hash, absent_me
         in_meta_not_in_file=absent_file)
 
 
-def plot_meta_data(plot_file):
-    # todo: widen vert space
-    # todo: increase fontsize
-    # todo: remove box
-    from pandas.plotting import register_matplotlib_converters
-    register_matplotlib_converters()
-    import matplotlib.lines as mlines
-    import re
-    # map probCP to colors
-    colors = {
-        'Quest': 'green',
-        0: 'blue',
-        .2: 'purple',
-        .5: 'red',
-        .8: 'gray'
-    }
-
-    y_values = OrderedDict(
-        {
-            'Quest': 0,
-            'Block2': 1,
-            'Block3': 2,
-            'Block4': 3,
-            'Block5': 4,
-            'Block6': 5,
-            'Block7': 6,
-            'Block8': 7,
-            'Block9': 8,
-            'Block10': 9,
-            'Block11': 10
-        }
-    )
-
-    lines = []
-    for p, c in colors.items():
-        lines.append(mlines.Line2D([], [],
-                                   linewidth=LINEWIDTH, color=c,
-                                   marker='+', markersize=MARKERSIZE,
-                                   label=f'prob CP = {p}' if not isinstance(p, str) else p))
-    delta_y = 3
-    ddy = 1
-    for i, value in enumerate(y_values.keys()):
-        y_values[value] = i * delta_y
-
-    """first we process the metadata"""
-
-    max_num_days = 1
+def read_new_metadata():
     # get checksum of metadata file ...
     new_meta_chksum = md5(NEW_META_FILE)
     assert new_meta_chksum == NEW_META_CHKSUM
 
     with open(NEW_META_FILE, 'r') as f_:
         metadata = json.load(f_)
+    return metadata
+
+
+def super_power_metadata():
+    max_num_days = 1
+    metadata = read_new_metadata()
 
     # loop over subjects
     block_counts = []
     for k, v in metadata.items():
-        block_counts_dict = {k: 0 for k in y_values.keys()}
+        block_counts_dict = {k: 0 for k in BLOCK_NAMES}
         num_sessions = len(v)
 
         # arbitrary date before experiment started
@@ -889,7 +853,7 @@ def plot_meta_data(plot_file):
         sessions_dates = {s: dtime.datetime.strptime(s, '%Y_%m_%d_%H_%M') for s in v.keys()}
 
         # dict with key-val = <session's date>:<bool>
-        first_session = {s:False for s in sessions_dates.keys()}
+        first_session = {s: False for s in sessions_dates.keys()}
 
         # now find the actual first session of each day, for this subject
         for d in range(len(unique_rel_days)):
@@ -945,12 +909,61 @@ def plot_meta_data(plot_file):
         if num_days > max_num_days:
             max_num_days += 1
 
-    num_subjects = len(SUBJECT_NAMES)
+    # todo: figure out what needs to be returned
+
+
+def plot_meta_data(plot_file):
+    # todo: widen vert space
+    # todo: increase fontsize
+    # todo: remove box
+    from pandas.plotting import register_matplotlib_converters
+    register_matplotlib_converters()
+    import matplotlib.lines as mlines
+    import re
+    # map probCP to colors
+    colors = {
+        'Quest': 'green',
+        0: 'blue',
+        .2: 'purple',
+        .5: 'red',
+        .8: 'gray'
+    }
+
+    y_values = OrderedDict(
+        {
+            'Quest': 0,
+            'Block2': 1,
+            'Block3': 2,
+            'Block4': 3,
+            'Block5': 4,
+            'Block6': 5,
+            'Block7': 6,
+            'Block8': 7,
+            'Block9': 8,
+            'Block10': 9,
+            'Block11': 10
+        }
+    )
+
+    lines = []
+    for p, c in colors.items():
+        lines.append(mlines.Line2D([], [],
+                                   linewidth=LINEWIDTH, color=c,
+                                   marker='+', markersize=MARKERSIZE,
+                                   label=f'prob CP = {p}' if not isinstance(p, str) else p))
+    delta_y = 3
+    ddy = 1
+    for i, value in enumerate(y_values.keys()):
+        y_values[value] = i * delta_y
+
+    """first we process the metadata"""
+    # todo: get appropriate objects from call below
+    super_power_metadata()
 
     """actual plotting"""
 
     # create figure
-    fig, axes = plt.subplots(num_subjects, max_num_days + 1, figsize=(20, 26), sharey='col', sharex=False)
+    fig, axes = plt.subplots(NUM_SUBJECTS, max_num_days + 1, figsize=(20, 26), sharey='col', sharex=False)
     all_dates = {}
     all_titles = {}
     dy_dict = {}
@@ -1073,65 +1086,166 @@ def plot_meta_data(plot_file):
     # plt.show()
 
 
+def pcorrect_coh_all_subj_plot():
+    fig, axes = plt.subplots(NUM_SUBJECTS, max_num_days + 1, figsize=(20, 26), sharey='col', sharex=False)
+
+
+def pcorrect_coh_plot(subject, session_timestamp, ax):
+
+    # get the metadata from the Quest block
+    meta_data = read_new_metadata()
+    blocks = meta_data[subject][session_timestamp]['blocks']
+
+    def extract_quest_parameters():
+        for b in blocks:
+            if b['name'] == 'Quest':
+                params = tuple(b['quest'])
+                threshold, slope, guess_rate, lapse_rate = params
+                return threshold, slope, guess_rate, lapse_rate
+
+    def extract_block2_dataframe():
+        whole_block, _ = get_block_data('Block2', session_timestamp)
+        block_to_return = whole_block[whole_block['viewingDuration'] == .4]
+        # pprint.pprint(block_to_return.head())
+        return block_to_return
+
+    def build_x_axis():
+        th, _, __, ___ = extract_quest_parameters()
+        return 0, th, 100
+
+    # extract 400 msec trials from the Block2 to consider
+    def build_y_axis(err_margin=(.01, .99)):
+        data = extract_block2_dataframe()
+        percent_correct = []
+        errors = []
+        for coh_val in build_x_axis():
+            extracted_df = data[data['coherence'] == coh_val].copy()
+            num_nan = extracted_df['dirCorrect'].isna().sum()
+
+            data_point = extracted_df['dirCorrect'].mean()
+            percent_correct.append(data_point)
+
+            # compute error bars
+            num_trials = len(extracted_df) - num_nan
+            num_correct = extracted_df['dirCorrect'].sum()
+            num_incorrect = num_trials - num_correct
+
+            # compute Beta posterior
+            if coh_val == 0:
+                alpha_prior, beta_prior = 3.6, 3.6
+            elif coh_val == 100:
+                alpha_prior, beta_prior = 3, 1
+            else:
+                alpha_prior, beta_prior = 2.85, 2.33
+            b_alpha = alpha_prior + num_correct
+            b_beta = beta_prior + num_incorrect
+
+            # find quantiles of the posterior
+            import scipy.stats as sst
+            percentiles = sst.beta.ppf(err_margin, b_alpha, b_beta)
+            errors.append([abs(xx - data_point) for xx in percentiles])
+
+        return percent_correct, np.transpose(np.array(errors))
+
+    def count_trials():
+        trial_counts = {}
+        data = extract_block2_dataframe()
+        for coh_val in build_x_axis():
+            extracted_df = data[data['coherence'] == coh_val].copy()
+            num_nan = extracted_df['dirCorrect'].isna().sum()
+            num_trials = len(extracted_df) - num_nan
+            trial_counts[coh_val] = num_trials
+        return trial_counts
+
+    def weibull(x, guess, lapse, alpha, beta):
+        p_success = guess + (1 - guess - lapse) * (1 - np.exp(-(x / alpha)**beta))
+        return p_success  # 1-np.exp(-((x/alpha)**beta))
+
+    x_vals = build_x_axis()
+    y_vals, y_err = build_y_axis(err_margin=(.01, .99))
+    # print(y_vals)
+
+    # plot the points
+    ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o')
+    # plot the error bars
+
+    # plot the Weibull
+    x_weibull = np.linspace(0, 100)
+    qthreshold, qslope, qguess_rate, qlapse_rate = extract_quest_parameters()
+    y_weibull = weibull(x_weibull, qguess_rate, qlapse_rate, qthreshold, qslope)
+    ax.plot(x_weibull, y_weibull)
+
+    trial_numbers = count_trials()
+    coh_counter = 0
+    for xcoh, tn in trial_numbers.items():
+        ax.annotate(str(tn), (xcoh+2, y_vals[coh_counter]))
+        coh_counter += 1
+
+
 if __name__ == '__main__':
+    # pcorrect_coh_plot("S1", '2019_06_20_12_54')
+    fig, ax = plt.subplots(1, 1)
+    pcorrect_coh_plot('S2', '2019_06_24_12_38', ax)
+    plt.show()
+
     """
     When called from the command line, this script must have one argument. If the arg is 
     'check': checks are performed on the data
     'log': a log file is written to disc
     'plot': a plot summarizing valid metadata is saved to file
     """
-    _, arg = sys.argv
-
-    if arg == 'check':
-        files_data, latest_hashes = get_files_and_hashes(show=False, hash_map=True)
-
-        assert latest_hashes == REF_HASHES, 'latest hashes do not match reference hashes'
-        # pprint.pprint(latest_hashes)
-        """
-        Recall: files_data is a list of dicts with fields 'FIRA', 'dots' and 'session'. The values are as follows:
-            FIRA: list of pairs of the form (<path to .csv file>, <MD5 checksum for this file>)
-            dots: same as for FIRA, but for dots data
-            session: single string representing the timestamp of the session, in the format YYYY_MM_DD_HH_mm
-    
-            for the values corresponding to the FIRA and dots keys, the absence of any file is encoded as an empty list
-        """
-        # get checksum of metadata file ...
-        meta_chksum = md5(META_FILE)
-        assert meta_chksum == META_CHKSUM
-
-        num_folder_on_disk = len([i for i in os.listdir(DATA_FOLDER) if i[:5] == '2019_'])
-
-        # number of timestamps in notebook variable
-        num_timestamps = len(TIMESTAMPS)
-
-        # number of timestamps in metadafile
-        with open(META_FILE, 'r') as f:
-            meta_data = json.load(f)
-        # recall: meta_data is a dict. Its keys are hash codes for subjects.
-        # its values are themselves dicts, with keys session names and values dicts with session info.
-        # So, to access the session info corresponding to the first session of the the first subject, do:
-        # meta_data[<subj code>]['session1']
-        num_metadata_sessions = 0
-        for v in meta_data.values():
-            num_metadata_sessions += len(v)
-
-        assert num_timestamps == num_folder_on_disk, f'{num_timestamps} timestamps in module vs. {num_folder_on_disk} data folders on disk'
-        assert num_metadata_sessions == num_timestamps, 'distinct number of sessions in metadata than timestamps in module'
-
-        check_homogeneity(files_data)
-
-    elif arg == 'log':
-        valid_meta_data = produce_valid_metadata(meta_data)
-        with open('new_metadata', 'w') as fp:
-            try:
-                json.dump(valid_meta_data, fp, indent=4, sort_keys=True)
-            except TypeError:
-                print('pickling')
-                pickle.dump(valid_meta_data, fp)
-
-        print()
-        pprint.pprint(valid_meta_data)
-
-        print('ALL GOOD!!!!')
-    elif arg == 'plot':
-        plot_meta_data('metaplot.png')
+    # _, arg = sys.argv
+    #
+    # if arg == 'check':
+    #     files_data, latest_hashes = get_files_and_hashes(show=False, hash_map=True)
+    #
+    #     assert latest_hashes == REF_HASHES, 'latest hashes do not match reference hashes'
+    #     # pprint.pprint(latest_hashes)
+    #     """
+    #     Recall: files_data is a list of dicts with fields 'FIRA', 'dots' and 'session'. The values are as follows:
+    #         FIRA: list of pairs of the form (<path to .csv file>, <MD5 checksum for this file>)
+    #         dots: same as for FIRA, but for dots data
+    #         session: single string representing the timestamp of the session, in the format YYYY_MM_DD_HH_mm
+    #
+    #         for the values corresponding to the FIRA and dots keys, the absence of any file is encoded as an empty list
+    #     """
+    #     # get checksum of metadata file ...
+    #     meta_chksum = md5(META_FILE)
+    #     assert meta_chksum == META_CHKSUM
+    #
+    #     num_folder_on_disk = len([i for i in os.listdir(DATA_FOLDER) if i[:5] == '2019_'])
+    #
+    #     # number of timestamps in notebook variable
+    #     num_timestamps = len(TIMESTAMPS)
+    #
+    #     # number of timestamps in metadafile
+    #     with open(META_FILE, 'r') as f:
+    #         meta_data = json.load(f)
+    #     # recall: meta_data is a dict. Its keys are hash codes for subjects.
+    #     # its values are themselves dicts, with keys session names and values dicts with session info.
+    #     # So, to access the session info corresponding to the first session of the the first subject, do:
+    #     # meta_data[<subj code>]['session1']
+    #     num_metadata_sessions = 0
+    #     for v in meta_data.values():
+    #         num_metadata_sessions += len(v)
+    #
+    #     assert num_timestamps == num_folder_on_disk, f'{num_timestamps} timestamps in module vs. {num_folder_on_disk} data folders on disk'
+    #     assert num_metadata_sessions == num_timestamps, 'distinct number of sessions in metadata than timestamps in module'
+    #
+    #     check_homogeneity(files_data)
+    #
+    # elif arg == 'log':
+    #     valid_meta_data = produce_valid_metadata(meta_data)
+    #     with open('new_metadata', 'w') as fp:
+    #         try:
+    #             json.dump(valid_meta_data, fp, indent=4, sort_keys=True)
+    #         except TypeError:
+    #             print('pickling')
+    #             pickle.dump(valid_meta_data, fp)
+    #
+    #     print()
+    #     pprint.pprint(valid_meta_data)
+    #
+    #     print('ALL GOOD!!!!')
+    # elif arg == 'plot':
+    #     plot_meta_data('metaplot.png')
