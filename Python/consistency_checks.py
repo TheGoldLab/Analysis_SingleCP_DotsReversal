@@ -8,6 +8,7 @@ import datetime as dtime
 from collections import Counter, OrderedDict
 import pandas as pd
 import numpy as np
+import scipy.stats as sst
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -910,6 +911,7 @@ def super_power_metadata():
             max_num_days += 1
 
     # todo: figure out what needs to be returned
+    return max_num_days, metadata, block_counts
 
 
 def plot_meta_data(plot_file):
@@ -958,7 +960,7 @@ def plot_meta_data(plot_file):
 
     """first we process the metadata"""
     # todo: get appropriate objects from call below
-    super_power_metadata()
+    max_num_days, metadata, block_counts = super_power_metadata()
 
     """actual plotting"""
 
@@ -967,7 +969,7 @@ def plot_meta_data(plot_file):
     all_dates = {}
     all_titles = {}
     dy_dict = {}
-    for i in range(num_subjects):
+    for i in range(NUM_SUBJECTS):
         for j in range(max_num_days):
             all_dates[(i, j)] = []
             all_titles[(i, j)] = 0
@@ -1022,7 +1024,7 @@ def plot_meta_data(plot_file):
     # pprint.pprint(matplotlib.dates.date2num(all_dates[(0, 0)]))
     # print()
     DX = .13
-    for subj in range(num_subjects):
+    for subj in range(NUM_SUBJECTS):
         for dd in range(max_num_days):
             if (subj, dd) in {(3, 2), (4, 2)}:
                 continue
@@ -1062,7 +1064,7 @@ def plot_meta_data(plot_file):
             pcp = PROB_CP[blockname]
             return colors[pcp]
 
-    for subj in range(num_subjects):
+    for subj in range(NUM_SUBJECTS):
         curr_ax = axes[subj, max_num_days]
         counts_dict = block_counts[subj]
 
@@ -1086,12 +1088,15 @@ def plot_meta_data(plot_file):
     # plt.show()
 
 
-def pcorrect_coh_all_subj_plot():
-    fig, axes = plt.subplots(NUM_SUBJECTS, max_num_days + 1, figsize=(20, 26), sharey='col', sharex=False)
+# def pcorrect_coh_all_subj_plot():
+#
+#     fig, axes = plt.subplots(NUM_SUBJECTS, max_num_days + 1, figsize=(20, 26), sharey='col', sharex=False)
 
 
-def pcorrect_coh_plot(subject, session_timestamp, ax):
-
+def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail=True, figure=None):
+    assert err_method in {'Bayes', 'CI'}, 'error method unknown'
+    if detail:
+        assert figure is not None
     # get the metadata from the Quest block
     meta_data = read_new_metadata()
     blocks = meta_data[subject][session_timestamp]['blocks']
@@ -1130,21 +1135,26 @@ def pcorrect_coh_plot(subject, session_timestamp, ax):
             num_correct = extracted_df['dirCorrect'].sum()
             num_incorrect = num_trials - num_correct
 
-            # compute Beta posterior
-            if coh_val == 0:
-                alpha_prior, beta_prior = 3.6, 3.6
-            elif coh_val == 100:
-                alpha_prior, beta_prior = 3, 1
+            if err_method == 'Bayes':
+                # compute Beta posterior
+                if coh_val == 0:
+                    alpha_prior, beta_prior = 3.6, 3.6
+                elif coh_val == 100:
+                    alpha_prior, beta_prior = 3, 1
+                else:
+                    alpha_prior, beta_prior = 2.85, 2.33
+                b_alpha = alpha_prior + num_correct
+                b_beta = beta_prior + num_incorrect
+
+                # find quantiles of the posterior
+                percentiles = sst.beta.ppf(err_margin, b_alpha, b_beta)
+                errors.append([abs(xx - data_point) for xx in percentiles])
             else:
-                alpha_prior, beta_prior = 2.85, 2.33
-            b_alpha = alpha_prior + num_correct
-            b_beta = beta_prior + num_incorrect
-
-            # find quantiles of the posterior
-            import scipy.stats as sst
-            percentiles = sst.beta.ppf(err_margin, b_alpha, b_beta)
-            errors.append([abs(xx - data_point) for xx in percentiles])
-
+                pihat = num_correct / num_trials
+                stderr = np.sqrt(pihat * (1-pihat) / num_trials)
+                low_err = -sst.norm.ppf(err_margin[0]) * stderr
+                high_err = sst.norm.ppf(err_margin[1]) * stderr
+                errors.append([low_err, high_err])
         return percent_correct, np.transpose(np.array(errors))
 
     def count_trials():
@@ -1178,14 +1188,39 @@ def pcorrect_coh_plot(subject, session_timestamp, ax):
     trial_numbers = count_trials()
     coh_counter = 0
     for xcoh, tn in trial_numbers.items():
-        ax.annotate(str(tn), (xcoh+2, y_vals[coh_counter]))
+        ax.annotate(str(tn), (xcoh+2, y_vals[coh_counter]), fontsize=SMALL_FONT)
         coh_counter += 1
+
+    ax.set_title(session_timestamp)
+
+    # plot inset optionally
+    if detail:
+        # These are in unitless percentages of the figure size. (0,0 is bottom left)
+        container_pos = ax.get_position()
+        delta_h, delta_w = 0.01 * container_pos.height, 0.01 * container_pos.width
+        # print(container_pos)
+        left = container_pos.x0 + .5 * container_pos.width
+        bottom = container_pos.y0 + delta_h
+        width = container_pos.x1 - left - delta_w
+        height = .5 * container_pos.height
+        ax2 = figure.add_axes([left, bottom, width, height])
+        quest_data, _ = get_block_data('Quest', session_timestamp)
+        quest_data = quest_data[quest_data['dirChoice'].notnull()]
+        ax2.step(quest_data['trialIndex'], quest_data['coherence'])
+        ax2.tick_params(
+            axis='x',  # changes apply to the x-axis
+            which='both',  # both major and minor ticks are affected
+            bottom=False,  # ticks along the bottom edge are off
+            top=False,  # ticks along the top edge are off
+            labelbottom=False)  # labels along the bottom edge are off
+        for tick in ax2.yaxis.get_major_ticks():
+            tick.label.set_fontsize(SMALL_FONT)
 
 
 if __name__ == '__main__':
-    # pcorrect_coh_plot("S1", '2019_06_20_12_54')
     fig, ax = plt.subplots(1, 1)
-    pcorrect_coh_plot('S2', '2019_06_24_12_38', ax)
+    pcorrect_coh_plot("S1", '2019_06_20_12_54', ax, err_method='Bayes', figure=fig)
+    # pcorrect_coh_plot('S2', '2019_06_24_12_38', ax, err_method='Bayes', figure=fig)
     plt.show()
 
     """
