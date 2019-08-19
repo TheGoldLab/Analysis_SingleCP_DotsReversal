@@ -1335,6 +1335,7 @@ if __name__ == '__main__':
     # _, arg = sys.argv
     #
     # if arg == 'check':
+    # todo: turn this whole block into a function
     #     files_data, latest_hashes = get_files_and_hashes(show=False, hash_map=True)
     #
     #     assert latest_hashes == REF_HASHES, 'latest hashes do not match reference hashes'
