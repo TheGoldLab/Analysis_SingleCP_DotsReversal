@@ -2,23 +2,29 @@ import sys
 import os.path
 import pprint
 import json
+import re
 import pickle
 import hashlib
 import datetime as dtime
 from collections import Counter, OrderedDict
 import pandas as pd
+from pandas.plotting import register_matplotlib_converters
 import numpy as np
 import scipy.stats as sst
 import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 import matplotlib
 
-font = {'family': 'DejaVu Sans',
-        'size'  : 22}
+register_matplotlib_converters()
 
-matplotlib.rc('font', **font)
+SMALL_FONT = 10
+MEDIUM_FONT = 16
+LARGE_FONT = 22
+FONT_OPTS = {'family': 'DejaVu Sans', 'size': LARGE_FONT}
+matplotlib.rc('font', **FONT_OPTS)
+
 LINEWIDTH = 3
 MARKERSIZE = 12
-SMALL_FONT = 10
 
 THEO_DATA_FOLDER = '/home/adrian/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/Blocks003/'
 assert os.path.isdir(THEO_DATA_FOLDER)
@@ -620,26 +626,41 @@ def get_fira_files_from_timestamp(stamp):
     return []
 
 
-def get_block_data(name, stamp):
+def get_block_data(name, stamp=None, subject_name=None):
     """
-    for a given block name and timestamp (corresponding to a session tag) returns the data in the corresponding file
-    An attempt is made to pick file with ending '_FIRA.csv" if it exists.
+    for a given block name and optional timestamp (corresponding to a session tag) returns the data and the
+    corresponding file names.
+    An attempt is made to pick each file with ending '_FIRA.csv" if it exists.
     :param name: (str) block name, such as 'Block2', 'Block3', etc.
-    :param stamp: (str) timestamp, such as '2019_06_23_13_31'
-    :return: (2-tuple) (<pandas.DataFrame>, <path to file>)
+    :param stamp: (str) timestamp, such as '2019_06_23_13_31'. If None, all sessions are parsed
+    :param subject_name: (str) an element of SUBJECT_NAMES
+    :return: (2-tuple) (<pandas.DataFrame>, <list of paths to files>)
              Note the dataframe is empty if the block name is not in the data
     """
     task_id = NAME_TYPE_ID[name]
-    file_list = get_fira_files_from_timestamp(stamp)
-    assert len(file_list) <= 2, 'list of FIRA files has length greater than 2'
-    file = file_list[0][0]  # get first file in list
-    ending = file[-9:]
-    if ending != '_FIRA.csv' and len(file_list) > 1:
-        file = file_list[1][0]
-    data = pd.read_csv(file)
-    data = data[data['taskID'] == task_id]
-    return data, file
-
+    if stamp is None:
+        metadata = read_new_metadata()
+        if subject_name is None:
+            raise NotImplementedError
+        else:
+            list_of_dataframes = []
+            list_of_files = []
+            for session in metadata[subject_name].values():
+                filename = session['fira_file'][0]
+                data = pd.read_csv(filename)
+                list_of_dataframes.append(data[data['taskID'] == task_id])
+                list_of_files.append(filename)
+            return pd.concat(list_of_dataframes), list_of_files
+    else:
+        file_list = get_fira_files_from_timestamp(stamp)
+        assert len(file_list) <= 2, 'list of FIRA files has length greater than 2'
+        file = file_list[0][0]  # get first file in list
+        ending = file[-9:]
+        if ending != '_FIRA.csv' and len(file_list) > 1:
+            file = file_list[1][0]
+        data = pd.read_csv(file)
+        data = data[data['taskID'] == task_id]
+        return data, [file]
 
 def match_data(s, meta_data_file):
     """
@@ -672,8 +693,8 @@ def match_data(s, meta_data_file):
 
     blocks = []
     for block_name in block_names:
-        block_data, filename = get_block_data(block_name, timestamp)
-
+        block_data, filename = get_block_data(block_name, stamp=timestamp)
+        filename = filename[0]
         # store file info only once in outer dict
         if file_not_stored:
             candidate_fira_files = get_fira_files_from_timestamp(timestamp)
@@ -811,11 +832,21 @@ def read_new_metadata():
     assert new_meta_chksum == NEW_META_CHKSUM
 
     with open(NEW_META_FILE, 'r') as f_:
-        metadata = json.load(f_)
+        metadata = json.load(f_, object_pairs_hook=OrderedDict)
+    # assert isinstance(metadata, OrderedDict)
+    # assert isinstance(metadata["S1"], OrderedDict)
+    # assert isinstance(metadata["S1"]["2019_06_20_12_54"], OrderedDict)
     return metadata
 
 
 def super_power_metadata():
+    """
+    Reads the metadata stored in NEW_METADATA file and performs extra useful computations
+    1. maximum number of days across which any subject did the experiment
+    2. the empowered metadata dict
+    3. list of dicts of block counts. len(list) = NUM_SUBJECTS; key-val of dicts = <block name>:<block count>
+    :return: 3-tuple in the order described above
+    """
     max_num_days = 1
     metadata = read_new_metadata()
 
@@ -905,23 +936,15 @@ def super_power_metadata():
                 # add prob_cp field
                 block['prob_cp'] = PROB_CP[block['name']] if block['name'] != 'Quest' else 0
         block_counts.append(block_counts_dict)
-        # here we anticipate the numbe of columns in the subplots layout
+        # here we anticipate the number of columns in the subplots layout
         num_days = len(np.unique(list(dates_sweep.values())))
         if num_days > max_num_days:
             max_num_days += 1
 
-    # todo: figure out what needs to be returned
     return max_num_days, metadata, block_counts
 
 
 def plot_meta_data(plot_file):
-    # todo: widen vert space
-    # todo: increase fontsize
-    # todo: remove box
-    from pandas.plotting import register_matplotlib_converters
-    register_matplotlib_converters()
-    import matplotlib.lines as mlines
-    import re
     # map probCP to colors
     colors = {
         'Quest': 'green',
@@ -959,7 +982,6 @@ def plot_meta_data(plot_file):
         y_values[value] = i * delta_y
 
     """first we process the metadata"""
-    # todo: get appropriate objects from call below
     max_num_days, metadata, block_counts = super_power_metadata()
 
     """actual plotting"""
@@ -1064,6 +1086,7 @@ def plot_meta_data(plot_file):
             pcp = PROB_CP[blockname]
             return colors[pcp]
 
+    # plot block counts in right-most column
     for subj in range(NUM_SUBJECTS):
         curr_ax = axes[subj, max_num_days]
         counts_dict = block_counts[subj]
@@ -1088,15 +1111,131 @@ def plot_meta_data(plot_file):
     # plt.show()
 
 
-# def pcorrect_coh_all_subj_plot():
-#
-#     fig, axes = plt.subplots(NUM_SUBJECTS, max_num_days + 1, figsize=(20, 26), sharey='col', sharex=False)
+def pcorrect_coh_all_subj_plot():
+    max_num_days, metadata, block_counts = super_power_metadata()
+    fig, axes = plt.subplots(NUM_SUBJECTS, max_num_days + 1, figsize=(25, 21), sharey=True, sharex=False)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=.1, hspace=.2)
+
+    def get_first_session_of_day(dict_of_sessions, day_count):
+        for sess, content in dict_of_sessions.items():
+            if content['day_count'] < day_count:
+                continue
+            else:
+                return sess
+
+    for subj in range(NUM_SUBJECTS):
+        # # debug
+        # if subj < NUM_SUBJECTS-1:
+        #     continue
+        subj_name = SUBJECT_NAMES[subj]
+        bottom_label = True  # use the following to only draw xlabel on bottom-most panels: subj == NUM_SUBJECTS - 1
+        for day in range(max_num_days):
+            if (subj, day) in {(3, 2), (4, 2)}:
+                continue
+            curr_ax = axes[subj, day]
+            subj_info = metadata[subj_name]
+            first_session = get_first_session_of_day(subj_info, day)
+            left_label = day == 0
+
+            pcorrect_coh_plot(subj_name, first_session, curr_ax, figure=fig,
+                              bottom_left_labels=(bottom_label, left_label))
+            if day == 0:
+                curr_ax.set_ylabel('subj ' + str(subj + 1))
+            if subj < NUM_SUBJECTS - 1:
+                curr_ax.tick_params(axis='x', labelsize=SMALL_FONT)
+            elif subj == NUM_SUBJECTS - 1:
+                curr_ax.set_xlabel('coherence', fontsize=MEDIUM_FONT)
+
+    fig.delaxes(axes[3, 2])
+    fig.delaxes(axes[4, 2])
+
+    # plot all Block2 data together in right-most column
+    for subj in range(NUM_SUBJECTS):
+        ax = axes[subj, max_num_days]
+        all_block2, _ = get_block_data('Block2', subject_name=SUBJECT_NAMES[subj])
+        all_block2 = all_block2[all_block2['viewingDuration'] == .4]
+        y_vals, y_err, trial_numbers = build_y_axis_pcorrect(all_block2,
+                                                             err_margin=(.01, .99), err_method='Bayes')
+        x_vals = all_block2['coherence'].unique()
+        x_vals.sort()
+
+        # plot the points
+        ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o')
+        for xcoh, tn in enumerate(trial_numbers):
+            ax.annotate(str(tn), (x_vals[xcoh] + 2, y_vals[xcoh]), fontsize=SMALL_FONT)
+
+        if subj == 0:
+            ax.set_title("All block 2's", fontsize=MEDIUM_FONT)
+
+        ax.tick_params(axis='y', labelright=True, right=True, labelsize=MEDIUM_FONT)
+        ax.set_ylabel('P(Correct)', fontsize=MEDIUM_FONT, rotation=90)
+        ax.yaxis.set_label_position("right")
+
+        ax.set_xticks(x_vals)
+        ax.set_xlim(-2, 103)
+        ax.tick_params(axis='x', labelsize=SMALL_FONT)
+
+        # ax.set_ylim(0, 1.2)
+    # plt.show()
+    for ax in axes.flat:
+        ax.axhline(.5, linestyle='--', color='k')
+        ax.axhline(1, linestyle='--', color='k')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+    plt.savefig('coh_perf_Block2.png')
 
 
-def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail=True, figure=None):
+def build_y_axis_pcorrect(data, err_margin=(.01, .99), err_method='Bayes'):
+    percent_correct, errors, coh_trial_counts = [], [], []
+
+    def get_coh_values(dataframe):
+        assert dataframe['coherence'].isna().sum() == 0, 'some nan values in coherence column'
+        coh_vals = dataframe['coherence'].unique()
+        coh_vals.sort()
+        return coh_vals
+
+    for coh_val in get_coh_values(data):
+        extracted_df = data[data['coherence'] == coh_val].copy()
+        num_nan = extracted_df['dirCorrect'].isna().sum()
+
+        data_point = extracted_df['dirCorrect'].mean()
+        percent_correct.append(data_point)
+
+        # compute error bars
+        num_trials = len(extracted_df) - num_nan
+        coh_trial_counts.append(num_trials)
+        num_correct = extracted_df['dirCorrect'].sum()
+        num_incorrect = num_trials - num_correct
+
+        if err_method == 'Bayes':
+            # compute Beta posterior
+            if coh_val == 0:
+                alpha_prior, beta_prior = 3.6, 3.6
+            elif coh_val == 100:
+                alpha_prior, beta_prior = 3, 1
+            else:
+                alpha_prior, beta_prior = 2.85, 2.33
+            b_alpha = alpha_prior + num_correct
+            b_beta = beta_prior + num_incorrect
+
+            # find quantiles of the posterior
+            percentiles = sst.beta.ppf(err_margin, b_alpha, b_beta)
+            errors.append([abs(xx - data_point) for xx in percentiles])
+        else:
+            pihat = num_correct / num_trials
+            stderr = np.sqrt(pihat * (1-pihat) / num_trials)
+            low_err = -sst.norm.ppf(err_margin[0]) * stderr
+            high_err = sst.norm.ppf(err_margin[1]) * stderr
+            errors.append([low_err, high_err])
+    return percent_correct, np.transpose(np.array(errors)), coh_trial_counts
+
+
+def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail=True, figure=None,
+                      bottom_left_labels=(True, True)):
     assert err_method in {'Bayes', 'CI'}, 'error method unknown'
     if detail:
         assert figure is not None
+
     # get the metadata from the Quest block
     meta_data = read_new_metadata()
     blocks = meta_data[subject][session_timestamp]['blocks']
@@ -1109,89 +1248,52 @@ def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail
                 return threshold, slope, guess_rate, lapse_rate
 
     def extract_block2_dataframe():
-        whole_block, _ = get_block_data('Block2', session_timestamp)
+        whole_block, _ = get_block_data('Block2', stamp=session_timestamp)
         block_to_return = whole_block[whole_block['viewingDuration'] == .4]
         # pprint.pprint(block_to_return.head())
         return block_to_return
 
     def build_x_axis():
         th, _, __, ___ = extract_quest_parameters()
-        return 0, th, 100
-
-    # extract 400 msec trials from the Block2 to consider
-    def build_y_axis(err_margin=(.01, .99)):
-        data = extract_block2_dataframe()
-        percent_correct = []
-        errors = []
-        for coh_val in build_x_axis():
-            extracted_df = data[data['coherence'] == coh_val].copy()
-            num_nan = extracted_df['dirCorrect'].isna().sum()
-
-            data_point = extracted_df['dirCorrect'].mean()
-            percent_correct.append(data_point)
-
-            # compute error bars
-            num_trials = len(extracted_df) - num_nan
-            num_correct = extracted_df['dirCorrect'].sum()
-            num_incorrect = num_trials - num_correct
-
-            if err_method == 'Bayes':
-                # compute Beta posterior
-                if coh_val == 0:
-                    alpha_prior, beta_prior = 3.6, 3.6
-                elif coh_val == 100:
-                    alpha_prior, beta_prior = 3, 1
-                else:
-                    alpha_prior, beta_prior = 2.85, 2.33
-                b_alpha = alpha_prior + num_correct
-                b_beta = beta_prior + num_incorrect
-
-                # find quantiles of the posterior
-                percentiles = sst.beta.ppf(err_margin, b_alpha, b_beta)
-                errors.append([abs(xx - data_point) for xx in percentiles])
-            else:
-                pihat = num_correct / num_trials
-                stderr = np.sqrt(pihat * (1-pihat) / num_trials)
-                low_err = -sst.norm.ppf(err_margin[0]) * stderr
-                high_err = sst.norm.ppf(err_margin[1]) * stderr
-                errors.append([low_err, high_err])
-        return percent_correct, np.transpose(np.array(errors))
-
-    def count_trials():
-        trial_counts = {}
-        data = extract_block2_dataframe()
-        for coh_val in build_x_axis():
-            extracted_df = data[data['coherence'] == coh_val].copy()
-            num_nan = extracted_df['dirCorrect'].isna().sum()
-            num_trials = len(extracted_df) - num_nan
-            trial_counts[coh_val] = num_trials
-        return trial_counts
+        if th == 100:
+            return 0, 100
+        else:
+            return 0, th, 100
 
     def weibull(x, guess, lapse, alpha, beta):
         p_success = guess + (1 - guess - lapse) * (1 - np.exp(-(x / alpha)**beta))
         return p_success  # 1-np.exp(-((x/alpha)**beta))
 
     x_vals = build_x_axis()
-    y_vals, y_err = build_y_axis(err_margin=(.01, .99))
-    # print(y_vals)
+    y_vals, y_err, trial_numbers = build_y_axis_pcorrect(extract_block2_dataframe(),
+                                                         err_margin=(.01, .99), err_method=err_method)
 
-    # plot the points
+    # plot the points with error bars
     ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o')
-    # plot the error bars
 
     # plot the Weibull
     x_weibull = np.linspace(0, 100)
     qthreshold, qslope, qguess_rate, qlapse_rate = extract_quest_parameters()
     y_weibull = weibull(x_weibull, qguess_rate, qlapse_rate, qthreshold, qslope)
+
     ax.plot(x_weibull, y_weibull)
 
-    trial_numbers = count_trials()
-    coh_counter = 0
-    for xcoh, tn in trial_numbers.items():
-        ax.annotate(str(tn), (xcoh+2, y_vals[coh_counter]), fontsize=SMALL_FONT)
-        coh_counter += 1
+    for xcoh, tn in enumerate(trial_numbers):
+        ax.annotate(str(tn), (x_vals[xcoh]+2, y_vals[xcoh]), fontsize=SMALL_FONT)
 
-    ax.set_title(session_timestamp)
+    ax.set_title(session_timestamp, fontsize=MEDIUM_FONT)
+    ax.tick_params(
+        axis='both',
+        labelbottom=bottom_left_labels[0],
+        labelleft=bottom_left_labels[1],
+        labelsize=MEDIUM_FONT
+    )
+    # if bottom_left_labels[1]:
+    #     ax.set_ylabel('P(Correct)', fontsize=MEDIUM_FONT)
+    # if bottom_left_labels[0]:
+    #     ax.set_xlabel('coherence', fontsize=MEDIUM_FONT)
+    ax.set_xlim(-2, 103)
+    ax.set_ylim(0.25, 1.1)
 
     # plot inset optionally
     if detail:
@@ -1204,7 +1306,7 @@ def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail
         width = container_pos.x1 - left - delta_w
         height = .5 * container_pos.height
         ax2 = figure.add_axes([left, bottom, width, height])
-        quest_data, _ = get_block_data('Quest', session_timestamp)
+        quest_data, _ = get_block_data('Quest', stamp=session_timestamp)
         quest_data = quest_data[quest_data['dirChoice'].notnull()]
         ax2.step(quest_data['trialIndex'], quest_data['coherence'])
         ax2.tick_params(
@@ -1218,11 +1320,12 @@ def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail
 
 
 if __name__ == '__main__':
-    fig, ax = plt.subplots(1, 1)
-    pcorrect_coh_plot("S1", '2019_06_20_12_54', ax, err_method='Bayes', figure=fig)
-    # pcorrect_coh_plot('S2', '2019_06_24_12_38', ax, err_method='Bayes', figure=fig)
-    plt.show()
-
+    # fig, ax = plt.subplots(1, 1)
+    # pcorrect_coh_plot("S1", '2019_06_20_12_54', ax, err_method='Bayes', figure=fig)
+    # # pcorrect_coh_plot('S2', '2019_06_24_12_38', ax, err_method='Bayes', figure=fig)
+    # plt.show()
+    # read_new_metadata()
+    pcorrect_coh_all_subj_plot()
     """
     When called from the command line, this script must have one argument. If the arg is 
     'check': checks are performed on the data
