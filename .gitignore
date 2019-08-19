@@ -17,6 +17,7 @@ Python/.idea/*
 Python/__pycache__/*
 figures/*
 *.csv
+!R/test.csv
 !MATLAB/metaDump.csv
 *.mat
 *.h5
