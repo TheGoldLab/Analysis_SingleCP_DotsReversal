@@ -29,6 +29,9 @@ MARKERSIZE = 12
 THEO_DATA_FOLDER = '/home/adrian/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/Blocks003/'
 assert os.path.isdir(THEO_DATA_FOLDER)
 
+IMAGE_SAVE_FOLDER = '/home/adrian/Git/dataviz/data_website/images/'
+assert os.path.isdir(IMAGE_SAVE_FOLDER)
+
 PROB_CP = {
     'Block2': 0,
     'Block3': 0.2,
@@ -40,6 +43,15 @@ PROB_CP = {
     'Block9': 0.5,
     'Block10': 0.2,
     'Block11': 0.8,
+}
+
+# map probCP to colors
+PCP_COLORS = {
+    'Quest': 'green',
+    0: 'blue',
+    .2: 'purple',
+    .5: 'red',
+    .8: 'gray'
 }
 
 BLOCK_NAMES = ['Quest'] + list(PROB_CP.keys())
@@ -662,6 +674,18 @@ def get_block_data(name, stamp=None, subject_name=None):
         data = data[data['taskID'] == task_id]
         return data, [file]
 
+
+def get_probcp_data(prob_changepoint, subject_name=None):
+    if subject_name is None:
+        raise NotImplementedError
+    list_of_dataframes = []
+    list_of_block_names = [k for k, v in PROB_CP.items() if v == prob_changepoint]
+    for bn in list_of_block_names:
+        bdata, _ = get_block_data(bn, subject_name=subject_name)
+        list_of_dataframes.append(bdata)
+    return pd.concat(list_of_dataframes)
+
+
 def match_data(s, meta_data_file):
     """
     checks whether the session's metadata in s is congruent with data on file and that the latter is congruent with the
@@ -945,15 +969,6 @@ def super_power_metadata():
 
 
 def plot_meta_data(plot_file):
-    # map probCP to colors
-    colors = {
-        'Quest': 'green',
-        0: 'blue',
-        .2: 'purple',
-        .5: 'red',
-        .8: 'gray'
-    }
-
     y_values = OrderedDict(
         {
             'Quest': 0,
@@ -971,7 +986,7 @@ def plot_meta_data(plot_file):
     )
 
     lines = []
-    for p, c in colors.items():
+    for p, c in PCP_COLORS.items():
         lines.append(mlines.Line2D([], [],
                                    linewidth=LINEWIDTH, color=c,
                                    marker='+', markersize=MARKERSIZE,
@@ -1020,9 +1035,9 @@ def plot_meta_data(plot_file):
             for block in list_of_blocks:
 
                 if block['name'] == 'Quest':
-                    linecolor = colors[block['name']]
+                    linecolor = PCP_COLORS[block['name']]
                 else:
-                    linecolor = colors[PROB_CP[block['name']]]
+                    linecolor = PCP_COLORS[PROB_CP[block['name']]]
 
                 if not block['in_meta_not_in_file']:
                     list_of_datetimes = [block['datetime_start'], block['datetime_stop']]
@@ -1081,10 +1096,10 @@ def plot_meta_data(plot_file):
 
     def get_block_color(blockname):
         if blockname == 'Quest':
-            return colors[blockname]
+            return PCP_COLORS[blockname]
         else:
             pcp = PROB_CP[blockname]
-            return colors[pcp]
+            return PCP_COLORS[pcp]
 
     # plot block counts in right-most column
     for subj in range(NUM_SUBJECTS):
@@ -1112,6 +1127,10 @@ def plot_meta_data(plot_file):
 
 
 def pcorrect_coh_all_subj_plot():
+    """
+    Produce plot https://scienceprojects.altervista.org/plots/coh_perf_block2.html (as of 08/20/2019)
+    :return:
+    """
     max_num_days, metadata, block_counts = super_power_metadata()
     fig, axes = plt.subplots(NUM_SUBJECTS, max_num_days + 1, figsize=(25, 21), sharey=True, sharex=False)
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=.1, hspace=.2)
@@ -1183,6 +1202,75 @@ def pcorrect_coh_all_subj_plot():
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
     plt.savefig('coh_perf_Block2.png')
+
+
+def pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4):
+    """
+    Produce plot https://scienceprojects.altervista.org/plots/coh_perf_all_prob_cp.html (as of .../2019)
+    :param vd_filter: (float) the viewing duration through which data should be filtered. Default 400 msec.
+    :return:
+    """
+    # get superpower metadata
+    max_num_days, metadata, block_counts = super_power_metadata()
+
+    # unique prob_cp values
+    prob_cp_vals = np.unique(list(PROB_CP.values()))
+    prob_cp_vals.sort()
+
+    # create figure and axes
+    fig, axes = plt.subplots(NUM_SUBJECTS, len(prob_cp_vals), figsize=(25, 21), sharey=True, sharex=False)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=.2, hspace=.2)
+
+    # loop over subjects
+    for subj in range(NUM_SUBJECTS):
+        subj_name = SUBJECT_NAMES[subj]
+        # # debug
+        # if subj > 0:
+        #     continue
+        for pcp_idx in range(len(prob_cp_vals)):
+            prob_cp = prob_cp_vals[pcp_idx]
+            ax = axes[subj, pcp_idx]
+            all_probcp = get_probcp_data(prob_cp, subject_name=subj_name)
+            all_probcp = all_probcp[all_probcp['viewingDuration'] == vd_filter]
+            y_vals, y_err, trial_numbers = build_y_axis_pcorrect(all_probcp,
+                                                                 err_margin=(.01, .99), err_method='Bayes')
+            x_vals = all_probcp['coherence'].unique()
+            x_vals.sort()
+
+            # plot the points
+            ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o', color=PCP_COLORS[prob_cp])
+            for xcoh, tn in enumerate(trial_numbers):
+                ax.annotate(str(tn), (x_vals[xcoh] + 2, y_vals[xcoh]), fontsize=SMALL_FONT)
+
+            if subj == 0:
+                ax.set_title(f"Prob CP = {prob_cp}", fontsize=MEDIUM_FONT)
+
+            # ax.tick_params(axis='y', labelright=True, right=True, labelsize=MEDIUM_FONT)
+            if prob_cp == 0:
+                ax.set_ylabel(subj_name, fontsize=MEDIUM_FONT)
+            elif prob_cp == max(prob_cp_vals):
+                ax.yaxis.set_label_position("right")
+                ax.set_ylabel('P(Correct)', fontsize=MEDIUM_FONT)
+
+            ax.set_xticks(x_vals)
+            ticks = np.arange(0, 1, 0.1)
+            labels = [f"{x:.1f}" for x in ticks]
+            plt.yticks(ticks, labels=labels)
+            ax.set_xlim(-2, 103)
+            ax.set_ylim(.2, 1.1)
+            ax.tick_params(axis='both', labelsize=SMALL_FONT)
+            # if pcp_idx > 0:
+            #     ax.set_yticks([])
+
+        # ax.set_ylim(0, 1.2)
+    # plt.show()
+    for ax in axes.flat:
+        ax.axhline(.5, linestyle='--', color='k')
+        ax.axhline(1, linestyle='--', color='k')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+    plt.savefig(IMAGE_SAVE_FOLDER + 'coh_perf_all_prob_cp.png')
+    # plt.show()
 
 
 def build_y_axis_pcorrect(data, err_margin=(.01, .99), err_method='Bayes'):
@@ -1325,7 +1413,8 @@ if __name__ == '__main__':
     # # pcorrect_coh_plot('S2', '2019_06_24_12_38', ax, err_method='Bayes', figure=fig)
     # plt.show()
     # read_new_metadata()
-    pcorrect_coh_all_subj_plot()
+    # pcorrect_coh_all_subj_plot()
+    pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4)
     """
     When called from the command line, this script must have one argument. If the arg is 
     'check': checks are performed on the data
