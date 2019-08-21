@@ -638,6 +638,40 @@ def get_fira_files_from_timestamp(stamp):
     return []
 
 
+def validate_trials(initial_df):
+    """
+    remove all rows from df that do not meet the following conditions:
+       1. dirCorrect is not NaN
+       2. cpCorrect is not NaN if probCP > 0
+       3. dirChoice is not NaN
+       4. cpChoice is not NaN if probCP > 0
+       5. dirRT > 0
+       6. cpRT > 0
+       7. abs(dotsOff - dotsOn - viewingDuration) < tolerance (45 msec)
+       8. trialIndex should NOT be repeated
+    :param df: dataframe in the format of FIRA.ecodes
+    :return: df modified inplace
+    """
+    vd_tolerance = 45 / 1000  # in seconds
+    df = initial_df.copy()  # just to make sure I don't modify the df outside of the function
+    df = df[df['dirCorrect'].notna()]  # 1
+    df = df[df['dirChoice'].notna()]  # 3
+    df = df[df['dirRT'] > 0]  # 5
+    df = df[df['cpRT'] > 0]  # 6
+    df = df[((df['condProbCP'] > 0) & (df['cpCorrect'].notna())) | (df['condProbCP'] == 0)]  # 2
+    df = df[((df['condProbCP'] > 0) & (df['cpChoice'].notna())) | (df['condProbCP'] == 0)]  # 4
+
+    # the following is inspired from this answer: https://stackoverflow.com/a/18182241
+    def check_vd(row):
+        return abs(df['dotsOff'] - df['dotsOn'] - df['viewingDuration']) < vd_tolerance
+    df = df[df.apply(check_vd, axis=1)]  # 7
+
+    assert not any(df['trialIndex'].duplicated()), 'duplicated trialIndex found'
+    # df = df.drop_duplicates('trialIndex')
+
+    return df
+
+
 def get_block_data(name, stamp=None, subject_name=None):
     """
     for a given block name and optional timestamp (corresponding to a session tag) returns the data and the
@@ -660,19 +694,22 @@ def get_block_data(name, stamp=None, subject_name=None):
             for session in metadata[subject_name].values():
                 filename = session['fira_file'][0]
                 data = pd.read_csv(filename)
-                list_of_dataframes.append(data[data['taskID'] == task_id])
+                data = data[data['taskID'] == task_id]
+                list_of_dataframes.append(validate_trials(data))
                 list_of_files.append(filename)
             return pd.concat(list_of_dataframes), list_of_files
     else:
+        # todo: this whole block to get 'file' is obsolete with new metadata? Maybe not as used to produce new metadata
         file_list = get_fira_files_from_timestamp(stamp)
         assert len(file_list) <= 2, 'list of FIRA files has length greater than 2'
         file = file_list[0][0]  # get first file in list
         ending = file[-9:]
         if ending != '_FIRA.csv' and len(file_list) > 1:
             file = file_list[1][0]
+
         data = pd.read_csv(file)
         data = data[data['taskID'] == task_id]
-        return data, [file]
+        return validate_trials(data), [file]
 
 
 def get_probcp_data(prob_changepoint, subject_name=None):
@@ -1244,8 +1281,9 @@ def pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4):
 
             if subj == 0:
                 ax.set_title(f"Prob CP = {prob_cp}", fontsize=MEDIUM_FONT)
+            elif subj == len(NUM_SUBJECTS) - 1:
+                ax.set_xlabel('coherence')
 
-            # ax.tick_params(axis='y', labelright=True, right=True, labelsize=MEDIUM_FONT)
             if prob_cp == 0:
                 ax.set_ylabel(subj_name, fontsize=MEDIUM_FONT)
             elif prob_cp == max(prob_cp_vals):
@@ -1253,14 +1291,14 @@ def pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4):
                 ax.set_ylabel('P(Correct)', fontsize=MEDIUM_FONT)
 
             ax.set_xticks(x_vals)
-            ticks = np.arange(0, 1, 0.1)
-            labels = [f"{x:.1f}" for x in ticks]
-            plt.yticks(ticks, labels=labels)
+            ticks = np.arange(0.2, 1.1, 0.2)
+            # labels = [f"{x:.1f}" for x in ticks]
+            ax.set_yticks(ticks)  # todo: still not happy with yticks in this plot
+
             ax.set_xlim(-2, 103)
             ax.set_ylim(.2, 1.1)
-            ax.tick_params(axis='both', labelsize=SMALL_FONT)
-            # if pcp_idx > 0:
-            #     ax.set_yticks([])
+
+            ax.tick_params(axis='both', labelleft=True, left=True, labelbottom=True, bottom=True, labelsize=SMALL_FONT)
 
         # ax.set_ylim(0, 1.2)
     # plt.show()
@@ -1269,7 +1307,12 @@ def pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4):
         ax.axhline(1, linestyle='--', color='k')
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
-    plt.savefig(IMAGE_SAVE_FOLDER + 'coh_perf_all_prob_cp.png')
+
+    vd_msec = str(int(1000*vd_filter))
+    fig.suptitle('Viewing Duration = ' + vd_msec + ' msec', fontsize=LARGE_FONT)
+
+    file_to_save = IMAGE_SAVE_FOLDER + 'coh_perf_all_prob_cp_' + vd_msec + '_.png'
+    plt.savefig(file_to_save)
     # plt.show()
 
 
@@ -1413,8 +1456,10 @@ if __name__ == '__main__':
     # # pcorrect_coh_plot('S2', '2019_06_24_12_38', ax, err_method='Bayes', figure=fig)
     # plt.show()
     # read_new_metadata()
-    # pcorrect_coh_all_subj_plot()
-    pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4)
+    plot_meta_data('metadata.png')
+    pcorrect_coh_all_subj_plot()  # Quest + Block2
+    for vd in [.1, .2, .3, .4]:
+        pcorrect_coh_all_subj_probcp_plot(vd_filter=vd)  # Perf by subject by PROB_CP
     """
     When called from the command line, this script must have one argument. If the arg is 
     'check': checks are performed on the data
