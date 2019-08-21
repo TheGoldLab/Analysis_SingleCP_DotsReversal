@@ -96,8 +96,12 @@ assert os.path.exists(META_FILE)
 # hard code the first one in case file has changed
 META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'
 
-# same for clean metadata (commit 9b7968e)
-NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata.json'
+# first version of clean metadata (commit 9b7968e)
+# NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata.json'
+
+# second version of clean metadata (commit 9aaafa8)
+NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata2.json'
+
 assert os.path.exists(NEW_META_FILE)
 # hard code the first one in case file has changed
 NEW_META_CHKSUM = '26e4181e0383eb34ceca75f52e2d4506'  # initial erroneous version was '13cdd7970ee824d96e132c99fcf5362a'
