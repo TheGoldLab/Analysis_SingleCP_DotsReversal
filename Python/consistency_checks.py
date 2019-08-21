@@ -1211,14 +1211,14 @@ def pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4):
     :return:
     """
     # get superpower metadata
-    max_num_days, metadata, block_counts = super_power_metadata()
+    # max_num_days, metadata, block_counts = super_power_metadata()
 
     # unique prob_cp values
     prob_cp_vals = np.unique(list(PROB_CP.values()))
     prob_cp_vals.sort()
 
     # create figure and axes
-    fig, axes = plt.subplots(NUM_SUBJECTS, len(prob_cp_vals), figsize=(25, 21), sharey=True, sharex=False)
+    fig, axes = plt.subplots(NUM_SUBJECTS, len(prob_cp_vals), figsize=(25, 21), sharey=False, sharex=False)
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=.2, hspace=.2)
 
     # loop over subjects
