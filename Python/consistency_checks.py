@@ -655,7 +655,7 @@ def validate_trials(initial_df):
        7. abs(dotsOff - dotsOn - viewingDuration) < tolerance (45 msec)
        8. trialIndex should NOT be repeated
     :param df: dataframe in the format of FIRA.ecodes
-    :return: df modified inplace
+    :return: copy of the modified df, or None if nothing is left after filtering out bad trials
     """
     vd_tolerance = 45 / 1000  # in seconds
     df = initial_df.copy()  # just to make sure I don't modify the df outside of the function
@@ -671,9 +671,19 @@ def validate_trials(initial_df):
         return abs(df['dotsOff'] - df['dotsOn'] - df['viewingDuration']) < vd_tolerance
     df = df[df.apply(check_vd, axis=1)]  # 7
 
-    assert not any(df['trialIndex'].duplicated()), 'duplicated trialIndex found'
-    # df = df.drop_duplicates('trialIndex')
+    # at this point, it could be the case that the dataframe is simply a collection of empty rows
+    if df['trialIndex'].notna().sum() == 0:
+        return None
 
+    try:
+        assert not any(df['trialIndex'].duplicated()), 'duplicated trialIndex found'
+    except AssertionError:
+        print('num duplicates = ', sum(df['trialIndex'].duplicated()))
+        print('length of df = ', len(df))
+        print('shape of df = ', df.shape)
+        df.to_csv('faulty.csv')
+        raise
+    # df = df.drop_duplicates('trialIndex')
     return df
 
 
@@ -714,7 +724,15 @@ def get_block_data(name, stamp=None, subject_name=None):
 
         data = pd.read_csv(file)
         data = data[data['taskID'] == task_id]
-        return validate_trials(data), [file]
+        try:
+            epurated_data = validate_trials(data)
+        except AssertionError as err:
+            print(err)
+            print(f'Assertion error occurred in {name}, {stamp}')
+            raise
+
+        # keep in mind that epurated_data might well be None
+        return epurated_data, [file]
 
 
 def get_probcp_data(prob_changepoint, subject_name=None):
@@ -771,7 +789,10 @@ def match_data(s, meta_data_file):
                     file_not_stored = False
                     break
 
-        in_file = block_data['trialIndex'].max() > min_trial_num
+        if block_data is None:
+            in_file = False
+        else:
+            in_file = block_data['trialIndex'].max() > min_trial_num
 
         # check whether block in metadatafile
         in_meta = block_name in s.keys() and s[block_name]['numTrials'] > min_trial_num
@@ -1397,6 +1418,8 @@ def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail
 
     def extract_block2_dataframe():
         whole_block, _ = get_block_data('Block2', stamp=session_timestamp)
+        if whole_block is None:
+            return whole_block
         block_to_return = whole_block[whole_block['viewingDuration'] == .4]
         # pprint.pprint(block_to_return.head())
         return block_to_return
@@ -1524,7 +1547,8 @@ if __name__ == '__main__':
         check_homogeneity(files_data)
 
     elif arg == 'log':
-        valid_meta_data = produce_valid_metadata(read_new_metadata(old=True))
+        original_meta = read_new_metadata(old=True)
+        valid_meta_data = produce_valid_metadata(original_meta)
         with open('new_metadata', 'w') as fp:
             try:
                 json.dump(valid_meta_data, fp, indent=4, sort_keys=True)
