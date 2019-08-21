@@ -94,7 +94,8 @@ for t in TIMESTAMPS:
 META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/subj_metadata.json'
 assert os.path.exists(META_FILE)
 # hard code the first one in case file has changed
-META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'
+META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'  # version 1
+
 
 # first version of clean metadata (commit 9b7968e)
 # NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata.json'
@@ -104,7 +105,8 @@ NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsRe
 
 assert os.path.exists(NEW_META_FILE)
 # hard code the first one in case file has changed
-NEW_META_CHKSUM = '26e4181e0383eb34ceca75f52e2d4506'  # initial erroneous version was '13cdd7970ee824d96e132c99fcf5362a'
+# NEW_META_CHKSUM = '26e4181e0383eb34ceca75f52e2d4506'  # v1; version 0 was '13cdd7970ee824d96e132c99fcf5362a'
+NEW_META_CHKSUM = '79b2958c69464a0c8204daf823d1b9f3'  # v2
 
 # the following dict should match the row order of DefaultBlockSequence.csv
 TYPE_ID_NAME = {
@@ -929,13 +931,14 @@ def make_block_dict(name, start, stop, date, num_trials, subject_hash, absent_me
 
 def read_new_metadata(old=False):
     if old:
-        assert md5(META_FILE) == META_CHKSUM
+        new_chksum = md5(META_FILE)
+        assert new_chksum == META_CHKSUM, f'MD5: {new_chksum}'
         with open(META_FILE, 'r') as f_:
             metadata = json.load(f_, object_pairs_hook=OrderedDict)
         return metadata
     else:
         new_meta_chksum = md5(NEW_META_FILE)
-        assert new_meta_chksum == NEW_META_CHKSUM
+        assert new_meta_chksum == NEW_META_CHKSUM, f'MD5: {new_meta_chksum}'
         with open(NEW_META_FILE, 'r') as f_:
             metadata = json.load(f_, object_pairs_hook=OrderedDict)
         return metadata
@@ -1499,6 +1502,7 @@ def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail
 
 
 if __name__ == '__main__':
+    read_new_metadata()  # a quick way to do a check sum on metadata
     # plot_meta_data('metadata.png')
     # pcorrect_coh_all_subj_plot()  # Quest + Block2
     # for vd in [.1, .2, .3, .4]:
