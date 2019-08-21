@@ -329,10 +329,15 @@ def ensure_no_nan(vec):
 
 def consistency_log(fname, dfiles, dmeta):
     """
+    todo: check this function?
     Write log file that compares data from files with content from metadata file.
     The main thing to check is what Task blocks each subject did, and when; and
     also that the trials shown in each block agree with the theoretical dataset of
     trials produced before the experiment.
+
+    :param fname: filename of log file to write
+    :param dfiles: list of file dicts as returned by get_files_and_hashes()
+    :param dmeta: (dict) as bare-imported with json.load from subj_metadata.json
     """
     old_stdout = sys.stdout
     try:
@@ -341,7 +346,7 @@ def consistency_log(fname, dfiles, dmeta):
             for file_dict in dfiles:
                 
                 time_stamp = file_dict['session']
-                c, s = get_keys(time_stamp, meta_data)
+                c, s = get_keys(time_stamp, dmeta)
                 meta = dmeta[c][s]
                 for filename, hhsh in file_dict['FIRA']:
                     assert REF_HASHES[filename] == hhsh
@@ -733,7 +738,8 @@ def match_data(s, meta_data_file):
       3/ some blocks are not present at all in the data file
       4/ some blocks are not present at all in the metadata file
 
-    :param s: (dict) -- usually read from meta_data .json file -- with key-value pairs described below:
+    :param s: (dict) with session info -- usually read from the old subj_metadata.json file -- with key-value pairs
+              described below:
         if key is one of 'Tut1', 'Block2', etc., value is dict with keys 'aborted', 'completed', 'numTrials', 'reward'
             the Quest block has extra field 'QuestFit' which is a list of values.
         if key is 'sessionTag', value is timestamp as string
@@ -793,6 +799,7 @@ def match_data(s, meta_data_file):
                 raise ValueError('unexpected returned value')
 
             do_not_redefine = False  # ad hoc flag needed later
+
             if match == 1:  # mismatch with condProbCP and theory
                 print()
                 print(timestamp, dict_to_return['fira_file'])
@@ -802,6 +809,7 @@ def match_data(s, meta_data_file):
                     continue
                 else:
                     raise ValueError('inconsistency found in the condProbCP field')
+
             elif match == 2:  # NaN values in key columns appeared in data
                 # re-run the function on truncated data if first NaN appeared above trial 10
                 if extra_data > min_trial_num:
@@ -816,6 +824,7 @@ def match_data(s, meta_data_file):
                         end_time = None
                         num_trials = None
                         do_not_redefine = True
+
             elif match == 3:  # match failed for some reason
                 print()
                 print(timestamp, dict_to_return['fira_file'])
@@ -830,6 +839,7 @@ def match_data(s, meta_data_file):
                 start_time = float(block_data['trialStart'].min(skipna=True))
                 end_time = float(block_data['trialEnd'].max(skipna=True))
                 num_trials = int(block_data['trialIndex'].max())
+
         else:  # block data not in file
             start_time = None
             end_time = None
@@ -856,12 +866,17 @@ def match_data(s, meta_data_file):
 
 
 def produce_valid_metadata(meta_data_import):
+    """
+    key processing is done by the function match_data()
+    :param meta_data_import: (dict) as read by json.load on old subj_metadata.json from pilot experiment
+    :return: (dict)
+    """
     # initial_files = get_files_and_hashes()
     new_metadata = {}
     for subject in meta_data_import:
         subject_key = get_name_from_hash(subject)
         new_metadata[subject_key] = {}
-        for session, session_info in meta_data[subject].items():
+        for session, session_info in meta_data_import[subject].items():
             session_dict = match_data(session_info, meta_data_import)
             timestamp = session_info['sessionTag']
             new_metadata[subject_key][timestamp] = session_dict
@@ -887,17 +902,18 @@ def make_block_dict(name, start, stop, date, num_trials, subject_hash, absent_me
         in_meta_not_in_file=absent_file)
 
 
-def read_new_metadata():
-    # get checksum of metadata file ...
-    new_meta_chksum = md5(NEW_META_FILE)
-    assert new_meta_chksum == NEW_META_CHKSUM
-
-    with open(NEW_META_FILE, 'r') as f_:
-        metadata = json.load(f_, object_pairs_hook=OrderedDict)
-    # assert isinstance(metadata, OrderedDict)
-    # assert isinstance(metadata["S1"], OrderedDict)
-    # assert isinstance(metadata["S1"]["2019_06_20_12_54"], OrderedDict)
-    return metadata
+def read_new_metadata(old=False):
+    if old:
+        assert md5(META_FILE) == META_CHKSUM
+        with open(META_FILE, 'r') as f_:
+            metadata = json.load(f_, object_pairs_hook=OrderedDict)
+        return metadata
+    else:
+        new_meta_chksum = md5(NEW_META_FILE)
+        assert new_meta_chksum == NEW_META_CHKSUM
+        with open(NEW_META_FILE, 'r') as f_:
+            metadata = json.load(f_, object_pairs_hook=OrderedDict)
+        return metadata
 
 
 def super_power_metadata():
@@ -1006,6 +1022,7 @@ def super_power_metadata():
 
 
 def plot_meta_data(plot_file):
+    # todo: fix wrong trial count for second Quest block of subj1 day1
     y_values = OrderedDict(
         {
             'Quest': 0,
@@ -1400,7 +1417,11 @@ def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail
                                                          err_margin=(.01, .99), err_method=err_method)
 
     # plot the points with error bars
-    ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o')
+    try:
+        ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o')
+    except ValueError:
+        print(subject, session_timestamp, x_vals, y_vals)
+        raise
 
     # plot the Weibull
     x_weibull = np.linspace(0, 100)
@@ -1451,74 +1472,69 @@ def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail
 
 
 if __name__ == '__main__':
-    # fig, ax = plt.subplots(1, 1)
-    # pcorrect_coh_plot("S1", '2019_06_20_12_54', ax, err_method='Bayes', figure=fig)
-    # # pcorrect_coh_plot('S2', '2019_06_24_12_38', ax, err_method='Bayes', figure=fig)
-    # plt.show()
-    # read_new_metadata()
-    plot_meta_data('metadata.png')
-    pcorrect_coh_all_subj_plot()  # Quest + Block2
-    for vd in [.1, .2, .3, .4]:
-        pcorrect_coh_all_subj_probcp_plot(vd_filter=vd)  # Perf by subject by PROB_CP
+    # plot_meta_data('metadata.png')
+    # pcorrect_coh_all_subj_plot()  # Quest + Block2
+    # for vd in [.1, .2, .3, .4]:
+    #     pcorrect_coh_all_subj_probcp_plot(vd_filter=vd)  # Perf by subject by PROB_CP
     """
     When called from the command line, this script must have one argument. If the arg is 
     'check': checks are performed on the data
     'log': a log file is written to disc
     'plot': a plot summarizing valid metadata is saved to file
     """
-    # _, arg = sys.argv
-    #
-    # if arg == 'check':
-    # todo: turn this whole block into a function
-    #     files_data, latest_hashes = get_files_and_hashes(show=False, hash_map=True)
-    #
-    #     assert latest_hashes == REF_HASHES, 'latest hashes do not match reference hashes'
-    #     # pprint.pprint(latest_hashes)
-    #     """
-    #     Recall: files_data is a list of dicts with fields 'FIRA', 'dots' and 'session'. The values are as follows:
-    #         FIRA: list of pairs of the form (<path to .csv file>, <MD5 checksum for this file>)
-    #         dots: same as for FIRA, but for dots data
-    #         session: single string representing the timestamp of the session, in the format YYYY_MM_DD_HH_mm
-    #
-    #         for the values corresponding to the FIRA and dots keys, the absence of any file is encoded as an empty list
-    #     """
-    #     # get checksum of metadata file ...
-    #     meta_chksum = md5(META_FILE)
-    #     assert meta_chksum == META_CHKSUM
-    #
-    #     num_folder_on_disk = len([i for i in os.listdir(DATA_FOLDER) if i[:5] == '2019_'])
-    #
-    #     # number of timestamps in notebook variable
-    #     num_timestamps = len(TIMESTAMPS)
-    #
-    #     # number of timestamps in metadafile
-    #     with open(META_FILE, 'r') as f:
-    #         meta_data = json.load(f)
-    #     # recall: meta_data is a dict. Its keys are hash codes for subjects.
-    #     # its values are themselves dicts, with keys session names and values dicts with session info.
-    #     # So, to access the session info corresponding to the first session of the the first subject, do:
-    #     # meta_data[<subj code>]['session1']
-    #     num_metadata_sessions = 0
-    #     for v in meta_data.values():
-    #         num_metadata_sessions += len(v)
-    #
-    #     assert num_timestamps == num_folder_on_disk, f'{num_timestamps} timestamps in module vs. {num_folder_on_disk} data folders on disk'
-    #     assert num_metadata_sessions == num_timestamps, 'distinct number of sessions in metadata than timestamps in module'
-    #
-    #     check_homogeneity(files_data)
-    #
-    # elif arg == 'log':
-    #     valid_meta_data = produce_valid_metadata(meta_data)
-    #     with open('new_metadata', 'w') as fp:
-    #         try:
-    #             json.dump(valid_meta_data, fp, indent=4, sort_keys=True)
-    #         except TypeError:
-    #             print('pickling')
-    #             pickle.dump(valid_meta_data, fp)
-    #
-    #     print()
-    #     pprint.pprint(valid_meta_data)
-    #
-    #     print('ALL GOOD!!!!')
-    # elif arg == 'plot':
-    #     plot_meta_data('metaplot.png')
+    _, arg = sys.argv
+
+    if arg == 'check':
+        # todo: turn this whole block into a function
+        files_data, latest_hashes = get_files_and_hashes(show=False, hash_map=True)
+
+        assert latest_hashes == REF_HASHES, 'latest hashes do not match reference hashes'
+        # pprint.pprint(latest_hashes)
+        """
+        Recall: files_data is a list of dicts with fields 'FIRA', 'dots' and 'session'. The values are as follows:
+            FIRA: list of pairs of the form (<path to .csv file>, <MD5 checksum for this file>)
+            dots: same as for FIRA, but for dots data
+            session: single string representing the timestamp of the session, in the format YYYY_MM_DD_HH_mm
+
+            for the values corresponding to the FIRA and dots keys, the absence of any file is encoded as an empty list
+        """
+        # get checksum of metadata file ...
+        meta_chksum = md5(META_FILE)
+        assert meta_chksum == META_CHKSUM
+
+        num_folder_on_disk = len([i for i in os.listdir(DATA_FOLDER) if i[:5] == '2019_'])
+
+        # number of timestamps in notebook variable
+        num_timestamps = len(TIMESTAMPS)
+
+        # number of timestamps in metadafile
+        with open(META_FILE, 'r') as f:
+            meta_data = json.load(f)
+        # recall: meta_data is a dict. Its keys are hash codes for subjects.
+        # its values are themselves dicts, with keys session names and values dicts with session info.
+        # So, to access the session info corresponding to the first session of the the first subject, do:
+        # meta_data[<subj code>]['session1']
+        num_metadata_sessions = 0
+        for v in meta_data.values():
+            num_metadata_sessions += len(v)
+
+        assert num_timestamps == num_folder_on_disk, f'{num_timestamps} timestamps in module vs. {num_folder_on_disk} data folders on disk'
+        assert num_metadata_sessions == num_timestamps, 'distinct number of sessions in metadata than timestamps in module'
+
+        check_homogeneity(files_data)
+
+    elif arg == 'log':
+        valid_meta_data = produce_valid_metadata(read_new_metadata(old=True))
+        with open('new_metadata', 'w') as fp:
+            try:
+                json.dump(valid_meta_data, fp, indent=4, sort_keys=True)
+            except TypeError:
+                print('pickling')
+                pickle.dump(valid_meta_data, fp)
+
+        print()
+        pprint.pprint(valid_meta_data)
+
+        print('ALL GOOD!!!!')
+    elif arg == 'plot':
+        plot_meta_data('metaplot.png')
