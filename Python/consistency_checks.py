@@ -1127,6 +1127,8 @@ def plot_meta_data(plot_file):
                     dy_dict[(scount, day_count)] += delta_y
                     dy = y_values[block['name']]
                     dates = matplotlib.dates.date2num(list_of_datetimes)
+                    if (scount, day_count) == (0, 0):
+                        print(kk, block['name'], dates)
                     curr_ax.plot_date(dates, [dy, dy],
                                       fmt='-+', linewidth=LINEWIDTH, markersize=MARKERSIZE,
                                       color=linecolor, xdate=True)
@@ -1167,7 +1169,13 @@ def plot_meta_data(plot_file):
             curr_ax.set_ylim(min(y_values.values())-3*ddy, max(y_values.values())+3*ddy)
             orig_x1, orig_x2 = curr_ax.get_xlim()
             curr_ax.set_xlim(orig_x1, orig_x1 + DX)
-            xticks = [matplotlib.dates.num2date(x) for x in curr_ax.get_xticks()]
+
+            try:
+                xticks = [matplotlib.dates.num2date(x) for x in curr_ax.get_xticks()]
+            except ValueError:
+                print('subject', subj, 'day', dd)
+                print(curr_ax.get_xticks())
+                raise
             curr_ax.set_xticklabels([d.strftime('%H:%M') for d in xticks], fontsize=SMALL_FONT)
             # curr_ax.format_xdata = matplotlib.dates.DateFormatter('%H:%M')
             curr_ax.grid(b=True)
