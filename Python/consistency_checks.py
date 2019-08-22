@@ -657,7 +657,7 @@ def validate_trials(initial_df):
        3. dirChoice is not NaN
        4. cpChoice is not NaN if probCP > 0
        5. dirRT > 0
-       6. cpRT > 0
+       6. cpRT > 0 if probCP > 0
        7. abs(dotsOff - dotsOn - viewingDuration) < tolerance (45 msec)
        8. trialIndex should NOT be repeated
     :param df: dataframe in the format of FIRA.ecodes
@@ -668,7 +668,7 @@ def validate_trials(initial_df):
     df = df[df['dirCorrect'].notna()]  # 1
     df = df[df['dirChoice'].notna()]  # 3
     df = df[df['dirRT'] > 0]  # 5
-    df = df[df['cpRT'] > 0]  # 6
+    df = df[((df['condProbCP'] > 0) & (df['cpRT'] > 0)) | (df['condProbCP'] == 0)]  # 6
     df = df[((df['condProbCP'] > 0) & (df['cpCorrect'].notna())) | (df['condProbCP'] == 0)]  # 2
     df = df[((df['condProbCP'] > 0) & (df['cpChoice'].notna())) | (df['condProbCP'] == 0)]  # 4
 
