@@ -1343,7 +1343,7 @@ def pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4):
 
             if subj == 0:
                 ax.set_title(f"Prob CP = {prob_cp}", fontsize=MEDIUM_FONT)
-            elif subj == len(NUM_SUBJECTS) - 1:
+            elif subj == NUM_SUBJECTS - 1:
                 ax.set_xlabel('coherence')
 
             if prob_cp == 0:
