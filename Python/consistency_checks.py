@@ -29,7 +29,7 @@ MARKERSIZE = 12
 THEO_DATA_FOLDER = '/home/adrian/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/Blocks003/'
 assert os.path.isdir(THEO_DATA_FOLDER)
 
-IMAGE_SAVE_FOLDER = '/home/adrian/Git/dataviz/data_website/images/'
+IMAGE_SAVE_FOLDER = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/Python/'  #''/home/adrian/Git/dataviz/data_website/images/'
 assert os.path.isdir(IMAGE_SAVE_FOLDER)
 
 PROB_CP = {
@@ -98,15 +98,15 @@ META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'  # version 1
 
 
 # first version of clean metadata (commit 9b7968e)
-# NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata.json'
+NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata.json'
 
 # second version of clean metadata (commit 9aaafa8)
-NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata2.json'
+# NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata2.json'
 
 assert os.path.exists(NEW_META_FILE)
 # hard code the first one in case file has changed
-# NEW_META_CHKSUM = '26e4181e0383eb34ceca75f52e2d4506'  # v1; version 0 was '13cdd7970ee824d96e132c99fcf5362a'
-NEW_META_CHKSUM = '79b2958c69464a0c8204daf823d1b9f3'  # v2
+NEW_META_CHKSUM = '26e4181e0383eb34ceca75f52e2d4506'  # v1; version 0 was '13cdd7970ee824d96e132c99fcf5362a'
+# NEW_META_CHKSUM = '79b2958c69464a0c8204daf823d1b9f3'  # v2
 
 # the following dict should match the row order of DefaultBlockSequence.csv
 TYPE_ID_NAME = {
@@ -694,6 +694,11 @@ def validate_trials(initial_df):
     return df
 
 
+def count_trials(block_name='', timestamp=''):
+    data, _ = get_block_data(block_name, stamp=timestamp)
+    return len(data)
+
+
 def get_block_data(name, stamp=None, subject_name=None):
     """
     todo: test it
@@ -796,7 +801,7 @@ def match_data(s, meta_data_file):
                     file_not_stored = False
                     break
 
-        in_file = block_data['trialIndex'].max() > min_trial_num
+        in_file = len(block_data) > min_trial_num
 
         # check whether block in metadatafile
         in_meta = block_name in s.keys() and s[block_name]['numTrials'] > min_trial_num
@@ -1018,6 +1023,10 @@ def super_power_metadata():
 
                 if not block['in_meta_not_in_file']:  # ensure block's data is on file
                     block_counts_dict[block['name']] += 1
+
+                    # set trial number to reflect only valid trials
+                    block['num_trials'] = count_trials(block_name=block['name'], timestamp=kk)
+
                     # add block start and stop times as datetime objects
                     try:
                         block_duration = dtime.timedelta(seconds=block['stop'] - block['start'])
@@ -1509,10 +1518,10 @@ def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail
 
 if __name__ == '__main__':
     read_new_metadata()  # a quick way to do a check sum on metadata
-    # plot_meta_data('metadata.png')
-    # pcorrect_coh_all_subj_plot()  # Quest + Block2
-    # for vd in [.1, .2, .3, .4]:
-    #     pcorrect_coh_all_subj_probcp_plot(vd_filter=vd)  # Perf by subject by PROB_CP
+    plot_meta_data('metadata.png')
+    pcorrect_coh_all_subj_plot()  # Quest + Block2
+    for vd in [.1, .2, .3, .4]:
+        pcorrect_coh_all_subj_probcp_plot(vd_filter=vd)  # Perf by subject by PROB_CP
     """
     When called from the command line, this script must have one argument. If the arg is 
     'check': checks are performed on the data
