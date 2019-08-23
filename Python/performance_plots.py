@@ -1,6 +1,9 @@
 from consistency_checks import *
 
 
+VD = [0.1, 0.2, 0.3, 0.4]  # viewing duration in sec
+
+
 def plot_meta_data(plot_file):
     # todo: fix wrong trial count for second Quest block of subj1 day1
     y_values = OrderedDict(
@@ -248,10 +251,110 @@ def pcorrect_coh_all_subj_plot():
     plt.savefig('coh_perf_Block2.png')
 
 
+def pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True):
+    """
+    Plot percent correct as function of viewing duration, by subject, by probCP, by presenceCP
+    :return:
+    """
+    # unique prob_cp values
+    prob_cp_vals = np.unique(list(PROB_CP.values()))
+    num_cp_vals = len(prob_cp_vals)
+
+    if by_presence_cp:
+        num_cols = 2 * num_cp_vals - 1  # number of columns in grid plot
+        pcp_idxs = []  # list of length num_cols containing indices for prob_cp_vals
+        for ii in range(num_cp_vals):
+            if ii == 0:
+                assert prob_cp_vals[ii] == 0, 'ordered sequence of prob_cp values does not contain 0 as first entry'
+                pcp_idxs.append(ii)
+            else:  # cols with Prob CP >0 take up two columns
+                pcp_idxs.append(ii)
+                pcp_idxs.append(ii)
+        fwidth = 40
+    else:
+        num_cols = num_cp_vals
+        pcp_idxs = list(range(num_cp_vals))
+        fwidth = 25
+
+    # create figure and axes
+    fig, axes = plt.subplots(NUM_SUBJECTS, num_cols, figsize=(fwidth, 21), sharey=False, sharex=False)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=.2, hspace=.2)
+
+    # loop over subjects
+    for subj in range(NUM_SUBJECTS):
+        subj_name = SUBJECT_NAMES[subj]
+        if by_presence_cp:
+            with_cp = 0  # switch that decides whether to filter trials with a CP (1) or not (0)
+            colors = {0: 'blue', 1: 'red'}  # plots for no-CP trials in blue, plots for CP-trials in red
+        for col in range(num_cols):
+            pcp_idx = pcp_idxs[col]
+            prob_cp = prob_cp_vals[pcp_idx]
+            ax = axes[subj, col]
+            all_probcp = get_probcp_data(prob_cp, subject_name=subj_name)
+
+            if by_presence_cp:
+                all_probcp = all_probcp[all_probcp['presenceCP'] == with_cp]
+
+            if len(all_probcp) == 0:
+                continue
+
+            y_vals, y_err, trial_numbers = build_y_axis_pcorrect_xvd(all_probcp, err_margin=(.01, .99),
+                                                                     err_method='Bayes')
+            x_vals = all_probcp['viewingDuration'].unique()
+            x_vals.sort()
+
+            # plot the points
+            if by_presence_cp:
+                ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o', color=colors[with_cp])
+                with_cp = 1 - with_cp  # flip for next column
+            else:
+                ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o', color=PCP_COLORS[prob_cp])
+
+            for xidx, tn in enumerate(trial_numbers):
+                ax.annotate(str(tn), (x_vals[xidx] + .013, y_vals[xidx]), fontsize=SMALL_FONT)
+
+            if subj == 0:
+                ax.set_title(f"Prob CP = {prob_cp}", fontsize=MEDIUM_FONT)
+            elif subj == NUM_SUBJECTS - 1:
+                ax.set_xlabel('duration')
+
+            if prob_cp == 0:
+                ax.set_ylabel(subj_name, fontsize=MEDIUM_FONT)
+            elif prob_cp == max(prob_cp_vals):
+                ax.yaxis.set_label_position("right")
+                ax.set_ylabel('P(Correct)', fontsize=MEDIUM_FONT)
+
+            ax.set_xticks(x_vals)
+            ticks = np.arange(0.1, 1.1, 0.2)
+            # labels = [f"{x:.1f}" for x in ticks]
+            ax.set_yticks(ticks)  # todo: still not happy with yticks in this plot
+
+            ax.set_xlim(0, .5)
+            ax.set_ylim(.2, 1.1)
+
+            ax.tick_params(axis='both', labelleft=True, left=True, labelbottom=True, bottom=True, labelsize=SMALL_FONT)
+
+        # ax.set_ylim(0, 1.2)
+    # plt.show()
+    for ax in axes.flat:
+        ax.axhline(.5, linestyle='--', color='k')
+        ax.axhline(1, linestyle='--', color='k')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+
+    if by_presence_cp:
+        title = 'No-CP trials in BLUE, CP-trials in RED'
+        fig.suptitle(title, fontsize=LARGE_FONT)
+        file_to_save = IMAGE_SAVE_FOLDER + 'vd_perf_all_prob_cp' + '.png'
+    else:
+        file_to_save = IMAGE_SAVE_FOLDER + 'vd_perf_all_prob_cp' + '_.png'
+    plt.savefig(file_to_save)
+    # plt.show()
+
+
 def pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4):
     """
     Plot percent correct as function of coherence, by subject, by probCP, by presenceCP
-    todo: subdivide plots by presenceCP
     :param vd_filter: (float) the viewing duration through which data should be filtered. Default 400 msec.
     :return:
     """
@@ -395,6 +498,54 @@ def build_y_axis_pcorrect(data, err_margin=(.01, .99), err_method='Bayes'):
     return percent_correct, np.transpose(np.array(errors)), coh_trial_counts
 
 
+def build_y_axis_pcorrect_xvd(data, err_margin=(.01, .99), err_method='Bayes'):
+    """
+    computes percent correct with error bars as a function of VD in the given dataframe
+    :param data: pandas.DataFrame with valid data
+    :param err_margin: percentiles that define CI or region of posterior
+    :param err_method: either 'Bayes' or 'CI'
+    :return:
+    """
+    percent_correct, errors, vd_trial_counts = [], [], []
+
+    def get_vd_values(dataframe):
+        assert dataframe['viewingDuration'].isna().sum() == 0, 'some nan values in viewing duration column'
+        vd_vals = dataframe['viewingDuration'].unique()
+        vd_vals.sort()
+        assert set(vd_vals).issubset(set(VD)), f'vd_vals: {vd_vals}; VD: {VD}; {data.head()}'
+        return vd_vals
+
+    for vd_val in get_vd_values(data):
+        extracted_df = data[data['viewingDuration'] == vd_val].copy()
+        num_nan = extracted_df['dirCorrect'].isna().sum()
+
+        data_point = extracted_df['dirCorrect'].mean()
+        percent_correct.append(data_point)
+
+        # compute error bars
+        num_trials = len(extracted_df) - num_nan
+        vd_trial_counts.append(num_trials)
+        num_correct = extracted_df['dirCorrect'].sum()
+        num_incorrect = num_trials - num_correct
+
+        if err_method == 'Bayes':
+            # compute Beta posterior
+            alpha_prior, beta_prior = 1, 1
+            b_alpha = alpha_prior + num_correct
+            b_beta = beta_prior + num_incorrect
+
+            # find quantiles of the posterior
+            percentiles = sst.beta.ppf(err_margin, b_alpha, b_beta)
+            errors.append([abs(xx - data_point) for xx in percentiles])
+        else:
+            pihat = num_correct / num_trials
+            stderr = np.sqrt(pihat * (1-pihat) / num_trials)
+            low_err = -sst.norm.ppf(err_margin[0]) * stderr
+            high_err = sst.norm.ppf(err_margin[1]) * stderr
+            errors.append([low_err, high_err])
+    return percent_correct, np.transpose(np.array(errors)), vd_trial_counts
+
+
 def pcorrect_coh_plot(subject, session_timestamp, ax, err_method='Bayes', detail=True, figure=None,
                       bottom_left_labels=(True, True)):
     """
@@ -497,5 +648,7 @@ if __name__ == '__main__':
     # read_new_metadata()  # a quick way to do a check sum on metadata
     # plot_meta_data('metadata.png')
     # pcorrect_coh_all_subj_plot()  # Quest + Block2
-    for vd in [.1, .2, .3, .4]:
-        pcorrect_coh_all_subj_probcp_plot(vd_filter=vd)  # Perf by subject by PROB_CP
+    # for vd in [.1, .2, .3, .4]:
+    #     pcorrect_coh_all_subj_probcp_plot(vd_filter=vd)  # Perf by subject by PROB_CP
+    # pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True)
+    pcorrect_vd_all_subj_probcp_plot(by_presence_cp=False)

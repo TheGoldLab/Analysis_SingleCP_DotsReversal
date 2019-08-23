@@ -32,7 +32,7 @@ assert os.path.isdir(THEO_DATA_FOLDER)
 IMAGE_SAVE_FOLDER = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/Python/'  #''/home/adrian/Git/dataviz/data_website/images/'
 assert os.path.isdir(IMAGE_SAVE_FOLDER)
 
-PROB_CP = {
+PROB_CP = {  # this dict should not contain the Quest block!
     'Block2': 0,
     'Block3': 0.2,
     'Block4': 0.5,
