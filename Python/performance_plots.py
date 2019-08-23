@@ -251,11 +251,14 @@ def pcorrect_coh_all_subj_plot():
     plt.savefig('coh_perf_Block2.png')
 
 
-def pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True):
+def pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True, by_coh=True):
     """
     Plot percent correct as function of viewing duration, by subject, by probCP, by presenceCP
     :return:
     """
+    if by_coh and not by_presence_cp:
+        raise NotImplementedError
+
     # unique prob_cp values
     prob_cp_vals = np.unique(list(PROB_CP.values()))
     num_cp_vals = len(prob_cp_vals)
@@ -279,7 +282,9 @@ def pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True):
     # create figure and axes
     fig, axes = plt.subplots(NUM_SUBJECTS, num_cols, figsize=(fwidth, 21), sharey=False, sharex=False)
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=.2, hspace=.2)
-
+    axes_to_skip = {(0,5), (0,6)}
+    fig.delaxes(axes[0, 5])
+    fig.delaxes(axes[0, 6])
     # loop over subjects
     for subj in range(NUM_SUBJECTS):
         subj_name = SUBJECT_NAMES[subj]
@@ -289,6 +294,8 @@ def pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True):
         for col in range(num_cols):
             pcp_idx = pcp_idxs[col]
             prob_cp = prob_cp_vals[pcp_idx]
+            if (subj, col) in axes_to_skip:
+                continue
             ax = axes[subj, col]
             all_probcp = get_probcp_data(prob_cp, subject_name=subj_name)
 
@@ -298,20 +305,78 @@ def pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True):
             if len(all_probcp) == 0:
                 continue
 
-            y_vals, y_err, trial_numbers = build_y_axis_pcorrect_xvd(all_probcp, err_margin=(.01, .99),
-                                                                     err_method='Bayes')
+            if by_coh:
+                # split coherence in three categories, zero (z), threshold (th) and 1 hundred (h)
+                zcoh_df = all_probcp[all_probcp['coherence'] == 0]
+                if len(zcoh_df) > 0:
+                    y_vals_z, y_err_z, trial_num_z = build_y_axis_pcorrect_xvd(
+                        zcoh_df, err_margin=(.01, .99), err_method='Bayes'
+                    )
+                else:
+                    y_vals_z, y_err_z, trial_num_z = None, None, None
+
+                thcoh_df = all_probcp[(all_probcp['coherence'] > 0) & (all_probcp['coherence'] < 100)]
+                if len(thcoh_df) > 0:
+                    y_vals_th, y_err_th, trial_num_th = build_y_axis_pcorrect_xvd(
+                        thcoh_df, err_margin=(.01, .99), err_method='Bayes'
+                    )
+                else:
+                    y_vals_th, y_err_th, trial_num_th = None, None, None
+
+                hcoh_df = all_probcp[all_probcp['coherence'] == 100]
+                if len(hcoh_df) > 0:
+                    y_vals_h, y_err_h, trial_num_h = build_y_axis_pcorrect_xvd(
+                        hcoh_df, err_margin=(.01, .99), err_method='Bayes'
+                    )
+                else:
+                    y_vals_h, y_err_h, trial_num_h = None, None, None
+            else:
+                y_vals, y_err, trial_numbers = build_y_axis_pcorrect_xvd(all_probcp, err_margin=(.01, .99),
+                                                                         err_method='Bayes')
             x_vals = all_probcp['viewingDuration'].unique()
             x_vals.sort()
 
             # plot the points
             if by_presence_cp:
-                ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o', color=colors[with_cp])
+                if by_coh:
+                    z_jitter = -.01
+                    h_jitter = .01
+                    legend = []
+                    if y_vals_z is not None:
+                        ax.errorbar(x_vals + z_jitter, y_vals_z, yerr=y_err_z, fmt='o', color=colors[with_cp],
+                                    fillstyle='none', markersize=MARKERSIZE*.8)
+                        legend.append('0-coh')
+
+                    if y_vals_th is not None:
+                        ax.errorbar(x_vals, y_vals_th, yerr=y_err_th, fmt='*', color=colors[with_cp],
+                                    markersize=MARKERSIZE*.8)
+                        legend.append('th-coh')
+
+                    if y_vals_h is not None:
+                        ax.errorbar(x_vals + h_jitter, y_vals_h, yerr=y_err_h, fmt='^', fillstyle='none',
+                                    color=colors[with_cp], markersize=MARKERSIZE*.8)
+                        legend.append('100-coh')
+
+                    # legend
+                    if col == 4 and subj_name == 'S1':
+                        ax.legend(legend, bbox_to_anchor=(1, 1), loc=2, borderaxespad=0., fontsize=MEDIUM_FONT)
+
+                else:
+                    ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o', color=colors[with_cp])
                 with_cp = 1 - with_cp  # flip for next column
             else:
                 ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o', color=PCP_COLORS[prob_cp])
 
-            for xidx, tn in enumerate(trial_numbers):
-                ax.annotate(str(tn), (x_vals[xidx] + .013, y_vals[xidx]), fontsize=SMALL_FONT)
+            if by_coh:
+                for xidx, tn in enumerate(trial_num_z):
+                    ax.annotate(str(tn), (x_vals[xidx] + .013, y_vals_z[xidx]), fontsize=SMALL_FONT)
+                for xidx, tn in enumerate(trial_num_th):
+                    ax.annotate(str(tn), (x_vals[xidx] + .013, y_vals_th[xidx]), fontsize=SMALL_FONT)
+                for xidx, tn in enumerate(trial_num_h):
+                    ax.annotate(str(tn), (x_vals[xidx] + .013, y_vals_h[xidx]), fontsize=SMALL_FONT)
+            else:
+                for xidx, tn in enumerate(trial_numbers):
+                    ax.annotate(str(tn), (x_vals[xidx] + .013, y_vals[xidx]), fontsize=SMALL_FONT)
 
             if subj == 0:
                 ax.set_title(f"Prob CP = {prob_cp}", fontsize=MEDIUM_FONT)
@@ -345,7 +410,10 @@ def pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True):
     if by_presence_cp:
         title = 'No-CP trials in BLUE, CP-trials in RED'
         fig.suptitle(title, fontsize=LARGE_FONT)
-        file_to_save = IMAGE_SAVE_FOLDER + 'vd_perf_all_prob_cp' + '.png'
+        if by_coh:
+            file_to_save = IMAGE_SAVE_FOLDER + 'vd_perf_all_prob_cp_by_coh' + '.png'
+        else:
+            file_to_save = IMAGE_SAVE_FOLDER + 'vd_perf_all_prob_cp' + '.png'
     else:
         file_to_save = IMAGE_SAVE_FOLDER + 'vd_perf_all_prob_cp' + '_.png'
     plt.savefig(file_to_save)
@@ -651,4 +719,4 @@ if __name__ == '__main__':
     # for vd in [.1, .2, .3, .4]:
     #     pcorrect_coh_all_subj_probcp_plot(vd_filter=vd)  # Perf by subject by PROB_CP
     # pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True)
-    pcorrect_vd_all_subj_probcp_plot(by_presence_cp=False)
+    pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True, by_coh=True)
