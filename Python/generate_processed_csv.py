@@ -5,6 +5,57 @@ from consistency_checks import *
 
 VIEWING_DURATIONS = [.1, .2, .3, .4]
 
+
+def dump_all_data(file_to_write):
+    """
+    read all FIRA data files (all subjects, all sessions),
+    filter out invalid trials,
+    delete columns that I don't think I will need (see cols_to_delete variable in code)
+    add subject, block, date and probCP columns
+    concatenate into a giant dataframe and writes it to file
+    :return: Nothing
+    """
+    metadata = read_new_metadata()
+    list_of_df = []
+    for subj_name, sessions in metadata.items():
+        for session_date, session_info in sessions.items():
+            # quick exit for debug
+            if session_date != '2019_06_20_12_54':
+                break
+            datafile = session_info['fira_file'][0]
+            sess_data = pd.read_csv(datafile)
+            clean_data = validate_trials(sess_data)
+
+            cols_to_delete = [
+                'targetOff',
+                'fixationOff',
+                'feedbackOn',
+                'dirReleaseChoiceTime',
+                'randSeedBase',
+                'timeCP'
+            ]
+            clean_data.drop(columns=cols_to_delete, inplace=True)
+
+            # add columns with subject name, session timestamp and block name
+            # num_rows = len(clean_data)
+            clean_data.insert(0, 'subject', subj_name)
+            clean_data.insert(1, 'date', session_date)
+
+            clean_data['block'] = 'Quest'
+            for number, name in TYPE_ID_NAME.items():
+                row_selector = clean_data.taskID == number
+                clean_data.loc[row_selector, 'block'] = name
+
+            clean_data['probCP'] = np.nan
+            for name, pcp in PROB_CP.items():
+                row_selector = clean_data.block == name
+                clean_data.loc[row_selector, 'probCP'] = pcp
+
+            list_of_df.append(clean_data)
+    all_data = pd.concat(list_of_df)
+    all_data.to_csv(file_to_write, index=False)
+
+
 def dump_all_pcorr_by_vd_subj_probcp(save_file=None):
     """
     produce a .csv file with the following header:
@@ -45,3 +96,5 @@ def dump_all_pcorr_by_vd_subj_probcp(save_file=None):
         pd.to_csv(save_file, index=False)
 
 
+if __name__ == '__main__':
+    dump_all_data('test_dump.csv')
