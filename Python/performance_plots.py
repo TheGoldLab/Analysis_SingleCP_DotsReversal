@@ -514,6 +514,133 @@ def pcorrect_coh_all_subj_probcp_plot(vd_filter=0.4):
     # plt.show()
 
 
+def pcorrect_cpd_coh_all_subj_probcp_plot():
+    """
+    Plot percent correct at CPD task as function of coherence, by subject, by probCP
+    :return:
+    """
+    # unique prob_cp values
+    prob_cp_vals = np.unique(list(PROB_CP.values()))
+    prob_cp_vals.sort()
+
+    if prob_cp_vals[0] == 0:  # discard 0 for CPD task
+        prob_cp_vals = prob_cp_vals[1:]
+
+    num_cp_vals = len(prob_cp_vals)
+
+    num_cols = num_cp_vals  # number of columns in grid plot
+
+    assert num_cp_vals == num_cols
+    pcp_idxs = list(range(num_cols))
+
+    # create figure and axes
+    fig, axes = plt.subplots(NUM_SUBJECTS, num_cols, figsize=(20, 20), sharey=False, sharex=False)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=.2, hspace=.2)
+
+    # loop over subjects
+    for subj in range(NUM_SUBJECTS):
+        subj_name = SUBJECT_NAMES[subj]
+        for col in range(num_cols):
+            pcp_idx = pcp_idxs[col]
+            prob_cp = prob_cp_vals[pcp_idx]
+            ax = axes[subj, col]
+            all_probcp = get_probcp_data(prob_cp, subject_name=subj_name)
+
+            y_vals, y_err, trial_numbers = build_y_axis_pcorrect_cpd(all_probcp,
+                                                                     err_margin=(.01, .99), err_method='Bayes')
+            x_vals = all_probcp['coherence'].unique()
+            x_vals.sort()
+
+            # plot the points
+            ax.errorbar(x_vals, y_vals, yerr=y_err, fmt='o', color=PCP_COLORS[prob_cp])
+
+            for xcoh, tn in enumerate(trial_numbers):
+                ax.annotate(str(tn), (x_vals[xcoh] + 2, y_vals[xcoh]), fontsize=SMALL_FONT)
+
+            if subj == 0:
+                ax.set_title(f"Prob CP = {prob_cp}", fontsize=MEDIUM_FONT)
+            elif subj == NUM_SUBJECTS - 1:
+                ax.set_xlabel('coherence')
+
+            if prob_cp == 0.2:
+                ax.set_ylabel(subj_name, fontsize=MEDIUM_FONT)
+            elif prob_cp == max(prob_cp_vals):
+                ax.yaxis.set_label_position("right")
+                ax.set_ylabel('P(Corr) | CPD', fontsize=MEDIUM_FONT)
+
+            ax.set_xticks(x_vals)
+            ticks = np.arange(0.2, 1.1, 0.2)
+            # labels = [f"{x:.1f}" for x in ticks]
+            ax.set_yticks(ticks)  # todo: still not happy with yticks in this plot
+
+            ax.set_xlim(-2, 103)
+            ax.set_ylim(.2, 1.1)
+
+            ax.tick_params(axis='both', labelleft=True, left=True, labelbottom=True, bottom=True, labelsize=SMALL_FONT)
+
+        # ax.set_ylim(0, 1.2)
+    # plt.show()
+    for ax in axes.flat:
+        ax.axhline(.5, linestyle='--', color='k')
+        ax.axhline(1, linestyle='--', color='k')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+
+    title = 'P(Correct) at Change-Point Detection Task, all VD confounded'
+    fig.suptitle(title, fontsize=LARGE_FONT)
+
+    file_to_save = IMAGE_SAVE_FOLDER + 'coh_perf_all_prob_cp_cpd.png'
+    plt.savefig(file_to_save)
+    # plt.show()
+
+
+def build_y_axis_pcorrect_cpd(data, err_margin=(.01, .99), err_method='Bayes'):
+    """
+    computes percent correct at CPD task with error bars as a function of coherence in the given dataframe
+    :param data: pandas.DataFrame with valid data
+    :param err_margin: percentiles that define CI or region of posterior
+    :param err_method: either 'Bayes' or 'CI'
+    :return:
+    """
+    percent_correct, errors, coh_trial_counts = [], [], []
+
+    def get_coh_values(dataframe):
+        assert dataframe['coherence'].isna().sum() == 0, 'some nan values in coherence column'
+        coh_vals = dataframe['coherence'].unique()
+        coh_vals.sort()
+        return coh_vals
+
+    for coh_val in get_coh_values(data):
+        extracted_df = data[data['coherence'] == coh_val].copy()
+        num_nan = extracted_df['cpCorrect'].isna().sum()
+
+        data_point = extracted_df['cpCorrect'].mean()
+        percent_correct.append(data_point)
+
+        # compute error bars
+        num_trials = len(extracted_df) - num_nan
+        coh_trial_counts.append(num_trials)
+        num_correct = extracted_df['cpCorrect'].sum()
+        num_incorrect = num_trials - num_correct
+
+        if err_method == 'Bayes':
+            # compute Beta posterior
+            alpha_prior, beta_prior = 1, 1
+            b_alpha = alpha_prior + num_correct
+            b_beta = beta_prior + num_incorrect
+
+            # find quantiles of the posterior
+            percentiles = sst.beta.ppf(err_margin, b_alpha, b_beta)
+            errors.append([abs(xx - data_point) for xx in percentiles])
+        else:
+            pihat = num_correct / num_trials
+            stderr = np.sqrt(pihat * (1-pihat) / num_trials)
+            low_err = -sst.norm.ppf(err_margin[0]) * stderr
+            high_err = sst.norm.ppf(err_margin[1]) * stderr
+            errors.append([low_err, high_err])
+    return percent_correct, np.transpose(np.array(errors)), coh_trial_counts
+
+
 def build_y_axis_pcorrect(data, err_margin=(.01, .99), err_method='Bayes'):
     """
     computes percent correct with error bars as a function of coherence in the given dataframe
@@ -719,4 +846,5 @@ if __name__ == '__main__':
     # for vd in [.1, .2, .3, .4]:
     #     pcorrect_coh_all_subj_probcp_plot(vd_filter=vd)  # Perf by subject by PROB_CP
     # pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True)
-    pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True, by_coh=True)
+    # pcorrect_vd_all_subj_probcp_plot(by_presence_cp=True, by_coh=True)
+    pcorrect_cpd_coh_all_subj_probcp_plot()
