@@ -1,0 +1,77 @@
+---
+title: "Exploratory Notebook"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+<!--
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+-->
+
+# Hello!
+
+```{r}
+library(data.table)
+```
+```{r}
+# block that imports the data and casts it into useful types for R
+data <- fread('/home/adrian/SingleCP_DotsReversal/processed/all_valid_data.csv')
+
+# set variables with appropriate type
+data[, `:=`(
+  subject=as.factor(subject),
+  dirChoice=as.factor(dirChoice),
+  cpChoice=factor(cpChoice),  # doesn't create level for NA values
+  dirCorrect=as.integer(dirCorrect),
+  cpCorrect=as.integer(cpCorrect),
+  initDirection=as.factor(initDirection),
+  endDirection=as.factor(endDirection),
+  presenceCP=factor(presenceCP, ordered=TRUE),
+  viewingDuration=as.integer(viewingDuration * 1000),
+  CPresponseSide=factor(CPresponseSide),
+  block=factor(block, levels=c('Quest', 'Block2', 'Block3', 'Block4', 'Block5', 'Block6', 'Block7',
+                               'Block8', 'Block9', 'Block10', 'Block11')),
+  probCP=factor(probCP, ordered=TRUE)
+  )]
+
+# render levels more human-friendly
+levels(data$dirChoice) <- c('left', 'right')
+levels(data$cpChoice) <- c('no-CP', 'CP')
+levels(data$initDirection) <- c('right', 'left')
+levels(data$endDirection) <- c('right', 'left')
+levels(data$presenceCP) <- c('no-CP', 'CP')
+levels(data$CPresponseSide) <- c('left', 'right')
+```
+
+
+```{r}
+str(data)
+```
+
+```{r}
+# Example of confusion matrix-like table for choice vs. true direction of motion
+# S3 2019_07_17_17_17
+table(
+  data[subject=='S3' &
+         date=='2019_07_17_17_17' & 
+         block=='Block2' & 
+         coherence==0 & 
+         viewingDuration == 400,
+       .(dirChoice, initDirection)]
+)
+# for an example of visualization, feed the table to fourfoldplot as in https://stackoverflow.com/a/23891764
+```
+
+```{r}
+
+```
+
