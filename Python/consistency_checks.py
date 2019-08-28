@@ -951,8 +951,22 @@ def super_power_metadata():
     """
     Reads the metadata stored in NEW_METADATA file and performs extra useful computations
     1. maximum number of days across which any subject did the experiment
-    2. the empowered metadata dict
+    2. the empowered metadata dict, which is an OrderedDict
     3. list of dicts of block counts. len(list) = NUM_SUBJECTS; key-val of dicts = <block name>:<block count>
+
+    detailed description of the metadata dict returned by this function
+    Level 1 keys: subject name such as "S1", "S2", etc.
+    Level 2 keys: session date such as "2019_06_24_12_31"
+    Level 3 keys:
+       'blocks': list of OrderedDict
+       'fira_file': list (possibly empty) with [<path to fira .csv file>, <MD5 hash>]
+       'rel_day': int
+       'day_count': int
+
+    Improved features compared to NEW_METADATA file are:
+    - trial count is accurate (only valid trials are counted for each block
+    - time entries available as datetime objects
+
     :return: 3-tuple in the order described above
     """
     max_num_days = 1

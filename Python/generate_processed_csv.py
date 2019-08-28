@@ -8,50 +8,57 @@ VIEWING_DURATIONS = [.1, .2, .3, .4]
 
 def dump_all_data(file_to_write):
     """
+    todo: filter --> use superpower metadata
     read all FIRA data files (all subjects, all sessions),
     filter out invalid trials,
     delete columns that I don't think I will need (see cols_to_delete variable in code)
-    add subject, block, date and probCP columns
+    add: subject, block, date, day and probCP columns
     concatenate into a giant dataframe and writes it to file
     :return: Nothing
     """
-    metadata = read_new_metadata()
+    _, metadata, _ = super_power_metadata()
+
+    # debug
+    pprint.pprint(metadata)
     list_of_df = []
     for subj_name, sessions in metadata.items():
         for session_date, session_info in sessions.items():
+            sess_day = session_info['day_count'] + 1
+
             # quick exit for debug
             if session_date != '2019_06_20_12_54':
                 break
-            datafile = session_info['fira_file'][0]
-            sess_data = pd.read_csv(datafile)
-            clean_data = validate_trials(sess_data)
 
-            cols_to_delete = [
-                'targetOff',
-                'fixationOff',
-                'feedbackOn',
-                'dirReleaseChoiceTime',
-                'randSeedBase',
-                'timeCP'
-            ]
-            clean_data.drop(columns=cols_to_delete, inplace=True)
+            blocks = [b for b in session_info['blocks'] if (not b['in_meta_not_in_file']) and b['num_trials'] > 0]
 
-            # add columns with subject name, session timestamp and block name
-            # num_rows = len(clean_data)
-            clean_data.insert(0, 'subject', subj_name)
-            clean_data.insert(1, 'date', session_date)
+            for b in blocks:
+                clean_data, _ = get_block_data(b['name'], stamp=session_date)
+                # debug
+                # print(clean_data.head())
+                cols_to_delete = [
+                    'targetOff',
+                    'fixationOff',
+                    'feedbackOn',
+                    'dirReleaseChoiceTime',
+                    'randSeedBase',
+                    'timeCP'
+                ]
+                clean_data.drop(columns=cols_to_delete, inplace=True)
 
-            clean_data['block'] = 'Quest'
-            for number, name in TYPE_ID_NAME.items():
-                row_selector = clean_data.taskID == number
-                clean_data.loc[row_selector, 'block'] = name
+                # add columns with subject name, session timestamp and block name
+                # num_rows = len(clean_data)
+                clean_data.insert(0, 'subject', subj_name)
+                clean_data.insert(1, 'date', session_date)
 
-            clean_data['probCP'] = np.nan
-            for name, pcp in PROB_CP.items():
-                row_selector = clean_data.block == name
-                clean_data.loc[row_selector, 'probCP'] = pcp
+                clean_data['block'] = b['name']
+                clean_data['day'] = sess_day
 
-            list_of_df.append(clean_data)
+                clean_data['probCP'] = np.nan
+                for name, pcp in PROB_CP.items():
+                    row_selector = clean_data.block == name
+                    clean_data.loc[row_selector, 'probCP'] = pcp
+
+                list_of_df.append(clean_data)
     all_data = pd.concat(list_of_df)
     all_data.to_csv(file_to_write, index=False)
 

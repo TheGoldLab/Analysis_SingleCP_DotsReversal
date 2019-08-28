@@ -48,14 +48,12 @@ def plot_meta_data(plot_file):
             all_dates[(i, j)] = []
             all_titles[(i, j)] = 0
             dy_dict[(i, j)] = -1
+
     # loop through subjects
     scount = -1
     for k, v in metadata.items():
         scount += 1
-        # print(list(zip(
-        #     list(v.keys()),
-        #     [dc['day_count'] for dc in v.values()]
-        # )))
+
         # loop through sessions
         for kk, vv in v.items():
             list_of_blocks = metadata[k][kk]['blocks']
