@@ -1,0 +1,5 @@
+# basis for R code for hypotheses 1-5
+# .csv file could be generated with Python
+t<-fread('/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/R/test.csv')
+p <- ggplot(t, aes(x=VD, y=pCorr)) + facet_grid(probCP ~ subject) + geom_point()
+print(p)

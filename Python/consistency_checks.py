@@ -2,27 +2,37 @@ import sys
 import os.path
 import pprint
 import json
+import re
 import pickle
 import hashlib
 import datetime as dtime
 from collections import Counter, OrderedDict
 import pandas as pd
+from pandas.plotting import register_matplotlib_converters
 import numpy as np
+import scipy.stats as sst
 import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 import matplotlib
 
-font = {'family': 'DejaVu Sans',
-        'size'  : 22}
+register_matplotlib_converters()
 
-matplotlib.rc('font', **font)
+SMALL_FONT = 10
+MEDIUM_FONT = 16
+LARGE_FONT = 22
+FONT_OPTS = {'family': 'DejaVu Sans', 'size': LARGE_FONT}
+matplotlib.rc('font', **FONT_OPTS)
+
 LINEWIDTH = 3
 MARKERSIZE = 12
-SMALL_FONT = 10
 
 THEO_DATA_FOLDER = '/home/adrian/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/Blocks003/'
 assert os.path.isdir(THEO_DATA_FOLDER)
 
-PROB_CP = {
+IMAGE_SAVE_FOLDER = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/Python/'  #''/home/adrian/Git/dataviz/data_website/images/'
+assert os.path.isdir(IMAGE_SAVE_FOLDER)
+
+PROB_CP = {  # this dict should not contain the Quest block!
     'Block2': 0,
     'Block3': 0.2,
     'Block4': 0.5,
@@ -34,6 +44,17 @@ PROB_CP = {
     'Block10': 0.2,
     'Block11': 0.8,
 }
+
+# map probCP to colors
+PCP_COLORS = {
+    'Quest': 'green',
+    0: 'blue',
+    .2: 'purple',
+    .5: 'red',
+    .8: 'gray'
+}
+
+BLOCK_NAMES = ['Quest'] + list(PROB_CP.keys())
 
 TIMESTAMPS = [
     '2019_06_20_12_54',
@@ -73,13 +94,19 @@ for t in TIMESTAMPS:
 META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/subj_metadata.json'
 assert os.path.exists(META_FILE)
 # hard code the first one in case file has changed
-META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'
+META_CHKSUM = '24e31da81bd43f2e2cd51df0ef111689'  # version 1
 
-# same for clean metadata (commit 9b7968e)
+
+# first version of clean metadata (commit 9b7968e)
 NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata.json'
+
+# second version of clean metadata (commit 9aaafa8)
+# NEW_META_FILE = '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/data/new_metadata2.json'
+
 assert os.path.exists(NEW_META_FILE)
 # hard code the first one in case file has changed
-NEW_META_CHKSUM = '26e4181e0383eb34ceca75f52e2d4506'  # initial erroneous version was '13cdd7970ee824d96e132c99fcf5362a'
+NEW_META_CHKSUM = '26e4181e0383eb34ceca75f52e2d4506'  # v1; version 0 was '13cdd7970ee824d96e132c99fcf5362a'
+# NEW_META_CHKSUM = '79b2958c69464a0c8204daf823d1b9f3'  # v2
 
 # the following dict should match the row order of DefaultBlockSequence.csv
 TYPE_ID_NAME = {
@@ -149,8 +176,10 @@ SUBJECT_HASHES = (
     'x648f9ad78ad1211c172d1a1cd2c5af3f'
 )
 
+NUM_SUBJECTS = len(SUBJECT_HASHES)
+
 # short strings more human-readable than the hashes above
-SUBJECT_NAMES = tuple('S' + str(j) for j in range(1, len(SUBJECT_HASHES) + 1))
+SUBJECT_NAMES = tuple('S' + str(j) for j in range(1, NUM_SUBJECTS + 1))
 
 
 def get_name_from_hash(hashh):
@@ -306,10 +335,15 @@ def ensure_no_nan(vec):
 
 def consistency_log(fname, dfiles, dmeta):
     """
+    todo: check this function?
     Write log file that compares data from files with content from metadata file.
     The main thing to check is what Task blocks each subject did, and when; and
     also that the trials shown in each block agree with the theoretical dataset of
     trials produced before the experiment.
+
+    :param fname: filename of log file to write
+    :param dfiles: list of file dicts as returned by get_files_and_hashes()
+    :param dmeta: (dict) as bare-imported with json.load from subj_metadata.json
     """
     old_stdout = sys.stdout
     try:
@@ -318,7 +352,7 @@ def consistency_log(fname, dfiles, dmeta):
             for file_dict in dfiles:
                 
                 time_stamp = file_dict['session']
-                c, s = get_keys(time_stamp, meta_data)
+                c, s = get_keys(time_stamp, dmeta)
                 meta = dmeta[c][s]
                 for filename, hhsh in file_dict['FIRA']:
                     assert REF_HASHES[filename] == hhsh
@@ -615,25 +649,113 @@ def get_fira_files_from_timestamp(stamp):
     return []
 
 
-def get_block_data(name, stamp):
+def validate_trials(initial_df):
     """
-    for a given block name and timestamp (corresponding to a session tag) returns the data in the corresponding file
-    An attempt is made to pick file with ending '_FIRA.csv" if it exists.
+    remove all rows from df that do not meet the following conditions:
+       1. dirCorrect is not NaN
+       2. cpCorrect is not NaN if probCP > 0
+       3. dirChoice is not NaN
+       4. cpChoice is not NaN if probCP > 0
+       5. dirRT > 0
+       6. cpRT > 0 if probCP > 0
+       7. abs(dotsOff - dotsOn - viewingDuration) < tolerance (45 msec)
+       8. trialIndex should NOT be repeated
+    :param df: dataframe in the format of FIRA.ecodes
+    :return: copy of the modified df
+    """
+    vd_tolerance = 45 / 1000  # in seconds
+    df = initial_df.copy()  # just to make sure I don't modify the df outside of the function
+    df = df[df['dirCorrect'].notna()]  # 1
+    df = df[df['dirChoice'].notna()]  # 3
+    df = df[df['dirRT'] > 0]  # 5
+    df = df[((df['condProbCP'] > 0) & (df['cpRT'] > 0)) | (df['condProbCP'] == 0)]  # 6
+    df = df[((df['condProbCP'] > 0) & (df['cpCorrect'].notna())) | (df['condProbCP'] == 0)]  # 2
+    df = df[((df['condProbCP'] > 0) & (df['cpChoice'].notna())) | (df['condProbCP'] == 0)]  # 4
+
+    # the following is inspired from this answer: https://stackoverflow.com/a/18182241
+    def check_vd(row):
+        return abs(row['dotsOff'] - row['dotsOn'] - row['viewingDuration']) < vd_tolerance
+
+    df = df[df.apply(check_vd, axis=1)]  # 7
+
+    # # at this point, it could be the case that the dataframe is simply a collection of empty rows
+    # if df['trialIndex'].notna().sum() == 0:
+    #     return None
+
+    try:
+        assert not any(df['trialIndex'].duplicated()), 'duplicated trialIndex found'
+    except AssertionError:
+        print('num duplicates = ', sum(df['trialIndex'].duplicated()))
+        print('length of df = ', len(df))
+        print('shape of df = ', df.shape)
+        df.to_csv('faulty.csv')
+        raise
+    # df = df.drop_duplicates('trialIndex')
+    return df
+
+
+def count_trials(block_name='', timestamp=''):
+    data, _ = get_block_data(block_name, stamp=timestamp)
+    return len(data)
+
+
+def get_block_data(name, stamp=None, subject_name=None):
+    """
+    todo: test it
+    for a given block name and optional timestamp (corresponding to a session tag) returns the data and the
+    corresponding file names.
+    An attempt is made to pick each file with ending '_FIRA.csv" if it exists.
     :param name: (str) block name, such as 'Block2', 'Block3', etc.
-    :param stamp: (str) timestamp, such as '2019_06_23_13_31'
-    :return: (2-tuple) (<pandas.DataFrame>, <path to file>)
+    :param stamp: (str) timestamp, such as '2019_06_23_13_31'. If None, all sessions are parsed
+    :param subject_name: (str) an element of SUBJECT_NAMES
+    :return: (2-tuple) (<pandas.DataFrame>, <list of paths to files>)
              Note the dataframe is empty if the block name is not in the data
     """
     task_id = NAME_TYPE_ID[name]
-    file_list = get_fira_files_from_timestamp(stamp)
-    assert len(file_list) <= 2, 'list of FIRA files has length greater than 2'
-    file = file_list[0][0]  # get first file in list
-    ending = file[-9:]
-    if ending != '_FIRA.csv' and len(file_list) > 1:
-        file = file_list[1][0]
-    data = pd.read_csv(file)
-    data = data[data['taskID'] == task_id]
-    return data, file
+    if stamp is None:
+        metadata = read_new_metadata()
+        if subject_name is None:
+            raise NotImplementedError
+        else:
+            list_of_dataframes = []
+            list_of_files = []
+            for session in metadata[subject_name].values():
+                filename = session['fira_file'][0]
+                data = pd.read_csv(filename)
+                data = data[data['taskID'] == task_id]
+                list_of_dataframes.append(validate_trials(data))
+                list_of_files.append(filename)
+            return pd.concat(list_of_dataframes), list_of_files
+    else:
+        # todo: this whole block to get 'file' is obsolete with new metadata? Maybe not as used to produce new metadata
+        file_list = get_fira_files_from_timestamp(stamp)
+        assert len(file_list) <= 2, 'list of FIRA files has length greater than 2'
+        file = file_list[0][0]  # get first file in list
+        ending = file[-9:]
+        if ending != '_FIRA.csv' and len(file_list) > 1:
+            file = file_list[1][0]
+
+        data = pd.read_csv(file)
+        data = data[data['taskID'] == task_id]
+        try:
+            epurated_data = validate_trials(data)
+        except AssertionError as err:
+            print(err)
+            print(f'Assertion error occurred in {name}, {stamp}')
+            raise
+
+        return epurated_data, [file]
+
+
+def get_probcp_data(prob_changepoint, subject_name=None):
+    if subject_name is None:
+        raise NotImplementedError
+    list_of_dataframes = []
+    list_of_block_names = [k for k, v in PROB_CP.items() if v == prob_changepoint]
+    for bn in list_of_block_names:
+        bdata, _ = get_block_data(bn, subject_name=subject_name)
+        list_of_dataframes.append(bdata)
+    return pd.concat(list_of_dataframes)
 
 
 def match_data(s, meta_data_file):
@@ -646,7 +768,8 @@ def match_data(s, meta_data_file):
       3/ some blocks are not present at all in the data file
       4/ some blocks are not present at all in the metadata file
 
-    :param s: (dict) -- usually read from meta_data .json file -- with key-value pairs described below:
+    :param s: (dict) with session info -- usually read from the old subj_metadata.json file -- with key-value pairs
+              described below:
         if key is one of 'Tut1', 'Block2', etc., value is dict with keys 'aborted', 'completed', 'numTrials', 'reward'
             the Quest block has extra field 'QuestFit' which is a list of values.
         if key is 'sessionTag', value is timestamp as string
@@ -667,8 +790,8 @@ def match_data(s, meta_data_file):
 
     blocks = []
     for block_name in block_names:
-        block_data, filename = get_block_data(block_name, timestamp)
-
+        block_data, filename = get_block_data(block_name, stamp=timestamp)
+        filename = filename[0]
         # store file info only once in outer dict
         if file_not_stored:
             candidate_fira_files = get_fira_files_from_timestamp(timestamp)
@@ -678,7 +801,7 @@ def match_data(s, meta_data_file):
                     file_not_stored = False
                     break
 
-        in_file = block_data['trialIndex'].max() > min_trial_num
+        in_file = len(block_data) > min_trial_num
 
         # check whether block in metadatafile
         in_meta = block_name in s.keys() and s[block_name]['numTrials'] > min_trial_num
@@ -706,6 +829,7 @@ def match_data(s, meta_data_file):
                 raise ValueError('unexpected returned value')
 
             do_not_redefine = False  # ad hoc flag needed later
+
             if match == 1:  # mismatch with condProbCP and theory
                 print()
                 print(timestamp, dict_to_return['fira_file'])
@@ -715,6 +839,7 @@ def match_data(s, meta_data_file):
                     continue
                 else:
                     raise ValueError('inconsistency found in the condProbCP field')
+
             elif match == 2:  # NaN values in key columns appeared in data
                 # re-run the function on truncated data if first NaN appeared above trial 10
                 if extra_data > min_trial_num:
@@ -729,6 +854,7 @@ def match_data(s, meta_data_file):
                         end_time = None
                         num_trials = None
                         do_not_redefine = True
+
             elif match == 3:  # match failed for some reason
                 print()
                 print(timestamp, dict_to_return['fira_file'])
@@ -743,6 +869,7 @@ def match_data(s, meta_data_file):
                 start_time = float(block_data['trialStart'].min(skipna=True))
                 end_time = float(block_data['trialEnd'].max(skipna=True))
                 num_trials = int(block_data['trialIndex'].max())
+
         else:  # block data not in file
             start_time = None
             end_time = None
@@ -769,12 +896,17 @@ def match_data(s, meta_data_file):
 
 
 def produce_valid_metadata(meta_data_import):
+    """
+    key processing is done by the function match_data()
+    :param meta_data_import: (dict) as read by json.load on old subj_metadata.json from pilot experiment
+    :return: (dict)
+    """
     # initial_files = get_files_and_hashes()
     new_metadata = {}
     for subject in meta_data_import:
         subject_key = get_name_from_hash(subject)
         new_metadata[subject_key] = {}
-        for session, session_info in meta_data[subject].items():
+        for session, session_info in meta_data_import[subject].items():
             session_dict = match_data(session_info, meta_data_import)
             timestamp = session_info['sessionTag']
             new_metadata[subject_key][timestamp] = session_dict
@@ -800,64 +932,50 @@ def make_block_dict(name, start, stop, date, num_trials, subject_hash, absent_me
         in_meta_not_in_file=absent_file)
 
 
-def plot_meta_data(plot_file):
-    # todo: widen vert space
-    # todo: increase fontsize
-    # todo: remove box
-    from pandas.plotting import register_matplotlib_converters
-    register_matplotlib_converters()
-    import matplotlib.lines as mlines
-    import re
-    # map probCP to colors
-    colors = {
-        'Quest': 'green',
-        0: 'blue',
-        .2: 'purple',
-        .5: 'red',
-        .8: 'gray'
-    }
+def read_new_metadata(old=False):
+    if old:
+        new_chksum = md5(META_FILE)
+        assert new_chksum == META_CHKSUM, f'MD5: {new_chksum}'
+        with open(META_FILE, 'r') as f_:
+            metadata = json.load(f_, object_pairs_hook=OrderedDict)
+        return metadata
+    else:
+        new_meta_chksum = md5(NEW_META_FILE)
+        assert new_meta_chksum == NEW_META_CHKSUM, f'MD5: {new_meta_chksum}'
+        with open(NEW_META_FILE, 'r') as f_:
+            metadata = json.load(f_, object_pairs_hook=OrderedDict)
+        return metadata
 
-    y_values = OrderedDict(
-        {
-            'Quest': 0,
-            'Block2': 1,
-            'Block3': 2,
-            'Block4': 3,
-            'Block5': 4,
-            'Block6': 5,
-            'Block7': 6,
-            'Block8': 7,
-            'Block9': 8,
-            'Block10': 9,
-            'Block11': 10
-        }
-    )
 
-    lines = []
-    for p, c in colors.items():
-        lines.append(mlines.Line2D([], [],
-                                   linewidth=LINEWIDTH, color=c,
-                                   marker='+', markersize=MARKERSIZE,
-                                   label=f'prob CP = {p}' if not isinstance(p, str) else p))
-    delta_y = 3
-    ddy = 1
-    for i, value in enumerate(y_values.keys()):
-        y_values[value] = i * delta_y
+def super_power_metadata():
+    """
+    Reads the metadata stored in NEW_METADATA file and performs extra useful computations
+    1. maximum number of days across which any subject did the experiment
+    2. the empowered metadata dict, which is an OrderedDict
+    3. list of dicts of block counts. len(list) = NUM_SUBJECTS; key-val of dicts = <block name>:<block count>
 
-    """first we process the metadata"""
+    detailed description of the metadata dict returned by this function
+    Level 1 keys: subject name such as "S1", "S2", etc.
+    Level 2 keys: session date such as "2019_06_24_12_31"
+    Level 3 keys:
+       'blocks': list of OrderedDict
+       'fira_file': list (possibly empty) with [<path to fira .csv file>, <MD5 hash>]
+       'rel_day': int
+       'day_count': int
 
+    Improved features compared to NEW_METADATA file are:
+    - trial count is accurate (only valid trials are counted for each block
+    - time entries available as datetime objects
+
+    :return: 3-tuple in the order described above
+    """
     max_num_days = 1
-    # get checksum of metadata file ...
-    new_meta_chksum = md5(NEW_META_FILE)
-    assert new_meta_chksum == NEW_META_CHKSUM
-
-    with open(NEW_META_FILE, 'r') as f_:
-        metadata = json.load(f_)
+    metadata = read_new_metadata()
 
     # loop over subjects
     block_counts = []
     for k, v in metadata.items():
-        block_counts_dict = {k: 0 for k in y_values.keys()}
+        block_counts_dict = {k: 0 for k in BLOCK_NAMES}
         num_sessions = len(v)
 
         # arbitrary date before experiment started
@@ -889,7 +1007,7 @@ def plot_meta_data(plot_file):
         sessions_dates = {s: dtime.datetime.strptime(s, '%Y_%m_%d_%H_%M') for s in v.keys()}
 
         # dict with key-val = <session's date>:<bool>
-        first_session = {s:False for s in sessions_dates.keys()}
+        first_session = {s: False for s in sessions_dates.keys()}
 
         # now find the actual first session of each day, for this subject
         for d in range(len(unique_rel_days)):
@@ -919,6 +1037,10 @@ def plot_meta_data(plot_file):
 
                 if not block['in_meta_not_in_file']:  # ensure block's data is on file
                     block_counts_dict[block['name']] += 1
+
+                    # set trial number to reflect only valid trials
+                    block['num_trials'] = count_trials(block_name=block['name'], timestamp=kk)
+
                     # add block start and stop times as datetime objects
                     try:
                         block_duration = dtime.timedelta(seconds=block['stop'] - block['start'])
@@ -940,137 +1062,12 @@ def plot_meta_data(plot_file):
                 # add prob_cp field
                 block['prob_cp'] = PROB_CP[block['name']] if block['name'] != 'Quest' else 0
         block_counts.append(block_counts_dict)
-        # here we anticipate the numbe of columns in the subplots layout
+        # here we anticipate the number of columns in the subplots layout
         num_days = len(np.unique(list(dates_sweep.values())))
         if num_days > max_num_days:
             max_num_days += 1
 
-    num_subjects = len(SUBJECT_NAMES)
-
-    """actual plotting"""
-
-    # create figure
-    fig, axes = plt.subplots(num_subjects, max_num_days + 1, figsize=(20, 26), sharey='col', sharex=False)
-    all_dates = {}
-    all_titles = {}
-    dy_dict = {}
-    for i in range(num_subjects):
-        for j in range(max_num_days):
-            all_dates[(i, j)] = []
-            all_titles[(i, j)] = 0
-            dy_dict[(i, j)] = -1
-    # loop through subjects
-    scount = -1
-    for k, v in metadata.items():
-        scount += 1
-        # print(list(zip(
-        #     list(v.keys()),
-        #     [dc['day_count'] for dc in v.values()]
-        # )))
-        # loop through sessions
-        for kk, vv in v.items():
-            list_of_blocks = metadata[k][kk]['blocks']
-            num_blocks = len(list_of_blocks)
-            day_count = vv['day_count']
-            all_titles[(scount, day_count)] = vv['rel_day']
-            try:
-                curr_ax = axes[scount, day_count]
-            except IndexError:
-                print(scount, day_count)
-                raise
-
-            # loop over blocks
-            for block in list_of_blocks:
-
-                if block['name'] == 'Quest':
-                    linecolor = colors[block['name']]
-                else:
-                    linecolor = colors[PROB_CP[block['name']]]
-
-                if not block['in_meta_not_in_file']:
-                    list_of_datetimes = [block['datetime_start'], block['datetime_stop']]
-                    all_dates[(scount, day_count)] += list_of_datetimes
-                    dy_dict[(scount, day_count)] += delta_y
-                    dy = y_values[block['name']]
-                    dates = matplotlib.dates.date2num(list_of_datetimes)
-                    curr_ax.plot_date(dates, [dy, dy],
-                                      fmt='-+', linewidth=LINEWIDTH, markersize=MARKERSIZE,
-                                      color=linecolor, xdate=True)
-                    # annotate block number
-                    bname = block['name']
-                    if bname not in {'Quest', 'Block2'}:
-                        bnum = re.findall('\\d+', bname)[0]
-                        # bnum = bname[-1]
-                        curr_ax.annotate(bnum + ':' + str(block['num_trials']), (dates[0], dy+.5), fontsize=SMALL_FONT)
-                    else:
-                        curr_ax.annotate(str(block['num_trials']), (dates[0], dy+.5), fontsize=SMALL_FONT)
-    # print()
-    # pprint.pprint(all_dates[(0, 0)])
-    # pprint.pprint(matplotlib.dates.date2num(all_dates[(0, 0)]))
-    # print()
-    DX = .13
-    for subj in range(num_subjects):
-        for dd in range(max_num_days):
-            if (subj, dd) in {(3, 2), (4, 2)}:
-                continue
-            curr_ax = axes[subj, dd]
-
-            curr_ax.set_title('day ' + str(all_titles[(subj, dd)]))
-            if dd == 0:
-                curr_ax.set_ylabel('subj ' + str(subj + 1))
-            curr_ax.tick_params(
-                axis='y',  # changes apply to the x-axis
-                which='both',  # both major and minor ticks are affected
-                left=False,  # ticks along the bottom edge are off
-                right=False,  # ticks along the top edge are off
-                labelleft=False)  # labels along the bottom edge are off
-            curr_ax.spines['top'].set_visible(False)
-            curr_ax.spines['right'].set_visible(False)
-            curr_ax.spines['bottom'].set_visible(False)
-            curr_ax.spines['left'].set_visible(False)
-            # orig_y1, orig_y2 = curr_ax.get_ylim()
-            curr_ax.set_ylim(min(y_values.values())-3*ddy, max(y_values.values())+3*ddy)
-            curr_ax.set_ylim(min(y_values.values())-3*ddy, max(y_values.values())+3*ddy)
-            orig_x1, orig_x2 = curr_ax.get_xlim()
-            curr_ax.set_xlim(orig_x1, orig_x1 + DX)
-            xticks = [matplotlib.dates.num2date(x) for x in curr_ax.get_xticks()]
-            curr_ax.set_xticklabels([d.strftime('%H:%M') for d in xticks], fontsize=SMALL_FONT)
-            # curr_ax.format_xdata = matplotlib.dates.DateFormatter('%H:%M')
-            curr_ax.grid(b=True)
-    fig.delaxes(axes[3, 2])
-    fig.delaxes(axes[4, 2])
-    plt.legend(handles=lines, bbox_to_anchor=(-1.1, 1.3), loc=2, borderaxespad=0., fontsize=2*SMALL_FONT)
-    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=.7)
-
-    def get_block_color(blockname):
-        if blockname == 'Quest':
-            return colors[blockname]
-        else:
-            pcp = PROB_CP[blockname]
-            return colors[pcp]
-
-    for subj in range(num_subjects):
-        curr_ax = axes[subj, max_num_days]
-        counts_dict = block_counts[subj]
-
-        # dict with key-val = <block name>:<index on x axis>
-        xindices = {k:x for x, k in enumerate(y_values.keys())}
-        # print(xindices)
-        xs, ys, cs = [], [], []  # x values, y values and color values
-        for k, v in counts_dict.items():
-            xs.append(xindices[k])
-            ys.append(v)
-            cs.append(get_block_color(k))
-        curr_ax.barh(xs, ys, color=cs)
-        curr_ax.set_yticks(list(xindices.values()))
-        yticklabels = ['Q'] + [str(i) for i in range(2,12)]
-        curr_ax.set_yticklabels(yticklabels)
-        curr_ax.set_xlabel('block count', fontsize=1.8*SMALL_FONT)
-        curr_ax.set_xlim(0, 4)
-        for label in (curr_ax.get_xticklabels() + curr_ax.get_yticklabels()):
-            label.set_fontsize(SMALL_FONT)
-    plt.savefig(plot_file)
-    # plt.show()
+    return max_num_days, metadata, block_counts
 
 
 if __name__ == '__main__':
@@ -1083,6 +1080,7 @@ if __name__ == '__main__':
     _, arg = sys.argv
 
     if arg == 'check':
+        # todo: turn this whole block into a function
         files_data, latest_hashes = get_files_and_hashes(show=False, hash_map=True)
 
         assert latest_hashes == REF_HASHES, 'latest hashes do not match reference hashes'
@@ -1092,7 +1090,7 @@ if __name__ == '__main__':
             FIRA: list of pairs of the form (<path to .csv file>, <MD5 checksum for this file>)
             dots: same as for FIRA, but for dots data
             session: single string representing the timestamp of the session, in the format YYYY_MM_DD_HH_mm
-    
+
             for the values corresponding to the FIRA and dots keys, the absence of any file is encoded as an empty list
         """
         # get checksum of metadata file ...
@@ -1121,7 +1119,8 @@ if __name__ == '__main__':
         check_homogeneity(files_data)
 
     elif arg == 'log':
-        valid_meta_data = produce_valid_metadata(meta_data)
+        original_meta = read_new_metadata(old=True)
+        valid_meta_data = produce_valid_metadata(original_meta)
         with open('new_metadata', 'w') as fp:
             try:
                 json.dump(valid_meta_data, fp, indent=4, sort_keys=True)
@@ -1133,5 +1132,3 @@ if __name__ == '__main__':
         pprint.pprint(valid_meta_data)
 
         print('ALL GOOD!!!!')
-    elif arg == 'plot':
-        plot_meta_data('metaplot.png')
