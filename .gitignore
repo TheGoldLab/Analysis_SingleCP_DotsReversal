@@ -29,3 +29,6 @@ Jupyter/old/Pilot15/.ipynb_checkpoints/
 .idea/*
 __pycache__/*
 Jupyter/__pycache__/*
+.Rproj.user
+R/.Rhistory
+R/R.Rproj
