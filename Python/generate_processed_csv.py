@@ -19,15 +19,15 @@ def dump_all_data(file_to_write):
     _, metadata, _ = super_power_metadata()
 
     # debug
-    pprint.pprint(metadata)
+    # pprint.pprint(metadata)
     list_of_df = []
     for subj_name, sessions in metadata.items():
         for session_date, session_info in sessions.items():
             sess_day = session_info['day_count'] + 1
 
             # quick exit for debug
-            if session_date != '2019_06_20_12_54':
-                break
+            # if session_date != '2019_06_20_12_54':
+            #     break
 
             blocks = [b for b in session_info['blocks'] if (not b['in_meta_not_in_file']) and b['num_trials'] > 0]
 
@@ -41,7 +41,8 @@ def dump_all_data(file_to_write):
                     'feedbackOn',
                     'dirReleaseChoiceTime',
                     'randSeedBase',
-                    'timeCP'
+                    'timeCP',
+                    'fixationStart'
                 ]
                 clean_data.drop(columns=cols_to_delete, inplace=True)
 
@@ -104,4 +105,4 @@ def dump_all_pcorr_by_vd_subj_probcp(save_file=None):
 
 
 if __name__ == '__main__':
-    dump_all_data('test_dump.csv')
+    dump_all_data('all_valid_data.csv')
