@@ -113,7 +113,8 @@ build_arcs <- function(confusion_table) {
   start <- c(start, startRight, startLeft)
   end <- c(end, endRight, endLeft)
   
-  arcs <- data.frame(start, end, r, side)
+  dimension <- side  # just to standardize the name
+  arcs <- data.frame(start, end, r, dimension)
   
   return(arcs)
 }
@@ -121,10 +122,11 @@ build_arcs <- function(confusion_table) {
 
 ```{r}
 # arc_data is data.table returned by build_arcs()
+# the inner donut is the true direction of motion, the outer one is subject's choice
 plot_donut <- function(arc_data) {
   g <- ggplot(arc_data) +
     geom_arc(aes(x0 = 0, y0 = 0, r = r, start = start, end = end,
-                 color = side), size=25) + 
+                 color = dimension), size=25) + 
     coord_fixed(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2)) +
     theme(axis.title.x=element_blank(),
           axis.text.x=element_blank(),
@@ -142,10 +144,69 @@ plot_donut <- function(arc_data) {
 s <- "S1"
 ss <- c("2019_06_20_12_54", "2019_06_21_13_08", "2019_06_27_11_33")
 bn <- 'Block2'
-c <- 0
+c <- 100
 v <- 400
 for (sss in ss) {
   p <- plot_donut(build_arcs(build_confusion_table(s, sss, bn, c, v)))
+  plot(p)
+}
+```
+
+```{r}
+# Example of confusion matrix-like table for CP response vs. true presenceCP
+build_confusion_cpd <- function(subj, prob_cp, coh) {
+  confusion <- table(
+    data[subject==subj &
+           probCP==as.character(prob_cp) &
+           coherence==coh,
+         .(cpChoice, presenceCP)]
+  )
+  pc <- confusion
+  print(pc)
+}
+
+# builds data.frame of arcs corresponding to a confusion table
+build_arcs_cpd <- function(confusion_table) {
+  dt <- as.data.table(confusion_table)
+  
+  trueCP <- dt[presenceCP == "CP", sum(N)]
+  trueNoCP <- dt[presenceCP == "no-CP", sum(N)]
+  choseCP <- dt[cpChoice == "CP", sum(N)]
+  choseNoCP <- dt[cpChoice == "no-CP", sum(N)]
+  
+  totTrials <- trueCP + trueNoCP
+  angle <- 2*pi/totTrials
+  
+  # build arc for true direction
+  start <- c(0, trueCP*angle)
+  end <- c(trueCP*angle, 2*pi)
+  
+  # build arc for reported CP 
+  startCP <- -dt[cpChoice == "CP" & presenceCP == "no-CP", N]*angle
+  endCP <- startCP + choseCP*angle
+  
+  startNoCP <- endCP
+  endNoCP <- 2*pi + startCP
+  
+  start <- c(start, startCP, startNoCP)
+  end <- c(end, endCP, endNoCP)
+  
+  r <- c(.52, .52, 1, 1)
+  CP <- factor(c('CP', 'no-CP', 'CP', 'no-CP'))
+  
+  dimension <- CP  # to standardize the name
+  arcs <- data.frame(start, end, r, dimension)
+  
+  return(arcs)
+}
+```
+
+```{r}
+subjects <- c("S1", "S2", "S3", "S4", "S5")
+pcp <- 0.2
+c <- 100
+for (s in subjects) {
+  p <- plot_donut(build_arcs_cpd(build_confusion_cpd(s, pcp, c)))
   plot(p)
 }
 ```
