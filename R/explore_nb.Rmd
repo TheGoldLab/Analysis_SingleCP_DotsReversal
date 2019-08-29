@@ -69,22 +69,18 @@ str(data)
 
 ```{r}
 # Example of confusion matrix-like table for choice vs. true direction of motion
-subj <- "S1"
-session <- "2019_06_20_12_54"
-block_name <- 'Block2'
-coh <- 0
-vd <- 400
-confusion <- table(
-  data[subject==subj &
-         date==session & 
-         block==block_name & 
-         coherence==coh & 
-         viewingDuration == vd,
-       .(dirChoice, initDirection)]
-)
-pc <- confusion
-print(pc)
-# for an example of visualization, feed the table to fourfoldplot as in https://stackoverflow.com/a/23891764
+build_confusion_table <- function(subj, session, block_name, coh, vd) {
+  confusion <- table(
+    data[subject==subj &
+           date==session &
+           block==block_name & 
+           coherence==coh & 
+           viewingDuration == vd,
+         .(dirChoice, initDirection)]
+  )
+  pc <- confusion
+  print(pc)
+}
 ```
 
 
@@ -124,19 +120,33 @@ build_arcs <- function(confusion_table) {
 ```
 
 ```{r}
-# Method 1
-arcsd <- build_arcs(pc)
-ggplot(arcsd) +
-  geom_arc(aes(x0 = 0, y0 = 0, r = r, start = start, end = end,
-               color = side), size=25) + 
-  coord_fixed(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2)) +
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        axis.ticks.y=element_blank(),
-        axis.text.y=element_blank(),
-        axis.title.y=element_blank(),
-        legend.text=element_text(size=16),
-        legend.title = element_text(size=16))
+# arc_data is data.table returned by build_arcs()
+plot_donut <- function(arc_data) {
+  g <- ggplot(arc_data) +
+    geom_arc(aes(x0 = 0, y0 = 0, r = r, start = start, end = end,
+                 color = side), size=25) + 
+    coord_fixed(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2)) +
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank(),
+          axis.ticks.y=element_blank(),
+          axis.text.y=element_blank(),
+          axis.title.y=element_blank(),
+          legend.text=element_text(size=16),
+          legend.title = element_text(size=16)) 
+  return(g)
+}
+```
+
+```{r}
+s <- "S1"
+ss <- c("2019_06_20_12_54", "2019_06_21_13_08", "2019_06_27_11_33")
+bn <- 'Block2'
+c <- 0
+v <- 400
+for (sss in ss) {
+  p <- plot_donut(build_arcs(build_confusion_table(s, sss, bn, c, v)))
+  plot(p)
+}
 ```
 
