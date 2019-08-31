@@ -79,13 +79,37 @@ build_confusion_table <- function(subj, session, block_name, coh, vd) {
          .(dirChoice, initDirection)]
   )
   pc <- confusion
-  print(pc)
+}
+
+# build_counts_dt <- function(subj, , coh, vd) {
+#   confusion <- table(
+#     data[subject==subj &
+#            date==session &
+#            block==block_name & 
+#            coherence==coh & 
+#            viewingDuration == vd,
+#          .(dirChoice, initDirection)]
+#   )
+#   pc <- confusion
+# }
+
+# confusion table of choice for given PCP
+build_confusion_pcp <- function(subj, coh, vd, pcp) {
+  confusion <- table(
+    data[subject==subj &
+           coherence==coh & 
+           viewingDuration == vd &
+           probCP == pcp,
+         .(dirChoice, initDirection)]
+  )
+  pc <- confusion
 }
 ```
 
 
 ```{r}
 # builds data.frame of arcs corresponding to a confusion table
+# note: prop.table might be useful: https://rdrr.io/r/base/prop.table.html
 build_arcs <- function(confusion_table) {
   dt <- as.data.table(confusion_table)
   
@@ -118,6 +142,40 @@ build_arcs <- function(confusion_table) {
   
   return(arcs)
 }
+  
+#   
+# # confusion_dtable here needs to be more than a classical 2x2 table
+# build_grouped_arcs <- function(confusion_dtable) {
+# 
+#   trueLeft <- dt[initDirection == "left", sum(N)]
+#   trueRight <- dt[initDirection == "right", sum(N)]
+#   choseLeft <- dt[dirChoice == "left", sum(N)]
+#   choseRight <- dt[dirChoice == "right", sum(N)]
+#   
+#   totTrials <- trueLeft + trueRight
+#   angle <- 2*pi/totTrials
+#   
+#   # build arc for true direction
+#   start <- c(0, trueRight*angle)
+#   end <- c(trueRight*angle, 2*pi)
+#   r <- c(.52, .52, 1, 1)
+#   side <- factor(c('right', 'left', 'right', 'left'))
+#   
+#   # build arc for chosen direction
+#   startRight <- -dt[dirChoice == "right" & initDirection == "left", N]*angle
+#   endRight <- startRight + choseRight*angle
+#   
+#   startLeft <- endRight
+#   endLeft <- 2*pi + startRight
+#   
+#   start <- c(start, startRight, startLeft)
+#   end <- c(end, endRight, endLeft)
+#   
+#   dimension <- side  # just to standardize the name
+#   arcs <- data.frame(start, end, r, dimension)
+#   
+#   return(arcs)
+# }
 ```
 
 ```{r}
@@ -138,19 +196,81 @@ plot_donut <- function(arc_data) {
           legend.title = element_text(size=16)) 
   return(g)
 }
+
+# plot_donut_grid <- function(arc_data) {
+#   g <- ggplot(arc_data) +
+#     geom_arc(aes(x0 = 0, y0 = 0, r = r, start = start, end = end,
+#                  color = dimension), size=25) + 
+#     coord_fixed(xlim=c(-1.2,1.2), ylim=c(-1.2,1.2)) +
+#     theme(axis.title.x=element_blank(),
+#           axis.text.x=element_blank(),
+#           axis.ticks.x=element_blank(),
+#           axis.ticks.y=element_blank(),
+#           axis.text.y=element_blank(),
+#           axis.title.y=element_blank(),
+#           legend.text=element_text(size=16),
+#           legend.title = element_text(size=16)) + 
+#     facet_grid(subject ~ viewingDuration)
+#   return(g)
+# }
 ```
 
 ```{r}
-s <- "S1"
-ss <- c("2019_06_20_12_54", "2019_06_21_13_08", "2019_06_27_11_33")
-bn <- 'Block2'
-c <- 100
-v <- 400
-for (sss in ss) {
-  p <- plot_donut(build_arcs(build_confusion_table(s, sss, bn, c, v)))
-  plot(p)
-}
+# s <- "S1"
+# ss <- c("2019_06_20_12_54", "2019_06_21_13_08", "2019_06_27_11_33")
+# bn <- 'Block2'
+# c <- 100
+# v <- 400
+# for (sss in ss) {
+#   p <- plot_donut(build_arcs(build_confusion_table(s, sss, bn, c, v)))
+#   plot(p)
+# }
 ```
+
+
+```{r}
+# curious data points
+# s <- "S5"
+# probcp <- 0
+# c <- 62
+# v <- 100
+
+# s <- "S1"
+# probcp <- 0
+# c <- 100
+# v <- 100
+
+subj <- c("S5", "S1", "S2", "S5", "S4", "S3", "S2")
+num_cases <- length(subj)
+probcp <- rep_len(0, num_cases)
+coh <- c(62, 100, 22.0, 0,0,0,100)
+vd <- c(100, 100, 100, 100, 200, 200, 200)
+
+cases <- data.table(subj, coh, vd, probcp)
+
+
+
+call_with_row_args <- function(dt) {
+  s <- dt[, subj]
+  p <- dt[, probcp]
+  c <- dt[, coh]
+  v <- dt[, vd]
+  return(build_confusion_pcp(s, c, v, p))
+}
+
+for (cc in 1:num_cases) {
+  case_to_plot <- as.vector(cases[cc,])
+  conftable <- call_with_row_args(case_to_plot)
+  print("-------------------- CASE --------------------")
+  print(case_to_plot)
+  print(addmargins(conftable, FUN = list(Total = sum), quiet = TRUE))
+  p <- plot_donut(build_arcs(conftable))
+  plot(p)  
+}
+
+```
+
+
 
 ```{r}
 # Example of confusion matrix-like table for CP response vs. true presenceCP
