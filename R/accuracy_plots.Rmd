@@ -1,0 +1,80 @@
+---
+title: "Accuracy plots"
+output: html_notebook
+---
+
+```{r}
+library(data.table)
+library(ggforce)
+source("explore_functions.r")
+```
+
+```{r}
+data <- get_full_data() 
+```
+
+
+Per-subject accuracy at threshold coherence on non-CP trials, as function of VD
+```{r}
+to_plot <- data[
+  coherence > 0 & 
+    coherence < 100 &
+    presenceCP == "no-CP",
+  .(accuracy=mean(dirCorrect), numTrials=.N), 
+  by=.(subject, viewingDuration)
+]
+to_plot[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot[,ci:=1.96*se]
+print(to_plot[order(subject, viewingDuration)])
+```
+
+```{r, fig.width = 12, fig.height = 7.8}
+ggplot(aes(x=viewingDuration, y=accuracy, col=subject, group=subject), data=to_plot) + 
+  geom_line(size=1.5) + 
+  geom_point() +
+  geom_hline(yintercept=c(.5,.9), color="black") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1) +
+  facet_wrap(~subject) +
+  theme(text = element_text(size=20))
+```
+
+Same as above, altogether.
+```{r, fig.width = 12, fig.height = 7.8}
+pd <- position_dodge(20) # move them .05 to the left and right
+ggplot(aes(x=viewingDuration, y=accuracy, col=subject, group=subject), data=to_plot) + 
+  geom_line(size=1.2, position = pd) + 
+  geom_point(position=pd, size=3) +
+  geom_hline(yintercept=c(.5,.9), color="black") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=30, position=pd, size=1) +
+  theme(text = element_text(size=20))
+```
+
+
+By Prob-CP
+```{r}
+nonQuestData <- data[block != "Quest"]
+to_plot2 <- nonQuestData[
+  coherence > 0 & 
+    coherence < 100 &
+    presenceCP == "no-CP",
+  .(accuracy=mean(dirCorrect), numTrials=.N), 
+  by=.(subject, viewingDuration, probCP)
+]
+to_plot2[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot2[,ci:=1.96*se]
+```
+
+```{r}
+
+```
+
+```{r, fig.width = 20, fig.height = 18}
+ggplot(aes(x=viewingDuration, y=accuracy, col=subject), data=to_plot2) + 
+  geom_line(size=1.5) + 
+  geom_point() +
+  geom_hline(yintercept=c(.5,.9), color="black") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1) +
+  facet_grid(subject~probCP) +
+  theme(text = element_text(size=20))
+```
+
