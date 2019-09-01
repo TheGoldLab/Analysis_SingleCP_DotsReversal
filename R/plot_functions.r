@@ -101,9 +101,31 @@ factored_threshold[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered
 #  theme(text = element_text(size=35))
 #dev.off()
 
-# Per prob-CP condition, accuracy at 200 msec ishigher than at 300 msecon CP trials.
+## as above, but with points for 300 msec no CP trials.
+#to_plot6 <- factored_threshold[
+#  ((viewingDuration == 200) | (viewingDuration == 300)) &
+#    coh_cat=="th",
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(presenceCP, subject, viewingDuration, probCP)
+#]
+#to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+#to_plot6[,ci:=1.96*se]
+#
+#pd <- position_dodge(.2) # move them .05 to the left and right
+#
+#png(filename="acc_dd_aroundCP_bysubj_bypcp.png", width=1050, height=1000)
+#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+#  geom_point(size=4, position=pd) +
+#  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+#  facet_grid(subject~probCP) +
+#  scale_color_brewer(palette="Dark2") +
+#  theme(text = element_text(size=35))
+#dev.off()
+
+# as above, but for 200-400 msec trials.
 to_plot6 <- factored_threshold[
-  ((viewingDuration == 200) | (viewingDuration == 300)) &
+  viewingDuration > 150 &
     coh_cat=="th",
   .(accuracy=mean(dirCorrect), numTrials=.N),
   by=.(presenceCP, subject, viewingDuration, probCP)
@@ -113,12 +135,14 @@ to_plot6[,ci:=1.96*se]
 
 pd <- position_dodge(.2) # move them .05 to the left and right
 
-png(filename="acc_dd_aroundCP_bysubj_bypcp.png", width=1050, height=1000)
+png(filename="acc_dd_200-400_bysubj_bypcp_bycp.png", width=1600, height=1000)
 ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
   geom_point(size=4, position=pd) +
+  geom_line(size=2) +
   geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
   geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
   facet_grid(subject~probCP) +
   scale_color_brewer(palette="Dark2") +
-  theme(text = element_text(size=35))
+  theme(text = element_text(size=35)) + 
+  ggtitle("Acc (DD) th-coh")
 dev.off()
