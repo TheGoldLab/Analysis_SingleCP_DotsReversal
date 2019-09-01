@@ -6,15 +6,14 @@ output:
     code_folding: hide
 ---
 <!--
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+TODO IN THIS NOTEBOOK
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+1/ Add radius to outmost boundary at every arc junction
+2/ change donut colors, maybe yellow vs. blue?
+3/ Order the direction factors "left" < "right" to improve display of confusion matrix
+4/ Draw trial numbers in each section of donut plots
+5/ When it makes sense, layout donuts as a grid!
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 -->
 
 # Hello!
@@ -227,7 +226,7 @@ plot_donut <- function(arc_data) {
 # }
 ```
 
-
+# Donuts on DD task
 ```{r}
 # curious data points
 # s <- "S5"
@@ -240,11 +239,11 @@ plot_donut <- function(arc_data) {
 # c <- 100
 # v <- 100
 
-subj <- c("S5", "S1", "S2", "S5", "S4", "S3", "S2")
+subj <- c("S5", "S1", "S2", "S5", "S4", "S3", "S2", "S1", "S1", "S1")
 num_cases <- length(subj)
 probcp <- rep_len(0, num_cases)
-coh <- c(62, 100, 22.0, 0,0,0,100)
-vd <- c(100, 100, 100, 100, 200, 200, 200)
+coh <- c(62, 100, 22.0, 0,0,0,100, 0, 0, 0)
+vd <- c(100, 100, 100, 100, 200, 200, 200, 200, 300, 400)
 
 cases <- data.table(subj, coh, vd, probcp)
 
@@ -321,13 +320,32 @@ build_arcs_cpd <- function(confusion_table) {
 }
 ```
 
+
+# Donuts for CPD task
+
 ```{r}
-subjects <- c("S1", "S2", "S3", "S4", "S5")
-pcp <- 0.2
-c <- 100
-for (s in subjects) {
-  p <- plot_donut(build_arcs_cpd(build_confusion_cpd(s, pcp, c)))
-  plot(p)
+
+subj <- rep(c("S1", "S2", "S3", "S4", "S5"), 3)
+probcp <- rep(c(0.2, .5, .8), 5)
+num_cases <- length(subj)
+coh <- rep_len(0, num_cases)
+
+cases <- data.table(subj, probcp, coh)
+
+call_with_row_args_cpd <- function(dt) {
+  s <- dt[, subj]
+  p <- dt[, probcp]
+  c <- dt[, coh]
+  return(build_confusion_cpd(s, p, c))
+}
+
+for (cc in 1:num_cases) {
+  case_to_plot <- as.vector(cases[cc,])
+  conftable <- call_with_row_args_cpd(case_to_plot)
+  print("-------------------- CASE --------------------")
+  print(case_to_plot)
+  print(addmargins(conftable, FUN = list(Total = sum), quiet = TRUE))
+  p <- plot_donut(build_arcs_cpd(conftable))
+  plot(p)  
 }
 ```
-
