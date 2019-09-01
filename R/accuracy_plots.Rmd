@@ -94,8 +94,31 @@ to_plot3[,ci:=1.96*se]
 ```
 
 ```{r, fig.height=9, fig.width=12}
-ggplot(aes(x=coh_cat, y=accuracy, col=subject), data=to_plot3) +
+# ggplot(aes(x=coh_cat, y=accuracy, col=subject), data=to_plot3) +
+#   geom_point() +
+#   geom_hline(yintercept=c(.5,1), color="black") +
+#   geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1) +
+#   facet_grid(subject~viewingDuration) +
+#   theme(text = element_text(size=20))
+```
+
+
+Accuracy at 100 & 200 msec for fixed coh is invariant across all ProbCP conditions
+```{r}
+to_plot4 <- factored_threshold[
+  viewingDuration < 250 &
+    coh_cat == "th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(subject, viewingDuration, probCP)
+]
+to_plot4[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot4[,ci:=1.96*se]
+```
+
+```{r}
+ggplot(aes(x=probCP, y=accuracy, col=subject), data=to_plot4) +
   geom_point() +
+  geom_line(group=1) +
   geom_hline(yintercept=c(.5,1), color="black") +
   geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1) +
   facet_grid(subject~viewingDuration) +

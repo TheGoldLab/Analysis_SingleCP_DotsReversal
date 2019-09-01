@@ -38,20 +38,46 @@ factored_threshold[coherence > 0, coh_cat:= "th"]
 factored_threshold[coherence==100, coh_cat:="100"]
 factored_threshold[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered=T)]
 
-to_plot3 <- factored_threshold[
-    presenceCP == "no-CP",
-  .(accuracy=mean(dirCorrect), numTrials=.N),
-  by=.(subject, viewingDuration, coh_cat)
-]
-to_plot3[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plot3[,ci:=1.96*se]
+#to_plot3 <- factored_threshold[
+#    presenceCP == "no-CP",
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(subject, viewingDuration, coh_cat)
+#]
+#to_plot3[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+#to_plot3[,ci:=1.96*se]
+#
+#png(filename="acc_dd_cohcat_nocp_bysubj_byvd.png", width=1600, height=1600)
+#ggplot(aes(x=coh_cat, y=accuracy, col=subject), data=to_plot3) +
+#  geom_point(size=5) +
+#  geom_hline(yintercept=c(.5,1), color="black") +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=2) +
+#  facet_grid(subject~viewingDuration) +
+#  ggtitle("Acc on non-CP trials, by subject by VD") +
+#  theme(text = element_text(size=40))
+#dev.off()
 
-png(filename="acc_dd_cohcat_nocp_bysubj_byvd.png", width=1600, height=1600)
-ggplot(aes(x=coh_cat, y=accuracy, col=subject), data=to_plot3) +
-  geom_point(size=5) +
+
+
+
+
+#Accuracy at 100 & 200 msec for fixed coh is invariant across all ProbCP conditions
+to_plot4 <- factored_threshold[
+  viewingDuration < 250 &
+    coh_cat == "th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(subject, viewingDuration, probCP)
+]
+to_plot4[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot4[,ci:=1.96*se]
+
+png(filename="acc_dd_pcp_nocp_bysubj_byvd.png", width=1000, height=1600)
+
+ggplot(aes(x=probCP, y=accuracy, col=subject), data=to_plot4) +
+  geom_point(size=3) +
+  geom_line(group=1, size=2) +
   geom_hline(yintercept=c(.5,1), color="black") +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=2) +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=1) +
   facet_grid(subject~viewingDuration) +
-  ggtitle("Acc on non-CP trials, by subject by VD") +
-  theme(text = element_text(size=40))
+  theme(text = element_text(size=35))
+
 dev.off()
