@@ -128,7 +128,7 @@ to_plot4[,ci:=1.96*se]
 Per prob-CP condition, accuracy at 200 msec ishigher than at 300 msecon CP trials.
 ```{r}
 to_plot5 <- factored_threshold[
-  ((viewingDuration == 200) | (viewingDuration == 300 & presenceCP == "CP")) &
+  ((viewingDuration == 200) | (viewingDuration == 300)) &
     coh_cat=="th",
   .(accuracy=mean(dirCorrect), numTrials=.N), 
   by=.(presenceCP, subject, viewingDuration, probCP)
@@ -141,7 +141,7 @@ to_plot5[,ci:=1.96*se]
 str(to_plot5)
 ```
 
-```{r}
+```{r, fig.width=10, fig.height=14}
 ggplot(to_plot5, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) + 
   geom_point() +
   geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +

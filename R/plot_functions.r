@@ -81,23 +81,43 @@ factored_threshold[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered
 #dev.off()
 
 
+## Per prob-CP condition, accuracy at 200 msec ishigher than at 300 msecon CP trials.
+#to_plot5 <- factored_threshold[
+#  ((viewingDuration == 200) | (viewingDuration == 300 & presenceCP == "CP")) &
+#    coh_cat=="th",
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(presenceCP, subject, viewingDuration, probCP)
+#]
+#to_plot5[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+#to_plot5[,ci:=1.96*se]
+#
+#png(filename="acc_dd_cp_short_bysubj_bypcp.png", width=1000, height=1000)
+#ggplot(to_plot5, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) +
+#  geom_point(size=5) +
+#  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=2) +
+#  facet_grid(subject~probCP) +
+#  scale_color_brewer(palette="Dark2") +
+#  theme(text = element_text(size=35))
+#dev.off()
+
 # Per prob-CP condition, accuracy at 200 msec ishigher than at 300 msecon CP trials.
-to_plot5 <- factored_threshold[
-  ((viewingDuration == 200) | (viewingDuration == 300 & presenceCP == "CP")) &
+to_plot6 <- factored_threshold[
+  ((viewingDuration == 200) | (viewingDuration == 300)) &
     coh_cat=="th",
   .(accuracy=mean(dirCorrect), numTrials=.N),
   by=.(presenceCP, subject, viewingDuration, probCP)
 ]
-to_plot5[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plot5[,ci:=1.96*se]
+to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot6[,ci:=1.96*se]
 
-#str(to_plot5)
+pd <- position_dodge(.2) # move them .05 to the left and right
 
-png(filename="acc_dd_cp_short_bysubj_bypcp.png", width=1000, height=1000)
-ggplot(to_plot5, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) +
-  geom_point(size=5) +
+png(filename="acc_dd_aroundCP_bysubj_bypcp.png", width=1050, height=1000)
+ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+  geom_point(size=4, position=pd) +
   geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=2) +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
   facet_grid(subject~probCP) +
   scale_color_brewer(palette="Dark2") +
   theme(text = element_text(size=35))
