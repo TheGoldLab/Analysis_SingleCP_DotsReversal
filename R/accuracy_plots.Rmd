@@ -116,12 +116,37 @@ to_plot4[,ci:=1.96*se]
 ```
 
 ```{r}
-ggplot(aes(x=probCP, y=accuracy, col=subject), data=to_plot4) +
+# ggplot(aes(x=probCP, y=accuracy, col=subject), data=to_plot4) +
+#   geom_point() +
+#   geom_line(group=1) +
+#   geom_hline(yintercept=c(.5,1), color="black") +
+#   geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1) +
+#   facet_grid(subject~viewingDuration) +
+#   theme(text = element_text(size=20))
+```
+
+Per prob-CP condition, accuracy at 200 msec ishigher than at 300 msecon CP trials.
+```{r}
+to_plot5 <- factored_threshold[
+  ((viewingDuration == 200) | (viewingDuration == 300 & presenceCP == "CP")) &
+    coh_cat=="th",
+  .(accuracy=mean(dirCorrect), numTrials=.N), 
+  by=.(presenceCP, subject, viewingDuration, probCP)
+]
+to_plot5[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot5[,ci:=1.96*se]
+```
+
+```{r}
+str(to_plot5)
+```
+
+```{r}
+ggplot(to_plot5, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) + 
   geom_point() +
-  geom_line(group=1) +
-  geom_hline(yintercept=c(.5,1), color="black") +
+  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
   geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1) +
-  facet_grid(subject~viewingDuration) +
-  theme(text = element_text(size=20))
+  facet_grid(subject~probCP) +
+  scale_color_brewer(palette="Dark2")
 ```
 
