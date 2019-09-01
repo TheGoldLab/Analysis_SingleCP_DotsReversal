@@ -135,7 +135,7 @@ to_plot6[,ci:=1.96*se]
 
 pd <- position_dodge(.2) # move them .05 to the left and right
 
-png(filename="acc_dd_200-400_bysubj_bypcp_bycp.png", width=1600, height=1000)
+png(filename="acc_dd_200-400_bysubj_bypcp_bycp.png", width=1600, height=1300)
 ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
   geom_point(size=4, position=pd) +
   geom_line(size=2) +

@@ -142,10 +142,11 @@ str(to_plot5)
 ```
 
 ```{r, fig.width=10, fig.height=14}
+pd <- position_dodge(.1) # move them .05 to the left and right
 ggplot(to_plot5, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) + 
-  geom_point() +
+  geom_point(position=pd) +
   geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1) +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, position=pd) +
   facet_grid(subject~probCP) +
   scale_color_brewer(palette="Dark2")
 ```
