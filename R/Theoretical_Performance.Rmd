@@ -1,0 +1,84 @@
+---
+title: "Theoretical performance curves"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(plotly)
+library(data.table)
+```
+
+```{r}
+#install.packages("plotly")
+```
+
+```{r, echo=FALSE}
+acc <- function(C, t) {
+  return(pnorm(C*sqrt(t)))
+}
+
+# C represents |d|/sigma with d the drift rate and sigma the diffusion constant
+acc_cp <- function(C, t) {
+  if (t<=.2) {
+    return(pnorm(C*sqrt(t)))
+  } else {
+    ccc <- t - .4  # in my equations this is -(T-tau) 
+    return(pnorm(C*ccc/sqrt(t)))
+  }
+}
+
+baseC <- seq(.2, 4, .1)
+baset <- seq(.1, .4, .01)
+
+C <- c()
+t <- c()
+Acc <- c()
+AccCP <- c()
+for (cc in baseC) {
+  for (tt in baset) {
+    C <- c(C, cc)
+    t <- c(t, tt)
+    Acc <- c(Acc, acc(cc, tt))
+    AccCP <- c(AccCP, acc_cp(cc, tt))
+  }
+}
+
+data <- data.table(C, t, Acc, AccCP)
+
+# convert to long format
+long_data = melt(data, id.vars = c("C", "t"),
+                measure.vars = c("Acc", "AccCP"))
+long_data[,Pwrong := 1-value]
+# head(long_data)
+# str(long_data)
+```
+
+```{r, fig.width=10, fig.height=5}
+# Plotting
+P1 <- ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
+      geom_tile() +
+      ggtitle("Theoretical Accuracy") + 
+      scale_fill_gradientn(colors=colorRampPalette(c("white","royalblue","seagreen","orange","red","brown"))(500),name="Accuracy\n[P(correct)]") +
+      labs(x = "Time [sec]",y="SNR [|d|/sigma]") +
+      facet_wrap(~variable) + 
+      theme_bw() + 
+      theme(text=element_text(size=20))
+ggplotly(P1)
+```
+
+Let's pick 3 SNR values and visualize accuracy as a function of time.
+```{r, fig.width=12, fig.height=8.5}
+ggplot(aes(x=t, y=value, col=factor(C)), data=long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001,]) + 
+  geom_line(aes(group=interaction(variable, C), linetype=variable), size=2) +
+  geom_hline(yintercept = long_data[variable == "Acc" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
+             linetype="dotted") +
+  ylab("P(correct)") + xlab("time (s)") +
+  labs(title = "Theoretical Curves Perfect Accumulator",
+       subtitle = "CP vs. no-CP trials",
+       caption = "dotted lines are P(wrong) at 100 msec", col="SNR") +
+  theme(text=element_text(size=30)) 
+```
