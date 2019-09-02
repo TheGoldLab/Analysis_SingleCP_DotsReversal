@@ -78,8 +78,8 @@ lowleak_cp <- c()
 highleak_cp <- c()
 
 #actual leak values
-lowl <- .1
-highl <- 3
+lowl <- 3
+highl <- 10
 
 
 # iteration <- 1
@@ -102,41 +102,56 @@ for (cc in baseC) {
 
 data <- data.table(C, t, norm_ncp, norm_cp, lowleak_ncp, highleak_ncp, lowleak_cp, highleak_cp)
 
+
+
 #convert to long format
 long_data = melt(data, id.vars = c("C", "t"),
                 measure.vars = c("norm_ncp", "norm_cp", "lowleak_ncp", "highleak_ncp", "lowleak_cp", "highleak_cp"))
 long_data[,Pwrong := 1-value]
-head(long_data)
-str(long_data)
+
+long_data[,CP:="no-CP"]
+long_data[,model:="DDM"]
+
+long_data[variable == "norm_cp" |
+            variable == "lowleak_cp" |
+            variable == "highleak_cp", `:=`(CP="CP")]
+long_data[variable == "lowleak_cp" | variable == "lowleak_ncp", `:=`(model="Low Leak")]
+long_data[variable == "highleak_cp" | variable == "highleak_ncp", `:=`(model="High Leak")]
+long_data[,model:=factor(model, levels = c("DDM", "Low Leak", "High Leak"))]
+long_data[,CP:=factor(CP, levels=c("no-CP", "CP"))]
+# 
+# head(long_data)
+# str(long_data)
 ```
 
 ```{r}
-str(data)
-head(data)
+# str(data)
+# head(data)
 ```
 
-```{r, fig.width=12, fig.height=16}
+```{r, fig.width=9, fig.height=10}
 # Plotting
-P1 <- ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
+ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
       geom_tile() +
       ggtitle("Theoretical Accuracy") + 
       scale_fill_gradientn(colors=colorRampPalette(c("white","royalblue","seagreen","orange","red","brown"))(500),name="Accuracy\n[P(correct)]") +
       labs(x = "Time [sec]",y="SNR [|d|/sigma]") +
-      facet_wrap(~variable, ncol = 2) + 
-      theme_bw() + 
-      theme(text=element_text(size=20))
-ggplotly(P1)
+      facet_grid(model~CP) + 
+      theme(text=element_text(size=20)) +
+      theme_bw()
 ```
 
 Let's pick 3 SNR values and visualize accuracy as a function of time.
-```{r, fig.width=12, fig.height=8.5}
-ggplot(aes(x=t, y=value, col=factor(C)), data=long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001,]) + 
-  geom_line(aes(group=interaction(variable, C), linetype=variable), size=2) +
-  geom_hline(yintercept = long_data[variable == "Acc" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
-             linetype="dotted") +
+```{r, fig.width=28, fig.height=9.5}
+ggplot(aes(x=t, y=value, col=CP), data=long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001,]) + 
+  geom_line(aes(group=interaction(model, CP), linetype=model), size=1.5) +
+  # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
+  #            linetype="dotted") +
+  facet_wrap(~factor(C)) +
   ylab("P(correct)") + xlab("time (s)") +
   labs(title = "Theoretical Curves Perfect Accumulator",
-       subtitle = "CP vs. no-CP trials",
-       caption = "dotted lines are P(wrong) at 100 msec", col="SNR") +
-  theme(text=element_text(size=30)) 
+       subtitle = "CP vs. no-CP trials", 
+       caption = paste("low leak =",lowl,"; high leak =",highl),
+       col="") +
+  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
 ```
