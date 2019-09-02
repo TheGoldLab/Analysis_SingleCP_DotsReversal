@@ -105,14 +105,14 @@ to_plot3[,ci:=1.96*se]
 
 Accuracy at 100 & 200 msec for fixed coh is invariant across all ProbCP conditions
 ```{r}
-to_plot4 <- factored_threshold[
-  viewingDuration < 250 &
-    coh_cat == "th",
-  .(accuracy=mean(dirCorrect), numTrials=.N),
-  by=.(subject, viewingDuration, probCP)
-]
-to_plot4[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plot4[,ci:=1.96*se]
+# to_plot4 <- factored_threshold[
+#   viewingDuration < 250 &
+#     coh_cat == "th",
+#   .(accuracy=mean(dirCorrect), numTrials=.N),
+#   by=.(subject, viewingDuration, probCP)
+# ]
+# to_plot4[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+# to_plot4[,ci:=1.96*se]
 ```
 
 ```{r}
@@ -127,27 +127,50 @@ to_plot4[,ci:=1.96*se]
 
 Per prob-CP condition, accuracy at 200 msec ishigher than at 300 msecon CP trials.
 ```{r}
-to_plot5 <- factored_threshold[
-  ((viewingDuration == 200) | (viewingDuration == 300)) &
-    coh_cat=="th",
-  .(accuracy=mean(dirCorrect), numTrials=.N), 
-  by=.(presenceCP, subject, viewingDuration, probCP)
-]
-to_plot5[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plot5[,ci:=1.96*se]
+# to_plot5 <- factored_threshold[
+#   ((viewingDuration == 200) | (viewingDuration == 300)) &
+#     coh_cat=="th",
+#   .(accuracy=mean(dirCorrect), numTrials=.N), 
+#   by=.(presenceCP, subject, viewingDuration, probCP)
+# ]
+# to_plot5[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+# to_plot5[,ci:=1.96*se]
 ```
 
 ```{r}
-str(to_plot5)
+# str(to_plot5)
+```
+
+```{r, fig.width=10, fig.height=14}
+# pd <- position_dodge(.1) # move them .05 to the left and right
+# ggplot(to_plot5, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) + 
+#   geom_point(position=pd) +
+#   geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+#   geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, position=pd) +
+#   facet_grid(subject~probCP) +
+#   scale_color_brewer(palette="Dark2")
+```
+
+# CPD
+```{r}
+to_plot7 <- factored_threshold[
+    coh_cat=="th" &
+      probCP > 0,
+  .(accuracy=mean(cpCorrect), numTrials=.N),
+  by=.(subject, viewingDuration, probCP)
+]
+to_plot7[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot7[,ci:=1.96*se]
 ```
 
 ```{r, fig.width=10, fig.height=14}
 pd <- position_dodge(.1) # move them .05 to the left and right
-ggplot(to_plot5, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) + 
+ggplot(to_plot7, aes(x=viewingDuration, y=accuracy, col=subject)) +
   geom_point(position=pd) +
   geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
   geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, position=pd) +
   facet_grid(subject~probCP) +
-  scale_color_brewer(palette="Dark2")
+  ggtitle("Acc at CPD as fcn of VD, by Prob(CP) by subject")
+  # scale_color_brewer(palette="Dark2")
 ```
 
