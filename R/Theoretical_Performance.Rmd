@@ -12,15 +12,21 @@ library(plotly)
 library(data.table)
 ```
 
+
+TODO: put CP as another grouping var, for nice grid plot
+
 ```{r}
 #install.packages("plotly")
 ```
 
 ```{r, echo=FALSE}
+
+# accuracy of perfect accumulator on non-CP trials
 acc <- function(C, t) {
   return(pnorm(C*sqrt(t)))
 }
 
+# accuracy of perfect accumulator on CP trials
 # C represents |d|/sigma with d the drift rate and sigma the diffusion constant
 acc_cp <- function(C, t) {
   if (t<=.2) {
@@ -31,40 +37,92 @@ acc_cp <- function(C, t) {
   }
 }
 
+
+
+# theoretical accuracy of a linear-leak model (O-U with drift)
+# C is |drift|/diffusion , t is time in sec, leak is leak rate, cp is bool: whether there is a cp or not
+acc_leak <- function(C, t, leak, cp) {
+  if (cp) {
+    if (t <= .2) {  # before CP, compute as for cp=F case
+      return(
+        pnorm(
+          C * ( 1 - exp(-leak*t) ) /  sqrt( (leak / 2) * (1 - exp(-2*leak*t)) )
+        )
+      )
+    } else {  # after CP
+      tau <- t-.2
+      return(pnorm(
+        C * (1-exp( -leak * tau ) * (2-exp( -leak*0.2 ))) / 
+          sqrt( (leak / 2) * (1 - exp(-2*leak*t)) )
+      ))
+    }
+  } else {
+    return(
+      pnorm(
+        C * ( 1 - exp(-leak*t) ) /  sqrt( (leak / 2) * (1 - exp(-2*leak*t)) )
+      )
+    )
+  }
+}
+
 baseC <- seq(.2, 4, .1)
 baset <- seq(.1, .4, .01)
 
 C <- c()
 t <- c()
-Acc <- c()
-AccCP <- c()
+norm_ncp <- c()
+norm_cp <- c()
+lowleak_ncp <- c()
+highleak_ncp <- c()
+lowleak_cp <- c()
+highleak_cp <- c()
+
+#actual leak values
+lowl <- .1
+highl <- 3
+
+
+# iteration <- 1
+
 for (cc in baseC) {
   for (tt in baset) {
     C <- c(C, cc)
     t <- c(t, tt)
-    Acc <- c(Acc, acc(cc, tt))
-    AccCP <- c(AccCP, acc_cp(cc, tt))
+    norm_ncp <- c(norm_ncp, acc(cc, tt))
+    norm_cp <- c(norm_cp, acc_cp(cc, tt))
+    lowleak_ncp <- c(lowleak_ncp, acc_leak(cc, tt, lowl, F))
+    highleak_ncp <- c(highleak_ncp, acc_leak(cc, tt, highl, F))
+    lowleak_cp <- c(lowleak_cp, acc_leak(cc, tt, lowl, T))
+    highleak_cp <- c(highleak_cp, acc_leak(cc, tt, highl, T))
+    # print(iteration)
+    # print(norm_ncp)
+    # iteration <- iteration + 1
   }
 }
 
-data <- data.table(C, t, Acc, AccCP)
+data <- data.table(C, t, norm_ncp, norm_cp, lowleak_ncp, highleak_ncp, lowleak_cp, highleak_cp)
 
-# convert to long format
+#convert to long format
 long_data = melt(data, id.vars = c("C", "t"),
-                measure.vars = c("Acc", "AccCP"))
+                measure.vars = c("norm_ncp", "norm_cp", "lowleak_ncp", "highleak_ncp", "lowleak_cp", "highleak_cp"))
 long_data[,Pwrong := 1-value]
-# head(long_data)
-# str(long_data)
+head(long_data)
+str(long_data)
 ```
 
-```{r, fig.width=10, fig.height=5}
+```{r}
+str(data)
+head(data)
+```
+
+```{r, fig.width=12, fig.height=16}
 # Plotting
 P1 <- ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
       geom_tile() +
       ggtitle("Theoretical Accuracy") + 
       scale_fill_gradientn(colors=colorRampPalette(c("white","royalblue","seagreen","orange","red","brown"))(500),name="Accuracy\n[P(correct)]") +
       labs(x = "Time [sec]",y="SNR [|d|/sigma]") +
-      facet_wrap(~variable) + 
+      facet_wrap(~variable, ncol = 2) + 
       theme_bw() + 
       theme(text=element_text(size=20))
 ggplotly(P1)
