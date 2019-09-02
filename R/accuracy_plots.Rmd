@@ -151,6 +151,41 @@ Per prob-CP condition, accuracy at 200 msec ishigher than at 300 msecon CP trial
 #   scale_color_brewer(palette="Dark2")
 ```
 
+
+The probability of being correct on 300-msec change-point trials
+should be greater (but still below %50) than the probability of being
+wrong on 100-msec trials
+```{r}
+to_plota <- factored_threshold[
+  ((viewingDuration == 100) | (viewingDuration == 300 & presenceCP == "CP")) &
+    coh_cat=="th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(presenceCP, subject, viewingDuration, probCP)
+]
+to_plota[, y:=accuracy]
+to_plota[viewingDuration==100, y:=1-y]  # P(wrong)for 100 msec
+to_plota[,se:=sqrt(y * (1-y) / numTrials)]
+to_plota[,ci:=1.96*se]
+```
+
+```{r}
+# str(to_plot5)
+```
+
+```{r, fig.width=10, fig.height=14}
+# pd <- position_dodge(.1) # move them .05 to the left and right
+ggplot(to_plota, aes(x=factor(viewingDuration), y=y, col=presenceCP)) +
+  geom_point() +
+  geom_hline(yintercept=c(0, .5), color="black", linetype="dashed") +
+  geom_errorbar(aes(ymin=y-ci, ymax=y+ci), width=.1) +
+  facet_grid(subject~probCP) +
+  labs(title="") +
+  xlab("Viewing Duration") + ylab("P(wrong) vs. P(correct)") +
+  ggtitle("P(wrong) vs. P(correct) on 100 vs. 300 CP trials") + 
+  scale_color_manual(labels = c("P(wrong)", "P(correct)"), values = c("darkred", "darkgreen")) +
+  theme_bw() 
+```
+
 # CPD
 ```{r}
 to_plot7 <- factored_threshold[
@@ -164,13 +199,13 @@ to_plot7[,ci:=1.96*se]
 ```
 
 ```{r, fig.width=10, fig.height=14}
-pd <- position_dodge(.1) # move them .05 to the left and right
-ggplot(to_plot7, aes(x=viewingDuration, y=accuracy, col=subject)) +
-  geom_point(position=pd) +
-  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, position=pd) +
-  facet_grid(subject~probCP) +
-  ggtitle("Acc at CPD as fcn of VD, by Prob(CP) by subject")
-  # scale_color_brewer(palette="Dark2")
+# pd <- position_dodge(.1) # move them .05 to the left and right
+# ggplot(to_plot7, aes(x=viewingDuration, y=accuracy, col=subject)) +
+#   geom_point(position=pd) +
+#   geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+#   geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, position=pd) +
+#   facet_grid(subject~probCP) +
+#   ggtitle("Acc at CPD as fcn of VD, by Prob(CP) by subject")
+#   # scale_color_brewer(palette="Dark2")
 ```
 

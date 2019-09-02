@@ -124,25 +124,58 @@ factored_threshold[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered
 #dev.off()
 
 # as above, but for 200-400 msec trials.
-to_plot6 <- factored_threshold[
-  viewingDuration > 150 &
+#to_plot6 <- factored_threshold[
+#  viewingDuration > 150 &
+#    coh_cat=="th",
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(presenceCP, subject, viewingDuration, probCP)
+#]
+#to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+#to_plot6[,ci:=1.96*se]
+#
+#pd <- position_dodge(.2) # move them .05 to the left and right
+#
+#png(filename="acc_dd_200-400_bysubj_bypcp_bycp.png", width=1600, height=1300)
+#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+#  geom_point(size=4, position=pd) +
+#  geom_line(size=2) +
+#  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+#  facet_grid(subject~probCP) +
+#  scale_color_brewer(palette="Dark2") +
+#  theme(text = element_text(size=35)) + 
+#  ggtitle("Acc (DD) th-coh")
+#dev.off()
+
+
+
+
+
+#The probability of being correct on 300-msec change-point trials
+#should be greater (but still below %50) than the probability of being
+#wrong on 100-msec trials
+to_plota <- factored_threshold[
+  ((viewingDuration == 100) | (viewingDuration == 300 & presenceCP == "CP")) &
     coh_cat=="th",
   .(accuracy=mean(dirCorrect), numTrials=.N),
   by=.(presenceCP, subject, viewingDuration, probCP)
 ]
-to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plot6[,ci:=1.96*se]
+to_plota[, y:=accuracy]
+to_plota[viewingDuration==100, y:=1-y]  # P(wrong)for 100 msec
+to_plota[,se:=sqrt(y * (1-y) / numTrials)]
+to_plota[,ci:=1.96*se]
 
-pd <- position_dodge(.2) # move them .05 to the left and right
 
-png(filename="acc_dd_200-400_bysubj_bypcp_bycp.png", width=1600, height=1300)
-ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
-  geom_point(size=4, position=pd) +
-  geom_line(size=2) +
-  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+png(filename="pwrong_pcorr_100-300_bysubj_bypcp_bycp.png", width=1150, height=1300)
+ggplot(to_plota, aes(x=factor(viewingDuration), y=y, col=presenceCP)) +
+  geom_point(size=5) +
+  geom_hline(yintercept=c(0, .5), color="black", linetype="dashed") +
+  geom_errorbar(aes(ymin=y-ci, ymax=y+ci), width=.1, size=2) +
   facet_grid(subject~probCP) +
-  scale_color_brewer(palette="Dark2") +
-  theme(text = element_text(size=35)) + 
-  ggtitle("Acc (DD) th-coh")
+  labs(title="") +
+  xlab("Viewing Duration") + ylab("P(wrong) vs. P(correct)") +
+  ggtitle("P(wrong|noCP) vs. P(correct|CP) \n on 100 vs. 300 CP trials") +
+  scale_color_manual(labels = c("P(wrong|noCP)", "P(correct|CP)"), values = c("darkred", "darkgreen")) + 
+  theme(text = element_text(size=35))  
+#  theme_bw()
 dev.off()
