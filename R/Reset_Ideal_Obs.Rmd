@@ -1,0 +1,93 @@
+---
+title: "Reset Ideal-Observer Model"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(plotly)
+library(data.table)
+```
+
+
+This model does not attempt to detect change-points.
+
+```{r}
+#install.packages("plotly")
+```
+
+```{r, echo=FALSE}
+
+# accuracy of perfect accumulator on non-CP trials
+jump <- function(y, h) {
+  return(y + log((h*exp(-y) + 1 - h)/(h*exp(y) + 1 - h)))
+}
+
+
+basey <- seq(-5, 5, .1)
+baseh <- seq(.01,.99,.01)
+
+yx <- c()
+yy <- c()
+hh <- c()
+
+# iteration <- 1
+
+for (y0 in basey) {
+  for (hval in baseh) {
+    yx <- c(yx, y0)
+    yy <- c(yy, jump(y0, hval))
+    hh <- c(hh, hval)
+  }
+}
+
+data <- data.table(yPre=yx, yPost=yy, h=hh)
+
+
+# #convert to long format
+# long_data = melt(data, id.vars = c("C", "t"),
+#                 measure.vars = c("norm_ncp", "norm_cp", "lowleak_ncp", "highleak_ncp", "lowleak_cp", "highleak_cp"))
+# long_data[,Pwrong := 1-value]
+# 
+# long_data[,CP:="no-CP"]
+# long_data[,model:="DDM"]
+# 
+# long_data[variable == "norm_cp" |
+#             variable == "lowleak_cp" |
+#             variable == "highleak_cp", `:=`(CP="CP")]
+# long_data[variable == "lowleak_cp" | variable == "lowleak_ncp", `:=`(model="Low Leak")]
+# long_data[variable == "highleak_cp" | variable == "highleak_ncp", `:=`(model="High Leak")]
+# long_data[,model:=factor(model, levels = c("DDM", "Low Leak", "High Leak"))]
+# long_data[,CP:=factor(CP, levels=c("no-CP", "CP"))]
+# # 
+# head(long_data)
+# str(long_data)
+```
+
+```{r}
+# str(data)
+# head(data)
+```
+
+Heatmaps:
+
+```{r, fig.width=11, fig.height=9}
+# Plotting
+ggplot(data=data, aes(x=yPre, y=yPost, group=h)) + 
+  geom_line(aes(col=h), size=1) +
+  ggtitle("Discounting at CP-time") + 
+  labs(x = "evidence pre-CP",y="evidence post-CP") +
+  theme(text=element_text(size=20))
+```
+
+Let's pick 3 SNR values and visualize accuracy as a function of time.
+```{r, fig.width=11, fig.height=9.5}
+ggplot(aes(x=h, y=yPost / yPre, col=yPre), data=data[yPre>0]) +
+  geom_line(aes(group=yPre), size=1) +
+  ylab("Reset value (% of yPre)") + xlab("prob CP (hazard)") +
+  labs(title = "Theoretical Jump at CP-time") +
+  theme(text=element_text(size=20))
+```
