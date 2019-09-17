@@ -8,7 +8,7 @@ output:
 
 ```{r, echo=FALSE}
 library(ggplot2)
-library(plotly)
+# library(plotly)
 library(data.table)
 ```
 
@@ -20,6 +20,8 @@ TODO: put CP as another grouping var, for nice grid plot
 ```
 
 ```{r, echo=FALSE}
+
+#### PA #####
 
 # accuracy of perfect accumulator on non-CP trials
 acc <- function(C, t) {
@@ -38,6 +40,8 @@ acc_cp <- function(C, t) {
 }
 
 
+
+#### LA #####
 
 # theoretical accuracy of a linear-leak model (O-U with drift)
 # C is |drift|/diffusion , t is time in sec, leak is leak rate, cp is bool: whether there is a cp or not
@@ -64,6 +68,17 @@ acc_leak <- function(C, t, leak, cp) {
     )
   }
 }
+
+
+
+
+#### PAR #####
+
+
+
+#### PADumbR #####
+
+
 
 baseC <- seq(.2, 4, .1)
 baset <- seq(.1, .4, .01)
@@ -125,8 +140,8 @@ long_data[,CP:=factor(CP, levels=c("no-CP", "CP"))]
 ```
 
 ```{r}
-# str(data)
-# head(data)
+str(data)
+head(data)
 ```
 
 ```{r, fig.width=9, fig.height=10}
@@ -155,3 +170,32 @@ ggplot(aes(x=t, y=value, col=CP), data=long_data[C==0.8 | C==1.5 | abs(C-3)<0.00
        col="") +
   theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
 ```
+
+```{r}
+tmp <- long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001, ]
+tmp[, Pwrong:=NULL]
+filtered <- dcast(tmp, C + t + model ~ CP, value.var = "value")
+names(filtered)<-c("C", "t", "model", "noCP", "CP")
+#    family_id age_mother dob_child1 dob_child2 dob_child3
+# 1:         1         30 1998-11-26 2000-01-29       <NA>
+# 2:         2         27 1996-06-22       <NA>       <NA>
+# 3:         3         26 2002-07-11 2004-04-05 2007-09-02
+head(filtered)
+str(filtered)
+```
+
+Difference:
+```{r, fig.width=28, fig.height=9.5}
+ggplot(aes(x=t, y=noCP - CP, col=model, group=C), data=filtered) + 
+  geom_line(aes(group=model),size=1.5) +
+  # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
+  #            linetype="dotted") +
+  facet_wrap(~factor(C)) +
+  ylab("Diff Acc") + xlab("time (s)") +
+  labs(title = "Accuracy Differential",
+       subtitle = "Acc(no-CP)-Acc(CP)", 
+       caption = paste("low leak =",lowl,"; high leak =",highl),
+       col="") +
+  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
+```
+
