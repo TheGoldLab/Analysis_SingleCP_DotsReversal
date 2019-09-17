@@ -1,5 +1,5 @@
 ---
-title: "Exploratory Notebook"
+title: "Bias on 0-coherence trials"
 output:
   html_document:
     df_print: paged
@@ -7,6 +7,12 @@ output:
 ---
 <!--
 TODO IN THIS NOTEBOOK
+
+Display a grid of donuts for L/R choices on 0-coherence trials, with 
+subjects as rows and VD as columns
+
+
+EXTRAS:
 
 1/ Add radius to outmost boundary at every arc junction
 2/ change donut colors, maybe yellow vs. blue?
@@ -16,7 +22,6 @@ TODO IN THIS NOTEBOOK
 
 -->
 
-# Hello!
 ```{r}
 #install.packages("ggforce")
 ```
@@ -30,17 +35,17 @@ source("explore_functions.r")
 
 ```{r}
 data <- get_full_data()
-str(data)
+# str(data)
 ```
 
-Accuracy on 0-coherence no-CP trials, per subject
-```{r}
-data[coherence == 0 & presenceCP == "no-CP", .(accuracy=mean(dirCorrect), numTrials=.N), by=subject]
-tt <- table(data[
-  coherence == 0 & presenceCP == "no-CP" & subject=="S1", .(initDirection, dirChoice)
-])
 
-addmargins(prop.table(tt), FUN = list(Total = sum), quiet = TRUE)
+```{r}
+# data[coherence == 0 & presenceCP == "no-CP", .(accuracy=mean(dirCorrect), numTrials=.N), by=subject]
+# tt <- table(data[
+#   coherence == 0 & presenceCP == "no-CP" & subject=="S1", .(initDirection, dirChoice)
+# ])
+# 
+# addmargins(prop.table(tt), FUN = list(Total = sum), quiet = TRUE)
 
 ```
 
@@ -53,6 +58,16 @@ build_confusion_table <- function(subj, session, block_name, coh, vd) {
     data[subject==subj &
            date==session &
            block==block_name & 
+           coherence==coh & 
+           viewingDuration == vd,
+         .(dirChoice, initDirection)]
+  )
+  pc <- confusion
+}
+
+build_confusion <- function(subj, coh, vd) {
+  confusion <- table(
+    data[subject==subj &
            coherence==coh & 
            viewingDuration == vd,
          .(dirChoice, initDirection)]
@@ -206,7 +221,7 @@ plot_donut <- function(arc_data) {
 # }
 ```
 
-# Donuts on DD task
+# Choice biases on 0-coherence trials, by subject by viewing duration
 ```{r}
 # curious data points
 # s <- "S5"
@@ -219,22 +234,19 @@ plot_donut <- function(arc_data) {
 # c <- 100
 # v <- 100
 
-subj <- c("S5", "S1", "S2", "S5", "S4", "S3", "S2", "S1", "S1", "S1")
+subj <- c("S1", "S1", "S1", "S1", "S2", "S2", "S2", "S2", "S3", "S3", "S3", "S3", "S4", "S4", "S4", "S4", "S5", "S5", "S5", "S5")
 num_cases <- length(subj)
-probcp <- rep_len(0, num_cases)
-coh <- c(62, 100, 22.0, 0,0,0,100, 0, 0, 0)
-vd <- c(100, 100, 100, 100, 200, 200, 200, 200, 300, 400)
+# probcp <- rep_len(0, num_cases)
+coh <- rep_len(0, num_cases)
+vd <- c(100, 200, 300, 400, 100, 200, 300, 400, 100, 200, 300, 400, 100, 200, 300, 400)
 
-cases <- data.table(subj, coh, vd, probcp)
-
-
+cases <- data.table(subj, coh, vd)
 
 call_with_row_args <- function(dt) {
   s <- dt[, subj]
-  p <- dt[, probcp]
   c <- dt[, coh]
   v <- dt[, vd]
-  return(build_confusion_pcp(s, c, v, p))
+  return(build_confusion(s, c, v))
 }
 
 for (cc in 1:num_cases) {
@@ -252,80 +264,79 @@ for (cc in 1:num_cases) {
 
 
 ```{r}
-# Example of confusion matrix-like table for CP response vs. true presenceCP
-build_confusion_cpd <- function(subj, prob_cp, coh) {
-  confusion <- table(
-    data[subject==subj &
-           probCP==as.character(prob_cp) &
-           coherence==coh,
-         .(cpChoice, presenceCP)]
-  )
-  pc <- confusion
-  print(pc)
-}
-
-# builds data.frame of arcs corresponding to a confusion table
-build_arcs_cpd <- function(confusion_table) {
-  dt <- as.data.table(confusion_table)
-  
-  trueCP <- dt[presenceCP == "CP", sum(N)]
-  trueNoCP <- dt[presenceCP == "no-CP", sum(N)]
-  choseCP <- dt[cpChoice == "CP", sum(N)]
-  choseNoCP <- dt[cpChoice == "no-CP", sum(N)]
-  
-  totTrials <- trueCP + trueNoCP
-  angle <- 2*pi/totTrials
-  
-  # build arc for true direction
-  start <- c(0, trueCP*angle)
-  end <- c(trueCP*angle, 2*pi)
-  
-  # build arc for reported CP 
-  startCP <- -dt[cpChoice == "CP" & presenceCP == "no-CP", N]*angle
-  endCP <- startCP + choseCP*angle
-  
-  startNoCP <- endCP
-  endNoCP <- 2*pi + startCP
-  
-  start <- c(start, startCP, startNoCP)
-  end <- c(end, endCP, endNoCP)
-  
-  r <- c(.52, .52, 1, 1)
-  CP <- factor(c('CP', 'no-CP', 'CP', 'no-CP'))
-  
-  dimension <- CP  # to standardize the name
-  arcs <- data.frame(start, end, r, dimension)
-  
-  return(arcs)
-}
+# # Example of confusion matrix-like table for CP response vs. true presenceCP
+# build_confusion_cpd <- function(subj, prob_cp, coh) {
+#   confusion <- table(
+#     data[subject==subj &
+#            probCP==as.character(prob_cp) &
+#            coherence==coh,
+#          .(cpChoice, presenceCP)]
+#   )
+#   pc <- confusion
+#   print(pc)
+# }
+# 
+# # builds data.frame of arcs corresponding to a confusion table
+# build_arcs_cpd <- function(confusion_table) {
+#   dt <- as.data.table(confusion_table)
+#   
+#   trueCP <- dt[presenceCP == "CP", sum(N)]
+#   trueNoCP <- dt[presenceCP == "no-CP", sum(N)]
+#   choseCP <- dt[cpChoice == "CP", sum(N)]
+#   choseNoCP <- dt[cpChoice == "no-CP", sum(N)]
+#   
+#   totTrials <- trueCP + trueNoCP
+#   angle <- 2*pi/totTrials
+#   
+#   # build arc for true direction
+#   start <- c(0, trueCP*angle)
+#   end <- c(trueCP*angle, 2*pi)
+#   
+#   # build arc for reported CP 
+#   startCP <- -dt[cpChoice == "CP" & presenceCP == "no-CP", N]*angle
+#   endCP <- startCP + choseCP*angle
+#   
+#   startNoCP <- endCP
+#   endNoCP <- 2*pi + startCP
+#   
+#   start <- c(start, startCP, startNoCP)
+#   end <- c(end, endCP, endNoCP)
+#   
+#   r <- c(.52, .52, 1, 1)
+#   CP <- factor(c('CP', 'no-CP', 'CP', 'no-CP'))
+#   
+#   dimension <- CP  # to standardize the name
+#   arcs <- data.frame(start, end, r, dimension)
+#   
+#   return(arcs)
+# }
 ```
 
 
-# Donuts for CPD task
-
 ```{r}
-
-subj <- rep(c("S1", "S2", "S3", "S4", "S5"), 3)
-probcp <- rep(c(0.2, .5, .8), 5)
-num_cases <- length(subj)
-coh <- rep_len(0, num_cases)
-
-cases <- data.table(subj, probcp, coh)
-
-call_with_row_args_cpd <- function(dt) {
-  s <- dt[, subj]
-  p <- dt[, probcp]
-  c <- dt[, coh]
-  return(build_confusion_cpd(s, p, c))
-}
-
-for (cc in 1:num_cases) {
-  case_to_plot <- as.vector(cases[cc,])
-  conftable <- call_with_row_args_cpd(case_to_plot)
-  print("-------------------- CASE --------------------")
-  print(case_to_plot)
-  print(addmargins(conftable, FUN = list(Total = sum), quiet = TRUE))
-  p <- plot_donut(build_arcs_cpd(conftable))
-  plot(p)  
-}
+# Donuts for CPD task
+# 
+# subj <- rep(c("S1", "S2", "S3", "S4", "S5"), 3)
+# probcp <- rep(c(0.2, .5, .8), 5)
+# num_cases <- length(subj)
+# coh <- rep_len(0, num_cases)
+# 
+# cases <- data.table(subj, probcp, coh)
+# 
+# call_with_row_args_cpd <- function(dt) {
+#   s <- dt[, subj]
+#   p <- dt[, probcp]
+#   c <- dt[, coh]
+#   return(build_confusion_cpd(s, p, c))
+# }
+# 
+# for (cc in 1:num_cases) {
+#   case_to_plot <- as.vector(cases[cc,])
+#   conftable <- call_with_row_args_cpd(case_to_plot)
+#   print("-------------------- CASE --------------------")
+#   print(case_to_plot)
+#   print(addmargins(conftable, FUN = list(Total = sum), quiet = TRUE))
+#   p <- plot_donut(build_arcs_cpd(conftable))
+#   plot(p)  
+# }
 ```
