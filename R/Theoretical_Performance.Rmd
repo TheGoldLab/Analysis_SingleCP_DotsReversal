@@ -5,18 +5,26 @@ output:
     df_print: paged
     code_folding: hide
 ---
+```{r}
+# install.packages("reticulate")
+```
 
 ```{r, echo=FALSE}
 library(ggplot2)
 # library(plotly)
 library(data.table)
+library(reticulate)
+```
+
+```{r}
+use_python("/home/adrian/anaconda3/envs/r-environment/bin/python", required = T)
 ```
 
 
 TODO: put CP as another grouping var, for nice grid plot
 
 ```{r}
-#install.packages("plotly")
+source_python("python_functions.py")
 ```
 
 ```{r, echo=FALSE}
@@ -74,7 +82,22 @@ acc_leak <- function(C, t, leak, cp) {
 
 
 #### PAR #####
-
+# we use Python base functions
+acc_par <- function(drift1, drift2, diffusion, time, CPtime, h, numbins) {
+  if (time <= CPtime) {
+    return(acc(drift1/diffusion, time))
+  } else {
+    a <- log(h / (1-h))
+    if (a < 0) {a <- -a}
+    int_lims <- tuple(-a,a)
+    pneg = integrate_wrt_cdf(FFF(h, CPtime, drift1, diffusion), fff(time-CPtime, drift2, sigma), int_lims, numbins)
+    if (drift2 < 0) {
+      return(pneg)
+    } else {
+      return(1-pneg)
+    } 
+  }
+}
 
 
 #### PADumbR ##### 
@@ -93,7 +116,7 @@ acc_dumbr <- function(drift, diffusion, time, CPtime, bias, CP) {
 }
 
 baseC <- seq(.2, 4, .1)
-baset <- seq(.1,.4,.001)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))
+baset <- seq(.1,.4,.01)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))
 
 C <- c()
 t <- c()
@@ -107,6 +130,9 @@ highleak_cp <- c()
 dumbr_ncp <- c()
 dumbr_cp <- c()
 
+par_ncp <- c()
+par_cp <- c()
+
 #actual leak values
 lowl <- 3
 highl <- 10
@@ -116,6 +142,16 @@ highl <- 10
 
 for (cc in baseC) {
   for (tt in baset) {
+    #### extra params ####
+    d1 <- cc
+    d2 <- -cc
+    dfsion <- 1
+    CPtime <- .2
+    h <- .2
+    nbins <- 10000
+    ######################
+    
+    
     C <- c(C, cc)
     t <- c(t, tt)
     norm_ncp <- c(norm_ncp, acc(cc, tt))
@@ -130,19 +166,18 @@ for (cc in baseC) {
       dumbr_cp <- c(dumbr_cp, acc_dumbr(-cc, 1, tt, .2, 0, TRUE))
     }
     dumbr_ncp <- c(dumbr_ncp, acc_dumbr(cc, 1, tt, .2, 0, FALSE))
-    # print(iteration)
-    # print(norm_ncp)
-    # iteration <- iteration + 1
+    par_cp <- c(par_cp, acc_par(d1, d2, dfsion, tt, CPtime, h, nbins))
+    par_ncp <- c(par_ncp, acc_par(d1, d1, dfsion, tt, CPtime, h, nbins))
   }
 }
 
-data <- data.table(C, t, norm_ncp, norm_cp, lowleak_ncp, highleak_ncp, lowleak_cp, highleak_cp, dumbr_cp, dumbr_ncp)
+data <- data.table(C, t, norm_ncp, norm_cp, lowleak_ncp, highleak_ncp, lowleak_cp, highleak_cp, dumbr_cp, dumbr_ncp, par_cp, par_ncp)
 
 
 
 #convert to long format
 long_data = melt(data, id.vars = c("C", "t"),
-                measure.vars = c("norm_ncp", "norm_cp", "lowleak_ncp", "highleak_ncp", "lowleak_cp", "highleak_cp", "dumbr_cp", "dumbr_ncp"))
+                measure.vars = c("norm_ncp", "norm_cp", "lowleak_ncp", "highleak_ncp", "lowleak_cp", "highleak_cp", "dumbr_cp", "dumbr_ncp", "par_cp", "par_ncp"))
 long_data[,Pwrong := 1-value]
 
 long_data[,CP:="no-CP"]
@@ -151,11 +186,13 @@ long_data[,model:="DDM"]
 long_data[variable == "norm_cp" |
             variable == "lowleak_cp" |
             variable == "highleak_cp" |
-            variable == "dumbr_cp", `:=`(CP="CP")]
+            variable == "dumbr_cp" | 
+            variable == "par_cp", `:=`(CP="CP")]
 long_data[variable == "lowleak_cp" | variable == "lowleak_ncp", `:=`(model="Low Leak")]
 long_data[variable == "highleak_cp" | variable == "highleak_ncp", `:=`(model="High Leak")]
 long_data[variable == "dumbr_cp" | variable == "dumbr_ncp", `:=`(model="DumbR")]
-long_data[,model:=factor(model, levels = c("DDM", "Low Leak", "High Leak", "DumbR"))]
+long_data[variable == "par_cp" | variable == "par_ncp", `:=`(model="PAR")]
+long_data[,model:=factor(model, levels = c("DDM", "Low Leak", "High Leak", "DumbR", "PAR"))]
 long_data[,CP:=factor(CP, levels=c("no-CP", "CP"))]
 # 
 # head(long_data)
