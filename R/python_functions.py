@@ -5,6 +5,7 @@ import scipy.stats as sp
 def integrate_wrt_cdf(F, f, limits, bins):
     """
     Integrates function f between limits[0] and limits[1], with respect to the measure induced by the cdf F
+    Note: this function fails when called from R. 
     :param F: cdf
     :param f: function to integrate w.r.t dF measure
     :param limits: tuple of integration bounds. It is assumed that F is undefined at the limit points
@@ -16,6 +17,23 @@ def integrate_wrt_cdf(F, f, limits, bins):
     measure = np.diff(cdf)
     func = f(grid_points)
     return np.dot(measure, func[:-1])
+
+
+def integrate_wrt_cdf_r(F, limits, bins, tau, dprime, sigma):
+    """
+    Version of integrate_wrt_cdf that should be callable from R (but some functionality is loss). Namely, ff only is used.
+    :param F: cdf
+    :param f: function to integrate w.r.t dF measure
+    :param limits: tuple of integration bounds. It is assumed that F is undefined at the limit points
+    :param bins: number of points on x-grid to use in integration (so, not quite the number of bins)
+    """
+    bin_width = (limits[1] - limits[0]) / bins  # just approximate, not the real bin width
+    grid_points = np.linspace(limits[0] + bin_width/4, limits[1], num=bins, endpoint=False)
+    cdf = F(grid_points)
+    measure = np.diff(cdf)
+    func = fff(tau, dprime, sigma)
+    feval = func(grid_points)
+    return np.dot(measure, feval[:-1])
 
 
 def alpha(x, h):
