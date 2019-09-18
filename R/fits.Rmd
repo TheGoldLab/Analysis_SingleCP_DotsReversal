@@ -1,0 +1,64 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Fits
+
+## DDM; no-CP; single timepoint
+```{r}
+library(data.table)
+library(ggplot2)
+source("explore_functions.r")
+source("accuracy_functions.r")
+```
+
+```{r}
+data <- get_full_data()
+```
+
+```{r}
+subj <- "S3"
+vd <- 100
+pcp <- 0
+alpha_prior <- 2.61
+beta_prior <- 2.13
+subdata <- data[subject == subj &
+                  viewingDuration == vd &
+                  probCP == pcp & 
+                  block != "Quest" &
+                  coherence > 0 &
+                  coherence < 100]
+count <- subdata[, .(correct=sum(dirCorrect), total=.N)]
+alpha <- alpha_prior + count[,correct]
+beta <- beta_prior + count[,total-correct]
+print(alpha)
+print(beta)
+
+cpdf <- function(x, t) {
+  return(sqrt(t)*dnorm(x*sqrt(t)) * dbeta(pnorm(x*sqrt(t)), alpha, beta))
+}
+
+z <- .05  # percentage of posterior mass to leave out of error bars
+lowp <- qbeta(z/2, alpha, beta)
+upp <- qbeta(1-z/2, alpha, beta)
+
+cvals <- seq(from=-10,to=10, length.out=200)
+ycvals <- cpdf(cvals, vd/1000)
+argmax <- which.max(ycvals)
+print(cvals[argmax])
+
+plot(cvals, ycvals)
+
+c_hat <- cvals[argmax]
+time <- seq(.01,.4,.01)
+theo_acc <- acc(c_hat, time)
+
+# build two data.tables used for the plot
+data_table <- data.table(t=vd/1000, p=count[,correct] / count[,total], lower=lowp, upper=upp)
+theo_table <- data.table(t=time, p=theo_acc)
+ggplot(data_table, aes(x=t, y=p)) + geom_point() + geom_errorbar(aes(ymin=lower, ymax=upper), width=.01) +
+  geom_line(aes(x=t, y=p), data=theo_table) + 
+  ylim(0.5, 1)
+```
+
