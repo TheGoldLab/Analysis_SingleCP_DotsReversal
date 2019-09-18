@@ -109,9 +109,9 @@ acc_dumbr <- function(drift, diffusion, time, CPtime, bias, CP) {
     return(acc(abs(C), time))
   } else {
     tau = time - CPtime
-    numerator = tau * C + bias
+    numerator = tau * drift + bias
     denominator = diffusion * sqrt(tau)
-    return(pnorm(sign(C)*(numerator / denominator)))
+    return(pnorm(sign(drift)*(numerator / denominator)))
   }
 }
 
