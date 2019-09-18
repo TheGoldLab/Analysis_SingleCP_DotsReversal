@@ -25,12 +25,13 @@ TODO: put CP as another grouping var, for nice grid plot
 
 # accuracy of perfect accumulator on non-CP trials
 acc <- function(C, t) {
-  return(pnorm(C*sqrt(t)))
+  return(pnorm(abs(C)*sqrt(t)))
 }
 
 # accuracy of perfect accumulator on CP trials
 # C represents |d|/sigma with d the drift rate and sigma the diffusion constant
 acc_cp <- function(C, t) {
+  C <- abs(C)
   if (t<=.2) {
     return(pnorm(C*sqrt(t)))
   } else {
@@ -46,6 +47,7 @@ acc_cp <- function(C, t) {
 # theoretical accuracy of a linear-leak model (O-U with drift)
 # C is |drift|/diffusion , t is time in sec, leak is leak rate, cp is bool: whether there is a cp or not
 acc_leak <- function(C, t, leak, cp) {
+  C <- abs(C)
   if (cp) {
     if (t <= .2) {  # before CP, compute as for cp=F case
       return(
@@ -76,27 +78,22 @@ acc_leak <- function(C, t, leak, cp) {
 
 
 #### PADumbR ##### 
-# Sign PB on CP trials!
 # accuracy of perfect accumulator on non-CP trials
+# drift must have the sign corresponding to the last epoch!
 acc_dumbr <- function(drift, diffusion, time, CPtime, bias, CP) {
-  C = abs(drift) / diffusion
+  C = drift / diffusion
   if (time <= CPtime) {
-    return(acc(C, time))
+    return(acc(abs(C), time))
   } else {
     tau = time - CPtime
+    numerator = tau * C + bias
     denominator = diffusion * sqrt(tau)
-    if (CP) {
-      numerator = tau * (-C) + bias
-      return(pnorm(-numerator / denominator))
-    } else {
-      numerator = tau * C + bias
-      return(pnorm(numerator / denominator))
-    }
+    return(pnorm(sign(C)*(numerator / denominator)))
   }
 }
 
 baseC <- seq(.2, 4, .1)
-baset <- seq(.1, .4, .01)
+baset <- seq(.1,.4,.001)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))
 
 C <- c()
 t <- c()
@@ -127,7 +124,11 @@ for (cc in baseC) {
     highleak_ncp <- c(highleak_ncp, acc_leak(cc, tt, highl, F))
     lowleak_cp <- c(lowleak_cp, acc_leak(cc, tt, lowl, T))
     highleak_cp <- c(highleak_cp, acc_leak(cc, tt, highl, T))
-    dumbr_cp <- c(dumbr_cp, acc_dumbr(cc, 1, tt, .2, 0, TRUE))
+    if (tt <= .2) {
+      dumbr_cp <- c(dumbr_cp, acc_dumbr(cc, 1, tt, .2, 0, TRUE))  
+    } else {
+      dumbr_cp <- c(dumbr_cp, acc_dumbr(-cc, 1, tt, .2, 0, TRUE))
+    }
     dumbr_ncp <- c(dumbr_ncp, acc_dumbr(cc, 1, tt, .2, 0, FALSE))
     # print(iteration)
     # print(norm_ncp)
@@ -161,14 +162,6 @@ long_data[,CP:=factor(CP, levels=c("no-CP", "CP"))]
 # str(long_data)
 ```
 
-```{r}
-abs(-3)
-```
-
-```{r}
-str(data)
-head(data)
-```
 
 ```{r, fig.width=9, fig.height=10}
 # Plotting
@@ -185,9 +178,9 @@ ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) +
 Let's pick 3 SNR values and visualize accuracy as a function of time.
 ```{r, fig.width=28, fig.height=9.5}
 ggplot(aes(x=t, y=value, col=CP), data=long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001,]) + 
+  # geom_hline(yintercept=.5, color='black', inherit.aes=FALSE) +  # buggy because of facet_wrap. See https://github.com/tidyverse/ggplot2/issues/2091
+  stat_identity(yintercept=0.5, geom='hline', color='black', inherit.aes=TRUE) +
   geom_line(aes(group=interaction(model, CP), linetype=model), size=1.5) +
-  # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
-  #            linetype="dotted") +
   facet_wrap(~factor(C)) +
   ylab("P(correct)") + xlab("time (s)") +
   labs(title = "Theoretical Curves Perfect Accumulator",
