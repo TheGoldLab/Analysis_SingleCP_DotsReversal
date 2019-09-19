@@ -1,11 +1,11 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Fits of Perfect Accumulator to Accuracy"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
 ---
 
-# Fits
-
-## DDM; no-CP; single timepoint
 ```{r}
 library(data.table)
 library(ggplot2)
@@ -18,17 +18,16 @@ data <- get_full_data()
 ```
 
 ```{r}
-subj <- "S1"
-pcp <- 0
+pcpvals <- c("0","0.2","0.5","0.8")
+iscp <- "no-CP"
 alpha_prior <- 2.61
 beta_prior <- 2.13
-subdata <- data[subject == subj &
-                  probCP == pcp & 
+subdata <- data[presenceCP == iscp &
                   block != "Quest" &
                   coherence > 0 &
                   coherence < 100]
 
-count <- subdata[, .(correct=sum(dirCorrect), total=.N), by=viewingDuration]
+count <- subdata[, .(correct=sum(dirCorrect), total=.N), by=.(viewingDuration, subject, probCP)]
 count[,`:=`(t=viewingDuration/1000, p=correct/total, lower=0, upper=0)]
 
 cpdf <- function(x, t, a, b) {
@@ -39,30 +38,100 @@ z <- .05  # percentage of posterior mass to leave out of error bars
 num_cvals <- 200
 cvals <- seq(from=-10,to=10, length.out=num_cvals)
 ycvals <- rep.int(1, num_cvals)
+ycvals_subj <- list(S10=ycvals, S20=ycvals, S30=ycvals, S40=ycvals, S50=ycvals,
+                    S102=ycvals, S202=ycvals, S302=ycvals, S402=ycvals, S502=ycvals,
+                    S105=ycvals, S205=ycvals, S305=ycvals, S405=ycvals, S505=ycvals,
+                    S108=ycvals, S208=ycvals, S308=ycvals, S408=ycvals, S508=ycvals)
 
 for (vd in c(100,200,300,400)) {
-  alpha <- alpha_prior + count[viewingDuration == vd,correct]
-  beta <- beta_prior + count[viewingDuration == vd,total-correct] 
-  lowp <- qbeta(z/2, alpha, beta)
-  upp <- qbeta(1-z/2, alpha, beta)
-  count[viewingDuration == vd, `:=`(lower=lowp, upper=upp)]
-  ycvals <- ycvals * cpdf(cvals, vd/1000, alpha, beta)
+  for (subj in c("S1", "S2", "S3", "S4", "S5")) {
+    for (pcp in pcpvals) {  # try to cope with missing data
+      if (pcp == "0.8") {
+        if (subj == "S1") {break}
+        if (vd > 200) {break}
+      }
+      alpha <- alpha_prior + count[viewingDuration == vd & subject == subj & probCP == pcp, correct]
+      beta <- beta_prior + count[viewingDuration == vd & subject == subj & probCP == pcp, total-correct] 
+      lowp <- qbeta(z/2, alpha, beta)
+      upp <- qbeta(1-z/2, alpha, beta)
+      count[viewingDuration == vd & subject == subj & probCP == pcp, `:=`(lower=lowp, upper=upp)]
+      
+      # ket appropriate key
+      if (pcp == "0") {
+        key <- paste0(subj, 0)
+      } else if (pcp == "0.2") {
+        key <- paste0(subj, "02")
+      } else if (pcp == "0.5") {
+        key <- paste0(subj, "05")
+      } else if (pcp == "0.8") {
+        key <- paste0(subj, "08")
+      }
+      
+      
+      ycvals_subj[[key]] <- ycvals_subj[[key]] * cpdf(cvals, vd/1000, alpha, beta) 
+      
+      # debug
+      # if (pcp == "0.8") {
+      #   str(alpha) 
+      #   str(beta) 
+      #   str(lowp) 
+      #   str(upp) 
+      #   str(count) 
+      #   str(key) 
+      #   str(cpdf(cvals, vd/1000, alpha, beta))
+      # }
+    }
+  }
+}
+
+# str(ycvals_subj)
+time <- seq(.01,.4,.01)
+theo_acc_concat <- c()
+subj_concat <- theo_acc_concat
+pcp_concat <- theo_acc_concat
+
+for (subj in c("S1", "S2", "S3", "S4", "S5")) {
+  for (pcp in pcpvals) {
+    
+    # get key
+    if (pcp == "0") {
+      key <- paste0(subj, 0)
+    } else if (pcp == "0.2") {
+      key <- paste0(subj, "02")
+    } else if (pcp == "0.5") {
+      key <- paste0(subj, "05")
+    } else if (pcp == "0.8") {
+      key <- paste0(subj, "08")
+      if (subj == "S1") {break}
+    }
+    
+    # str(ycvals_subj[[key]])
+    
+    c_hat <- cvals[which.max(ycvals_subj[[key]])]
+    acc_vec <- acc(c_hat, time)
+    
+    # print(paste(key, length(acc_vec)))
+    
+    theo_acc_concat <- c(theo_acc_concat, acc_vec)
+    subj_concat <- c(subj_concat, rep(subj, length(time)))
+    pcp_concat <- c(pcp_concat, rep(pcp, length(time)))
+  }
 }
 
 
-argmax <- which.max(ycvals)
-
-
-plot(cvals, ycvals, type="l")
-
-c_hat <- cvals[argmax]
-time <- seq(.01,.4,.01)
-theo_acc <- acc(c_hat, time)
-
+# plot(cvals, ycvals, type="l")
+  
 # build data.table used for the plot
-theo_table <- data.table(t=time, p=theo_acc)
-ggplot(count, aes(x=t, y=p)) + geom_point() + geom_errorbar(aes(ymin=lower, ymax=upper), data=count, width=.01) +
-  geom_line(aes(x=t, y=p), data=theo_table) + geom_hline(yintercept = 0.5) +
-  ylim(0, 1)
+theo_table <- data.table(t=rep(time,5*4-1), p=theo_acc_concat, subject=subj_concat, probCP=pcp_concat)
+theo_table[,`:=`(subject=factor(subject), probCP=factor(probCP))]
+```
+
+
+```{r, fig.width=12, fig.height=15}
+ggplot(count, aes(x=t, y=p, group=probCP)) + geom_point(size=2) + geom_errorbar(aes(ymin=lower, ymax=upper), data=count, width=.01) +
+  geom_line(aes(x=t, y=p, group=interaction(subject, probCP)), size=.75, data=theo_table) + geom_hline(yintercept = 0.5) +
+  ylim(0.2, .95) + facet_grid(subject~probCP) + theme(text=element_text(size=20)) + 
+  labs(title="Accuracy Fits PA", subtitle="Threshold coherence, Non-CP trials") +
+  ylab("P(Correct)") + xlab("Viewing Duration (sec)")
 ```
 
