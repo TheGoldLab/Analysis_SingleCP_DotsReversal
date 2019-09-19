@@ -18,47 +18,51 @@ data <- get_full_data()
 ```
 
 ```{r}
-subj <- "S3"
-vd <- 100
+subj <- "S1"
 pcp <- 0
 alpha_prior <- 2.61
 beta_prior <- 2.13
 subdata <- data[subject == subj &
-                  viewingDuration == vd &
                   probCP == pcp & 
                   block != "Quest" &
                   coherence > 0 &
                   coherence < 100]
-count <- subdata[, .(correct=sum(dirCorrect), total=.N)]
-alpha <- alpha_prior + count[,correct]
-beta <- beta_prior + count[,total-correct]
-print(alpha)
-print(beta)
 
-cpdf <- function(x, t) {
-  return(sqrt(t)*dnorm(x*sqrt(t)) * dbeta(pnorm(x*sqrt(t)), alpha, beta))
+count <- subdata[, .(correct=sum(dirCorrect), total=.N), by=viewingDuration]
+count[,`:=`(t=viewingDuration/1000, p=correct/total, lower=0, upper=0)]
+
+cpdf <- function(x, t, a, b) {
+  return(sqrt(t)*dnorm(x*sqrt(t)) * dbeta(pnorm(x*sqrt(t)), a, b))
 }
 
 z <- .05  # percentage of posterior mass to leave out of error bars
-lowp <- qbeta(z/2, alpha, beta)
-upp <- qbeta(1-z/2, alpha, beta)
+num_cvals <- 200
+cvals <- seq(from=-10,to=10, length.out=num_cvals)
+ycvals <- rep.int(1, num_cvals)
 
-cvals <- seq(from=-10,to=10, length.out=200)
-ycvals <- cpdf(cvals, vd/1000)
+for (vd in c(100,200,300,400)) {
+  alpha <- alpha_prior + count[viewingDuration == vd,correct]
+  beta <- beta_prior + count[viewingDuration == vd,total-correct] 
+  lowp <- qbeta(z/2, alpha, beta)
+  upp <- qbeta(1-z/2, alpha, beta)
+  count[viewingDuration == vd, `:=`(lower=lowp, upper=upp)]
+  ycvals <- ycvals * cpdf(cvals, vd/1000, alpha, beta)
+}
+
+
 argmax <- which.max(ycvals)
-print(cvals[argmax])
 
-plot(cvals, ycvals)
+
+plot(cvals, ycvals, type="l")
 
 c_hat <- cvals[argmax]
 time <- seq(.01,.4,.01)
 theo_acc <- acc(c_hat, time)
 
-# build two data.tables used for the plot
-data_table <- data.table(t=vd/1000, p=count[,correct] / count[,total], lower=lowp, upper=upp)
+# build data.table used for the plot
 theo_table <- data.table(t=time, p=theo_acc)
-ggplot(data_table, aes(x=t, y=p)) + geom_point() + geom_errorbar(aes(ymin=lower, ymax=upper), width=.01) +
-  geom_line(aes(x=t, y=p), data=theo_table) + 
-  ylim(0.5, 1)
+ggplot(count, aes(x=t, y=p)) + geom_point() + geom_errorbar(aes(ymin=lower, ymax=upper), data=count, width=.01) +
+  geom_line(aes(x=t, y=p), data=theo_table) + geom_hline(yintercept = 0.5) +
+  ylim(0, 1)
 ```
 
