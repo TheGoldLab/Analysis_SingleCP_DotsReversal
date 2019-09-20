@@ -1,0 +1,39 @@
+---
+title: "Accuracy Recovery"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+
+```{r}
+library(data.table)
+library(ggplot2)
+source("explore_functions.r")
+```
+
+```{r}
+data <- get_full_data()
+```
+
+```{r}
+count <- data[block != "Quest" & coherence > 0 & coherence < 100 & viewingDuration > 200, 
+                 .(accuracy=mean(dirCorrect), numTrials=.N), 
+                 by=.(viewingDuration, subject, probCP, presenceCP)]
+levels(count$presenceCP) <- c("noCP","CP")
+count[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+count[,ci:=1.96*se]
+count[,numTrials:=NULL]
+count[,`:=`(t=viewingDuration/1000, lower=accuracy - ci, upper=accuracy + ci)]
+```
+
+```{r, fig.width=12, fig.height=15}
+pd <- position_dodge(.1) # move them .05 to the left and right
+ggplot(count, aes(x=probCP, y=accuracy, col=presenceCP, group=presenceCP)) + 
+  geom_point(size=2, position=pd) + geom_line(size=1.65) + geom_hline(yintercept=c(.5), color="black", linetype="dashed") +
+  geom_errorbar(aes(ymin=lower, ymax=upper), position=pd, data=count, width=.15, size=.8) +
+  facet_grid(subject ~ viewingDuration) + theme(text=element_text(size=20)) + 
+  labs(title="Accuracy Recovery", subtitle="Threshold coherence") +
+  ylab("P(Correct)") + scale_color_brewer(palette="Set1") 
+```
+
