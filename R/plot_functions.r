@@ -153,30 +153,63 @@ factored_threshold[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered
 #  ggtitle("Acc (DD) th-coh")
 #dev.off()
 ####################################
-# as above, but for perceived CP as opposed to real CPs
-to_plotx <- factored_threshold[
-  viewingDuration > 150 &
-    coh_cat=="th" &
-    probCP > 0,
+
+######## Acc diff plot ##########
+to_plot <- factored_threshold[
+  probCP > 0 & probCP < 0.8 &
+  coh_cat=="th",
   .(accuracy=mean(dirCorrect), numTrials=.N),
-  by=.(cpChoice, subject, viewingDuration, probCP)
+  by=.(presenceCP, subject, viewingDuration, probCP)
 ]
-to_plotx[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plotx[,ci:=1.96*se]
+to_plot[,se:=sqrt(2*accuracy * (1-accuracy) / numTrials)]
+to_plot[,numTrials:=NULL]
+
+levels(to_plot$presenceCP) <- c("noCP","CP")
+to_plot2 <- dcast(to_plot, subject+viewingDuration+probCP~presenceCP, value.var=c("accuracy","se"))
+to_plot2[,accdiff:=0]
+to_plot2[viewingDuration > 200, accdiff:=accuracy_noCP - accuracy_CP]
+to_plot2[,ci:=1.96*se_noCP]
+to_plot2[viewingDuration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
 
 pd <- position_dodge(.2) # move them .05 to the left and right
 
-png(filename="acc_dd_200-400_bysubj_bypcp_byperceivedcp.png", width=1600, height=1400)
-ggplot(to_plotx, aes(x=factor(viewingDuration), y=accuracy, col=cpChoice, group=cpChoice)) +
+png(filename="acc_diff_dd_bysubj_bypcp_bycp.png", width=800, height=1300)
+ggplot(to_plot2, aes(x=viewingDuration, y=accdiff)) +
   geom_point(size=4, position=pd) +
   geom_line(size=2) +
-  geom_hline(yintercept=c(0,.5,1), color="black", linetype="dashed") +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+  geom_hline(yintercept=c(0,-.5,.5), color="black", linetype="dashed") +
+  geom_errorbar(aes(ymin=accdiff-ci, ymax=accdiff+ci), width=.1, size=1.7, position=pd) +
   facet_grid(subject~probCP) +
   scale_color_brewer(palette="Dark2") +
   theme(text = element_text(size=35)) + 
-  ggtitle("Acc (DD) at th-coh, by perceived CP")
+  ggtitle("Acc (DD) th-coh")
 dev.off()
+####################################
+
+## as above, but for perceived CP as opposed to real CPs
+#to_plotx <- factored_threshold[
+#  viewingDuration > 150 &
+#    coh_cat=="th" &
+#    probCP > 0,
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(cpChoice, subject, viewingDuration, probCP)
+#]
+#to_plotx[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+#to_plotx[,ci:=1.96*se]
+#
+#pd <- position_dodge(.2) # move them .05 to the left and right
+#
+#png(filename="acc_dd_200-400_bysubj_bypcp_byperceivedcp.png", width=1600, height=1400)
+#ggplot(to_plotx, aes(x=factor(viewingDuration), y=accuracy, col=cpChoice, group=cpChoice)) +
+#  geom_point(size=4, position=pd) +
+#  geom_line(size=2) +
+#  geom_hline(yintercept=c(0,.5,1), color="black", linetype="dashed") +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+#  facet_grid(subject~probCP) +
+#  scale_color_brewer(palette="Dark2") +
+#  theme(text = element_text(size=35)) + 
+#  ggtitle("Acc (DD) at th-coh, by perceived CP")
+#dev.off()
 
 
 
