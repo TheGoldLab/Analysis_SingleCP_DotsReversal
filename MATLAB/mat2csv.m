@@ -10,7 +10,7 @@
 
 clear all
 tbUseProject('Analysis_SingleCP_DotsReversal');
-dump_path = '/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/MATLAB/metaDump.csv';
+dump_path = '/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/MATLAB/metaDumpDotsReproducibility.csv';
 %% Load metadata
 metadata = loadjson('subj_metadata.json');
 subjects = fieldnames(metadata); % 5x1 cell of strings
@@ -22,8 +22,8 @@ curr_session = metadump.session(end);
 subjStruct = metadata.(subjects{subjNumber});
 sessions = fieldnames(subjStruct);  % session names for 
 disp(sessions)
-timestamp='2019_07_10_17_40';
-datapath = ['/Users/adrian/SingleCP_DotsReversal/raw/',timestamp,'/'];
+timestamp='2019_09_23_14_49';
+datapath = ['/Users/joshuagold/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/data/DotsReproducibilityTest/raw/',timestamp,'/'];
 filename = [timestamp, '_topsDataLog.mat'];
 disp(datapath)
 
@@ -36,6 +36,7 @@ writetable(FIRA,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
 disp('FIRA written')
 %% Dots data
 % columns of following matrix represent the following variables
+subjNumber=99;
 dotsColNames = {...
     'xpos', ...
     'ypos', ...
