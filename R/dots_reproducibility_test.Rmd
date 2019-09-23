@@ -5,7 +5,8 @@ output:
     df_print: paged
     code_folding: hide
 ---
-
+# Frame count variability
+10 trials of 200msec, followed by 10 trials of 400msec were run, all with the same random seed.
 ```{r}
 library(data.table)
 library(ggplot2)
@@ -60,8 +61,19 @@ ggplot(frameCounts, aes(x=reltrial, y=numFrames, color=type)) +
         panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "white",size=0.75))
 ```
+# Dots position variability
+On a single frame, each dot is represented by its (x.y) coordinates. Dots positions should be equal across trials, for a fixed frame number.
+```{r}
+dots_dt <- dots[isActive == 1, .(xpos, ypos, trial, frameIdx)]
+dots_dt[,dotID:=seq(.N), by=.(trial, frameIdx)]
+str(dots_dt)
+```
 
 ```{r}
-?.I
+head(dots_dt)
+```
+
+```{r, fig.width=100, fig.height=60}
+# ggplot(dots_dt, aes(x=xpos, y=ypos)) + geom_point() + facet_grid(trial~frameIdx) + theme(text=element_text(size=20))
 ```
 
