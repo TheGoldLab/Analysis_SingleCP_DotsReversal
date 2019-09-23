@@ -1,0 +1,189 @@
+---
+title: "Theoretical performance curves"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+```{r}
+# install.packages("reticulate")
+```
+
+```{r, echo=FALSE}
+library(ggplot2)
+# library(plotly)
+library(data.table)
+library(reticulate)
+```
+
+```{r}
+use_python("/home/adrian/anaconda3/envs/r-environment/bin/python", required = T)
+```
+
+
+TODO: put CP as another grouping var, for nice grid plot
+
+```{r}
+source_python("python_functions.py")
+source("accuracy_functions.r")
+```
+
+```{r, echo=FALSE}
+
+baseC <- seq(.2, 4, .1)
+baset <- seq(.1,.4,.01)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))
+
+C <- c()
+t <- c()
+norm_ncp <- c()
+norm_cp <- c()
+lowleak_ncp <- c()
+highleak_ncp <- c()
+lowleak_cp <- c()
+highleak_cp <- c()
+
+dumbr_ncp <- c()
+dumbr_cp <- c()
+
+lowh_par_ncp <- c()
+lowh_par_cp <- c()
+highh_par_ncp <- c()
+highh_par_cp <- c()
+
+#actual leak values
+lowl <- 3
+highl <- 10
+lowh <- .2
+highh <- .8
+
+# iteration <- 1
+
+for (cc in baseC) {
+  for (tt in baset) {
+    #### extra params ####
+    d1 <- cc
+    d2 <- -cc
+    dfsion <- 1
+    CPtime <- .2
+    nbins <- 10000
+    ######################
+    
+    
+    C <- c(C, cc)
+    t <- c(t, tt)
+    norm_ncp <- c(norm_ncp, acc(cc, tt))
+    norm_cp <- c(norm_cp, acc_cp(cc, tt))
+    lowleak_ncp <- c(lowleak_ncp, acc_leak(cc, tt, lowl, F))
+    highleak_ncp <- c(highleak_ncp, acc_leak(cc, tt, highl, F))
+    lowleak_cp <- c(lowleak_cp, acc_leak(cc, tt, lowl, T))
+    highleak_cp <- c(highleak_cp, acc_leak(cc, tt, highl, T))
+    if (tt <= .2) {
+      dumbr_cp <- c(dumbr_cp, acc_dumbr(cc, 1, tt, .2, 0, TRUE))  
+    } else {
+      dumbr_cp <- c(dumbr_cp, acc_dumbr(-cc, 1, tt, .2, 0, TRUE))
+    }
+    dumbr_ncp <- c(dumbr_ncp, acc_dumbr(cc, 1, tt, .2, 0, FALSE))
+    lowh_par_cp <- c(lowh_par_cp, acc_par(d1, d2, dfsion, tt, CPtime, lowh, nbins))
+    lowh_par_ncp <- c(lowh_par_ncp, acc_par(d1, d1, dfsion, tt, CPtime, lowh, nbins))
+    highh_par_cp <- c(highh_par_cp, acc_par(d1, d2, dfsion, tt, CPtime, highh, nbins))
+    highh_par_ncp <- c(highh_par_ncp, acc_par(d1, d1, dfsion, tt, CPtime, highh, nbins))
+  }
+}
+
+data <- data.table(C, t, norm_ncp, norm_cp, lowleak_ncp, highleak_ncp, lowleak_cp, highleak_cp, dumbr_cp, dumbr_ncp, lowh_par_cp, lowh_par_ncp, highh_par_cp, highh_par_ncp)
+
+
+
+#convert to long format
+long_data = melt(data, id.vars = c("C", "t"),
+                measure.vars = c("norm_ncp", "norm_cp", "lowleak_ncp", "highleak_ncp", "lowleak_cp", "highleak_cp", "dumbr_cp", "dumbr_ncp", "lowh_par_cp", "lowh_par_ncp", "highh_par_cp", "highh_par_ncp"))
+long_data[,Pwrong := 1-value]
+
+long_data[,CP:="no-CP"]
+long_data[,model:="DDM"]
+
+long_data[variable == "norm_cp" |
+            variable == "lowleak_cp" |
+            variable == "highleak_cp" |
+            variable == "dumbr_cp" | 
+            variable == "lowh_par_cp" | 
+            variable == "highh_par_cp", `:=`(CP="CP")]
+long_data[variable == "lowleak_cp" | variable == "lowleak_ncp", `:=`(model="Low Leak")]
+long_data[variable == "highleak_cp" | variable == "highleak_ncp", `:=`(model="High Leak")]
+long_data[variable == "dumbr_cp" | variable == "dumbr_ncp", `:=`(model="DumbR")]
+long_data[variable == "lowh_par_cp" | variable == "lowh_par_ncp", `:=`(model="PAR low h")]
+long_data[variable == "highh_par_cp" | variable == "highh_par_ncp", `:=`(model="PAR high h")]
+long_data[,model:=factor(model, levels = c("DDM", "Low Leak", "High Leak", "DumbR", "PAR low h", "PAR high h"))]
+long_data[,CP:=factor(CP, levels=c("no-CP", "CP"))]
+# 
+# head(long_data)
+# str(long_data)
+```
+
+```{r}
+# Rfff <- function(tau, dprime, sig) {
+#   Rinnerfunc <- function(x) {
+#     return(ff(tau, dprime, x, sig))
+#   }
+#   return(Rinnerfunc)
+# }
+# k <- Rfff(tt - CPtime, d2, sigma)
+# k(2)
+```
+
+
+```{r, fig.width=12, fig.height=15}
+# Plotting
+ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
+      geom_tile() +
+      ggtitle("Theoretical Accuracy") + 
+      scale_fill_gradientn(colors=colorRampPalette(c("white","royalblue","seagreen","orange","red","brown"))(500),name="Accuracy\n[P(correct)]") +
+      labs(x = "Time [sec]",y="SNR [|d|/sigma]") +
+      facet_grid(model~CP) + 
+      theme(text=element_text(size=20)) +
+      theme_bw()
+```
+
+Let's pick 3 SNR values and visualize accuracy as a function of time.
+```{r, fig.width=28, fig.height=11.5}
+ggplot(aes(x=t, y=value, col=CP), data=long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001,]) + 
+  # geom_hline(yintercept=.5, color='black', inherit.aes=FALSE) +  # buggy because of facet_wrap. See https://github.com/tidyverse/ggplot2/issues/2091
+  stat_identity(yintercept=0.5, geom='hline', color='black', inherit.aes=TRUE) +
+  geom_line(aes(group=interaction(model, CP), linetype=model), size=1.5) +
+  facet_wrap(~factor(C)) +
+  ylab("P(correct)") + xlab("time (s)") +
+  labs(title = "Theoretical Curves Perfect Accumulator",
+       subtitle = "CP vs. no-CP trials", 
+       caption = paste("low leak =",lowl,"; high leak =",highl, "; low h = ", lowh, "; high h = ", highh),
+       col="") +
+  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
+```
+
+```{r}
+tmp <- long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001, ]
+tmp[, Pwrong:=NULL]
+filtered <- dcast(tmp, C + t + model ~ CP, value.var = "value")
+names(filtered)<-c("C", "t", "model", "noCP", "CP")
+#    family_id age_mother dob_child1 dob_child2 dob_child3
+# 1:         1         30 1998-11-26 2000-01-29       <NA>
+# 2:         2         27 1996-06-22       <NA>       <NA>
+# 3:         3         26 2002-07-11 2004-04-05 2007-09-02
+head(filtered)
+str(filtered)
+```
+
+Difference:
+```{r, fig.width=28, fig.height=9.5}
+ggplot(aes(x=t, y=noCP - CP, col=model, group=C), data=filtered) + 
+  geom_line(aes(group=model),size=1.5) +
+  # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
+  #            linetype="dotted") +
+  facet_wrap(~factor(C)) +
+  ylab("Diff Acc") + xlab("time (s)") +
+  labs(title = "Accuracy Differential",
+       subtitle = "Acc(no-CP)-Acc(CP)", 
+       caption = paste("low leak =",lowl,"; high leak =",highl),
+       col="") +
+  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
+```
+
