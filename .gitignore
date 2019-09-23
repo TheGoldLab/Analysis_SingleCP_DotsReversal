@@ -33,3 +33,4 @@ Jupyter/__pycache__/*
 R/.Rhistory
 R/R.Rproj
 R/basics_files/*
+R/__pycache__/*
