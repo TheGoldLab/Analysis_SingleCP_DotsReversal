@@ -22,7 +22,7 @@ curr_session = metadump.session(end);
 subjStruct = metadata.(subjects{subjNumber});
 sessions = fieldnames(subjStruct);  % session names for 
 disp(sessions)
-timestamp='2019_09_23_14_49';
+timestamp='2019_09_25_13_53';
 datapath = ['/Users/joshuagold/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/data/DotsReproducibilityTest/raw/',timestamp,'/'];
 filename = [timestamp, '_topsDataLog.mat'];
 disp(datapath)
