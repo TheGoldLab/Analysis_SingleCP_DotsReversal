@@ -1,0 +1,69 @@
+---
+title: "Mixed Effects Logistic Regressions"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+```{r}
+library(ggplot2)
+library(lme4)
+library(data.table)
+source("explore_functions.r")
+```
+
+
+# Effect of probCP (random subject) on dirCorrect at 200 (and 100) msec
+```{r}
+data <- get_full_data(probCPasFactor = F)
+subdata <- data[block!="Quest" & viewingDuration == 200, .(subject, dirCorrect, block, probCP)]
+str(subdata)
+```
+
+## Standard logistic regression
+```{r}
+m <- glm(dirCorrect ~ probCP, data = subdata, family = binomial)  # no need to specify "no-CP" for 200-msec trials
+summary(m)
+```
+
+```{r}
+coef(m)
+xvals <- seq(0,0.8,.1)
+fitted_line_dt <- data.table(x=xvals, y=coef(m)[["(Intercept)"]] + coef(m)[["probCP"]]*xvals)
+# print(fitted_line_dt)
+```
+
+Let's visualize the fits in log-odds space.
+```{r}
+logodds_data <- subdata[,logodds:=(sum(dirCorrect)/(.N - sum(dirCorrect))), by=probCP]
+ggplot(logodds_data, aes(x=probCP, y=logodds)) + geom_point() + 
+  geom_line(data=fitted_line_dt, aes(x=x,y=y))
+```
+This looks horrible... WHY?
+
+## Adding random intercept for each subject
+```{r}
+m1 <- glmer(dirCorrect ~ probCP + (1 | subject), data=subdata, family = binomial, control = glmerControl(optimizer = "bobyqa"), nAGQ = 10)
+summary(m1)
+```
+
+```{r}
+coef(m1)$subject
+```
+
+## Adding random slope for each subject
+```{r}
+m2 <- glmer(dirCorrect ~ probCP + (1 | subject) + (1 + probCP | subject), data=subdata, family = binomial, control = glmerControl(optimizer = "bobyqa"))
+summary(m2)
+```
+
+```{r}
+coef(m2)$subject
+```
+
+```{r}
+isSingular(m2)
+```
+
+# Interpretation / Conclusion
+??
