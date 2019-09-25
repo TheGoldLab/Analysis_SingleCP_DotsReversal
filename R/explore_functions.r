@@ -1,7 +1,16 @@
 # load all the valid trials data for paid subjects as single data.table
-get_full_data <- function(probCPasFactor = TRUE) {
+get_full_data <- function(probCPasFactor = TRUE, excludeQuest = TRUE) {
   # block that imports the data and casts it into useful types for R
   data <- fread('/home/adrian/SingleCP_DotsReversal/processed/all_valid_data.csv')
+  
+  if (excludeQuest) {
+    data <- data[block != "Quest"]
+    data[, block:=factor(block, levels=c('Block2', 'Block3', 'Block4', 'Block5', 'Block6', 'Block7',
+                                         'Block8', 'Block9', 'Block10', 'Block11'))]
+  } else {
+    data[, block:=factor(block, levels=c('Quest', 'Block2', 'Block3', 'Block4', 'Block5', 'Block6', 'Block7',
+                                         'Block8', 'Block9', 'Block10', 'Block11'))]
+  }
   
   # set variables with appropriate type
   data[, `:=`(
@@ -14,9 +23,7 @@ get_full_data <- function(probCPasFactor = TRUE) {
     endDirection=as.factor(endDirection),
     presenceCP=factor(presenceCP, ordered=TRUE),
     viewingDuration=as.integer(viewingDuration * 1000),
-    CPresponseSide=factor(CPresponseSide),
-    block=factor(block, levels=c('Quest', 'Block2', 'Block3', 'Block4', 'Block5', 'Block6', 'Block7',
-                                 'Block8', 'Block9', 'Block10', 'Block11'))
+    CPresponseSide=factor(CPresponseSide)
   )]
   
   if (probCPasFactor) {
@@ -25,12 +32,18 @@ get_full_data <- function(probCPasFactor = TRUE) {
   
   # render levels more human-friendly
   levels(data$dirChoice) <- c('left', 'right')
-  levels(data$cpChoice) <- c('no-CP', 'CP')
+  levels(data$cpChoice) <- c('noCP', 'CP')
   levels(data$initDirection) <- c('right', 'left')
   levels(data$endDirection) <- c('right', 'left')
-  levels(data$presenceCP) <- c('no-CP', 'CP')
+  levels(data$presenceCP) <- c('noCP', 'CP')
   levels(data$CPresponseSide) <- c('left', 'right')
-  
+
+
+  # add factor coherence category 
+  data[coherence > 0, coh_cat:= "th"]
+  data[coherence==100, coh_cat:="100"]
+  data[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered=T)]
+
   return(data)
 }
 
