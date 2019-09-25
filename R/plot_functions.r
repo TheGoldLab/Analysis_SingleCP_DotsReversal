@@ -13,24 +13,60 @@ factored_threshold <- data
 #############
 
 
+#============ Acc(300) - Acc(200) ==============#
+data[,`:=`(acc=mean(dirCorrect),
+           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
+     by=.(viewingDuration, subject, probCP, presenceCP, coh_cat)]
+tocast <- unique(data[(viewingDuration == 200 | viewingDuration == 300) & coh_cat == "th", 
+                      .(acc, subject, probCP, presenceCP, viewingDuration, vv)])
+wide <- dcast(tocast, 
+              subject + probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
 
-#============ 100 msec window integration ==============#
-subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th", 
-                `:=`(accuracy=mean(dirCorrect), se=sqrt(mean(dirCorrect)*(1-mean(dirCorrect))/.N)),
-                by=.(viewingDuration, subject, probCP, presenceCP, coh_cat)]
-subdata <- unique(subdata[,.(accuracy, subject, probCP, presenceCP, viewingDuration, se)])
-subdata[, `:=`(priming='None', ci=1.96*se)]
-subdata[viewingDuration == 300 & presenceCP == "CP", priming := "Neg"]
-subdata[viewingDuration == 300 & presenceCP == "noCP", priming := "Pos"]
-subdata[,priming := as.factor(priming)]
+# fill NA values for vd200 at CP trials to vd200 at noCP trials
+for (subj in c("S1", "S2", "S3", "S4", "S5")) {
+  for (pcp in c("0", "0.2", "0.5", "0.8")) {
+  wide[subject == subj & probCP == pcp & presenceCP == "CP",
+       acc_200 := wide[subject == subj & probCP == pcp & presenceCP == "noCP", acc_200]]
+  wide[subject == subj & probCP == pcp & presenceCP == "CP",
+       vv_200 := wide[subject == subj & probCP == pcp & presenceCP == "noCP", vv_200]]
+  }
+}
 
-png(filename="100_msec_window.png", width=800, height=800)
-ggplot(subdata, aes(x=priming, y=accuracy, col=priming, group=priming)) + geom_point(size=4) +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=0.17, size=1.4) + geom_hline(yintercept = 0.5, linetype='dashed') +
-  facet_grid(subject~probCP) + theme_bw() + theme(text=element_text(size=20)) + 
-  labs(title="Accuracy on 100-msec window", subtitle="threshold coherence")
+wide[,`:=`(accDiff=acc_300 - acc_200,ci=1.96*sqrt(vv_200+vv_300))]
+
+png(filename="Acc300-Acc200.png", width=600, height=800)
+ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
+  geom_point(size=3.7) + 
+  geom_line(aes(group=interaction(probCP, subject)), size=1.5) +
+  geom_hline(yintercept = 0, linetype='dashed') + 
+  geom_errorbar(aes(ymin=accDiff - ci, ymax=accDiff + ci), width=.1, size=1) +
+  facet_grid(subject~probCP) + theme(text=element_text(size=20)) + ylab("Acc(300) - Acc(200)") + 
+  labs(title="Accuracy difference around CP", subtitle="threshold coherence")
 dev.off()
 #=======================================================#
+
+
+
+##============ 100 msec window integration ==============#
+#subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th", 
+#                `:=`(accuracy=mean(dirCorrect), se=sqrt(mean(dirCorrect)*(1-mean(dirCorrect))/.N)),
+#                by=.(viewingDuration, subject, probCP, presenceCP, coh_cat)]
+#subdata <- unique(subdata[,.(accuracy, subject, probCP, presenceCP, viewingDuration, se)])
+#subdata[, `:=`(priming='None', ci=1.96*se)]
+#subdata[viewingDuration == 300 & presenceCP == "CP", priming := "Neg"]
+#subdata[viewingDuration == 300 & presenceCP == "noCP", priming := "Pos"]
+#subdata[,priming := as.factor(priming)]
+#
+#png(filename="100_msec_window.png", width=800, height=800)
+#ggplot(subdata, aes(x=priming, y=accuracy, col=priming, group=priming)) + geom_point(size=4) +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=0.17, size=1.4) + geom_hline(yintercept = 0.5, linetype='dashed') +
+#  facet_grid(subject~probCP) + theme_bw() + theme(text=element_text(size=20)) + 
+#  labs(title="Accuracy on 100-msec window", subtitle="threshold coherence")
+#dev.off()
+##=======================================================#
+
+
+
 
 ## Acc (DD) on non-CP trials as function of VD for threshold coherence, by subject by probCP
 #to_plot2 <- nonQuestData[
