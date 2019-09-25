@@ -1,5 +1,5 @@
 # load all the valid trials data for paid subjects as single data.table
-get_full_data <- function() {
+get_full_data <- function(probCPasFactor = TRUE) {
   # block that imports the data and casts it into useful types for R
   data <- fread('/home/adrian/SingleCP_DotsReversal/processed/all_valid_data.csv')
   
@@ -16,9 +16,12 @@ get_full_data <- function() {
     viewingDuration=as.integer(viewingDuration * 1000),
     CPresponseSide=factor(CPresponseSide),
     block=factor(block, levels=c('Quest', 'Block2', 'Block3', 'Block4', 'Block5', 'Block6', 'Block7',
-                                 'Block8', 'Block9', 'Block10', 'Block11')),
-    probCP=factor(probCP, ordered=TRUE)
+                                 'Block8', 'Block9', 'Block10', 'Block11'))
   )]
+  
+  if (probCPasFactor) {
+    data[,probCP:=factor(probCP, ordered = TRUE)]
+  }
   
   # render levels more human-friendly
   levels(data$dirChoice) <- c('left', 'right')
