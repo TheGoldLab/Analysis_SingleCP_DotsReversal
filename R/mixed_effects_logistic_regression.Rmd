@@ -16,7 +16,7 @@ source("explore_functions.r")
 # Effect of probCP (random subject) on dirCorrect at 200 (and 100) msec
 ```{r}
 data <- get_full_data(probCPasFactor = F)
-subdata <- data[block!="Quest" & viewingDuration == 200, .(subject, dirCorrect, block, probCP)]
+subdata <- data[block!="Quest" & viewingDuration == 200 & coh_cat == "th", .(subject, dirCorrect, block, probCP)]
 str(subdata)
 ```
 
