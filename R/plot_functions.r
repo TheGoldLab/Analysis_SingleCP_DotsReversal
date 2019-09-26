@@ -12,37 +12,37 @@ nonQuestData <- data
 factored_threshold <- data
 #############
 
-#============ Priming Effect ===============#
-subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th",
-                .(dirCorrect, subject, probCP, presenceCP, viewingDuration)]
-subdata[, `:=`(accuracy=mean(dirCorrect), vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-        by=.(viewingDuration, subject, probCP, presenceCP)]
-tocast <- unique(subdata[,dirCorrect:=NULL])
-
-wide <- dcast(tocast, 
-              subject + probCP + presenceCP ~ viewingDuration, value.var = c("accuracy", "vv"))
-
-for (subj in c("S1", "S2", "S3", "S4", "S5")) {
-  for (pcp in c("0", "0.2", "0.5", "0.8")) {
-  wide[subject == subj & probCP == pcp & presenceCP == "CP",
-       accuracy_100 := wide[subject == subj & probCP == pcp & presenceCP == "noCP", accuracy_100]]
-  wide[subject == subj & probCP == pcp & presenceCP == "CP",
-       vv_100 := wide[subject == subj & probCP == pcp & presenceCP == "noCP", vv_100]]
-  }
-}
-
-wide[,`:=`(accDiff=accuracy_300 - accuracy_100,ci=1.96*sqrt(vv_100+vv_300))]
-
-png(filename="priming_effect.png", width=600, height=800)
-ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
-  geom_point(size=3.7) + 
-  geom_line(aes(group=interaction(probCP, subject)), size=1.5) +
-  geom_hline(yintercept = 0, linetype='dashed') + 
-  geom_errorbar(aes(ymin=accDiff - ci, ymax=accDiff + ci), width=.1, size=1) +
-  facet_grid(subject~probCP) + theme(text=element_text(size=20)) + ylab("Acc(300) - Acc(100)") + 
-  labs(title="Effect of pre-CP stim on post-CP acc", subtitle="threshold coherence")
-dev.off()
-#============================================#
+##============ Priming Effect ===============#
+#subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th",
+#                .(dirCorrect, subject, probCP, presenceCP, viewingDuration)]
+#subdata[, `:=`(accuracy=mean(dirCorrect), vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
+#        by=.(viewingDuration, subject, probCP, presenceCP)]
+#tocast <- unique(subdata[,dirCorrect:=NULL])
+#
+#wide <- dcast(tocast, 
+#              subject + probCP + presenceCP ~ viewingDuration, value.var = c("accuracy", "vv"))
+#
+#for (subj in c("S1", "S2", "S3", "S4", "S5")) {
+#  for (pcp in c("0", "0.2", "0.5", "0.8")) {
+#  wide[subject == subj & probCP == pcp & presenceCP == "CP",
+#       accuracy_100 := wide[subject == subj & probCP == pcp & presenceCP == "noCP", accuracy_100]]
+#  wide[subject == subj & probCP == pcp & presenceCP == "CP",
+#       vv_100 := wide[subject == subj & probCP == pcp & presenceCP == "noCP", vv_100]]
+#  }
+#}
+#
+#wide[,`:=`(accDiff=accuracy_300 - accuracy_100,ci=1.96*sqrt(vv_100+vv_300))]
+#
+#png(filename="priming_effect.png", width=600, height=800)
+#ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
+#  geom_point(size=3.7) + 
+#  geom_line(aes(group=interaction(probCP, subject)), size=1.5) +
+#  geom_hline(yintercept = 0, linetype='dashed') + 
+#  geom_errorbar(aes(ymin=accDiff - ci, ymax=accDiff + ci), width=.1, size=1) +
+#  facet_grid(subject~probCP) + theme(text=element_text(size=20)) + ylab("Acc(300) - Acc(100)") + 
+#  labs(title="Effect of pre-CP stim on post-CP acc", subtitle="threshold coherence")
+#dev.off()
+##============================================#
 
 
 ##============ Acc(300) - Acc(200) ==============#
@@ -216,28 +216,27 @@ dev.off()
 
 ######## Main result plot ##########
 # as above, but for 200-400 msec trials.
-#to_plot6 <- factored_threshold[
-#  viewingDuration > 150 &
-#    coh_cat=="th",
-#  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, subject, viewingDuration, probCP)
-#]
-#to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-#to_plot6[,ci:=1.96*se]
-#
-#pd <- position_dodge(.2) # move them .05 to the left and right
-#
-#png(filename="acc_dd_200-400_bysubj_bypcp_bycp.png", width=1600, height=1300)
-#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
-#  geom_point(size=4, position=pd) +
-#  geom_line(size=2) +
-#  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
-#  facet_grid(subject~probCP) +
-#  scale_color_brewer(palette="Dark2") +
-#  theme(text = element_text(size=35)) + 
-#  ggtitle("Acc (DD) th-coh")
-#dev.off()
+to_plot6 <- factored_threshold[
+  coh_cat=="th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(presenceCP, subject, viewingDuration, probCP)
+]
+to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot6[,ci:=1.96*se]
+
+pd <- position_dodge(.2) # move them .05 to the left and right
+
+png(filename="acc_dd_100-400_bysubj_bypcp_bycp.png", width=1600, height=1300)
+ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+  geom_point(size=4, position=pd) +
+  geom_line(size=2) +
+  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+  facet_grid(subject~probCP) +
+  scale_color_brewer(palette="Dark2") +
+  theme(text = element_text(size=35)) + 
+  ggtitle("Acc (DD) th-coh")
+dev.off()
 ####################################
 
 ######### Acc diff plot ##########
