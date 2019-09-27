@@ -5,13 +5,36 @@ output:
     df_print: paged
     code_folding: hide
 ---
-# Frame count variability
-10 trials of 200msec, followed by 10 trials of 400msec were run, all with the same random seed.
+
 ```{r}
 library(data.table)
 library(ggplot2)
 # source("explore_functions.r")
 ```
+
+# Cross-sessions comparison of dotsPositions.csv files
+```{r}
+file1 <- fread("/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_25_13_47/2019_09_25_13_47_dotsPositions_truncated.csv")
+file1[,`:=`(seqDumpTime=NULL,pilotID=NULL,taskID=NULL)]
+
+file2 <- fread("/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_25_13_53/2019_09_25_13_53_dotsPositions.csv")
+file2[,`:=`(seqDumpTime=NULL,pilotID=NULL,taskID=NULL)]
+
+file3 <- fread("/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_27_11_29/2019_09_27_11_29_dotsPositions.csv")
+file3[,`:=`(seqDumpTime=NULL,pilotID=NULL,taskID=NULL)]
+```
+
+```{r}
+match <- file2[1:2392,]==file3
+```
+
+```{r}
+colSums(match)
+```
+
+
+# Frame count variability
+10 trials of 200msec, followed by 10 trials of 400msec were run, all with the same random seed.
 
 ```{r}
 path_to_fira <- "/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_23_14_49/2019_09_23_14_49_FIRA.csv"
