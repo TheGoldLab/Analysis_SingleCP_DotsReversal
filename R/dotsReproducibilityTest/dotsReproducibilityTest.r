@@ -2,16 +2,10 @@
 library(data.table)
 library(ggforce)
 
-path_to_fira <- "/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_23_14_49/2019_09_23_14_49_FIRA.csv"
+path_to_fira <- "/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_30_11_57/2019_09_30_11_57_FIRA.csv"
 fira <- fread(path_to_fira)
 
-
-
-
-
-
-
-path_to_dots <- "/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_23_14_49/2019_09_23_14_49_dotsPositions.csv"
+path_to_dots <- "/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_30_11_57/2019_09_30_11_57_dotsPositions.csv"
 dots <- fread(path_to_dots)
 
 dots[,trial:=factor(seqDumpTime, ordered=T)]
@@ -21,38 +15,31 @@ if (dotsTrials == max(fira$trialIndex)) {
   levels(dots$trial) <- seq(dotsTrials)
 }
 
-
-
 frames <- unique(dots[,.(frameIdx), by=trial])
 frameCounts <- frames[,.(maxFrames=max(frameIdx), numFrames=.N), by=trial]
-frameCounts[,type:='short']
-frameCounts[trial>10,type:='long']
-frameCounts[,type:=as.factor(type)]
 
-frameCounts[,reltrial:=as.integer(seq(dotsTrials / 2)), by=type]
+frameCounts[,reltrial:=.I]
 
-png(filename="dotsReproducibilityTest_frameCount.png", width=400, height=350)
-ggplot(frameCounts, aes(x=reltrial, y=numFrames, color=type)) +
+png(filename="dotsReproducibilityTest_4th_frameCount.png", width=400, height=350)
+ggplot(frameCounts, aes(x=reltrial, y=numFrames)) +
   geom_point(size=4) +
-  scale_y_continuous(breaks = seq(10, 30, 1)) +
+  scale_y_continuous(breaks = seq(0, 15, 1)) +
   theme(text=element_text(size=20),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "white",size=0.75))
 dev.off()
 
 
-
 dots_dt <- dots[isActive == 1, .(xpos, ypos, trial, frameIdx)]
 dots_dt[,dotID:=seq(.N), by=.(trial, frameIdx)]
 
-#png(filename="dotsReproducibilityTest_2.png", width=5000, height=3000)
-#ggplot(dots_dt, aes(x=xpos, y=ypos, color=xpos)) + geom_point() + facet_grid(trial~frameIdx) + theme(text=element_text(size=20))
-#dev.off()
-
+png(filename="dotsReproducibilityTest_4th_2.png", width=5000, height=3000)
+ggplot(dots_dt, aes(x=xpos, y=ypos, color=xpos)) + geom_point() + facet_grid(trial~frameIdx) + theme(text=element_text(size=20))
+dev.off()
 
 dots_melted <- melt(dots_dt, measure.vars=c("xpos", "ypos"), variable.name="axis", value.name="position", id.vars=c("trial", "frameIdx", "dotID"))
 
-#png(filename="dotsReproducibilityTest_histograms_xpos_ypos.png", width=400, height=1200)
-#ggplot(dots_melted, aes(x=position, group=axis)) + geom_histogram(bins=500) + facet_grid(frameIdx~axis) + 
-#	theme(text=element_text(size=15), panel.spacing.y=unit(0, "lines"))
-#dev.off()
+png(filename="dotsReproducibilityTest_4th_histograms_xpos_ypos.png", width=400, height=1200)
+ggplot(dots_melted, aes(x=position, group=axis)) + geom_histogram(bins=500) + facet_grid(frameIdx~axis) + 
+	theme(text=element_text(size=15), panel.spacing.y=unit(0, "lines"))
+dev.off()
