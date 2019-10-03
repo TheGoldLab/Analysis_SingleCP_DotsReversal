@@ -14,15 +14,15 @@ library(ggplot2)
 
 # Cross-sessions comparison of dotsPositions.csv files
 ```{r}
-file1 <- fread("/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_30_11_35/2019_09_30_11_35_dotsPositions.csv")
+file1 <- fread("/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_10_01_11_53/2019_10_01_11_53_dotsPositions.csv")
 file1[,`:=`(seqDumpTime=NULL,pilotID=NULL,taskID=NULL)]
 
-file2 <- fread("/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_09_30_11_57/2019_09_30_11_57_dotsPositions.csv")
+file2 <- fread("/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_10_01_12_06/2019_10_01_12_06_dotsPositions.csv")
 file2[,`:=`(seqDumpTime=NULL,pilotID=NULL,taskID=NULL)]
 ```
 
 ```{r}
-match <- file2[1:3050,]==file1
+match <- file2[1:6100,]==file1
 ```
 
 ```{r}
