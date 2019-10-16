@@ -333,30 +333,30 @@ factored_threshold <- data
 #####################################
 
 
-######## Main result plot AVG SUBJ ##########
-# as above, but for 200-400 msec trials.
-to_plot6 <- factored_threshold[
-  coh_cat=="th",
-  .(accuracy=mean(dirCorrect), numTrials=.N),
-  by=.(presenceCP, viewingDuration, probCP)
-]
-to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plot6[,ci:=1.96*se]
-
-pd <- position_dodge(.2) # move them .05 to the left and right
-
-png(filename="acc_dd_100-400_bypcp_bycp.png", width=1500, height=385)
-ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
-  geom_point(size=4, position=pd) +
-  geom_line(size=2) +
-  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
-  facet_grid(~probCP) +
-  scale_color_brewer(palette="Dark2") +
-  theme(text = element_text(size=35)) + 
-  ggtitle("Acc (DD) th-coh")
-dev.off()
-####################################
+######### Main result plot AVG SUBJ ##########
+## as above, but for 200-400 msec trials.
+#to_plot6 <- factored_threshold[
+#  coh_cat=="th",
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(presenceCP, viewingDuration, probCP)
+#]
+#to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+#to_plot6[,ci:=1.96*se]
+#
+#pd <- position_dodge(.2) # move them .05 to the left and right
+#
+#png(filename="acc_dd_100-400_bypcp_bycp.png", width=1500, height=385)
+#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+#  geom_point(size=4, position=pd) +
+#  geom_line(size=2) +
+#  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+#  facet_grid(~probCP) +
+#  scale_color_brewer(palette="Dark2") +
+#  theme(text = element_text(size=35)) + 
+#  ggtitle("Acc (DD) th-coh")
+#dev.off()
+#####################################
 
 ######### Acc diff plot ##########
 #to_plot <- factored_threshold[
