@@ -14,38 +14,38 @@ factored_threshold <- data
 
 
 
-#============ Acc(400)-Acc(300) vs. Acc(200)-Acc(100) AVG SUBJ ===============#
-data[,`:=`(acc=mean(dirCorrect),
-           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
-tocast <- unique(data[coh_cat == "th", .(acc, probCP, presenceCP, viewingDuration, vv)])
-wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
-wide[,`:=`(
-  accDiffPost=acc_400 - acc_300,
-  ciPost=1.96*sqrt(vv_400+vv_300),
-  accDiffPre=acc_200 - acc_100,
-  ciPre=1.96*sqrt(vv_200+vv_100))]
-wide[,`:=`(acc_100=NULL, acc_200=NULL, acc_300=NULL, acc_400=NULL,
-           vv_100=NULL, vv_200=NULL, vv_300=NULL, vv_400=NULL)]
-listForAcc <- paste("accDiff", c("Pre", "Post"), sep = "")
-listForCI <- paste("ci", c("Pre", "Post"), sep = "")
-long_again <- melt(wide, measure = list(listForAcc, listForCI),
-               variable.name = "TimeLoc", value.name = c("AccChange", "CI"))
-levels(long_again$TimeLoc) <- c("PreCP", "PostCP")
-pd <- position_dodge(.14) 
-
-png(filename="Accuracy_Change_Pre_vs_Post_CP_avg_subj.png", width=740, height=300)
-ggplot(long_again, aes(x=TimeLoc, y=AccChange, col=presenceCP)) + 
-  geom_point(position=pd, size=3.7) + 
-  geom_hline(yintercept = 0, linetype='dashed') + 
-  geom_errorbar(aes(ymin=AccChange - CI, ymax=AccChange + CI), width=.2, position=pd, size=1) +
-  facet_grid(~probCP) + 
-  theme_bw() + scale_color_brewer(palette="Set1") +
-  theme(text=element_text(size=20)) + 
-  ylab("Accuracy Increase") + xlab("100-msec window") +  
-  labs(title="Accuracy Change Pre- vs. Post-CP", subtitle = "Threshold Coherence")
-dev.off()
-#============================================#
+##============ Acc(400)-Acc(300) vs. Acc(200)-Acc(100) AVG SUBJ ===============#
+#data[,`:=`(acc=mean(dirCorrect),
+#           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
+#     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
+#tocast <- unique(data[coh_cat == "th", .(acc, probCP, presenceCP, viewingDuration, vv)])
+#wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
+#wide[,`:=`(
+#  accDiffPost=acc_400 - acc_300,
+#  ciPost=1.96*sqrt(vv_400+vv_300),
+#  accDiffPre=acc_200 - acc_100,
+#  ciPre=1.96*sqrt(vv_200+vv_100))]
+#wide[,`:=`(acc_100=NULL, acc_200=NULL, acc_300=NULL, acc_400=NULL,
+#           vv_100=NULL, vv_200=NULL, vv_300=NULL, vv_400=NULL)]
+#listForAcc <- paste("accDiff", c("Pre", "Post"), sep = "")
+#listForCI <- paste("ci", c("Pre", "Post"), sep = "")
+#long_again <- melt(wide, measure = list(listForAcc, listForCI),
+#               variable.name = "TimeLoc", value.name = c("AccChange", "CI"))
+#levels(long_again$TimeLoc) <- c("PreCP", "PostCP")
+#pd <- position_dodge(.14) 
+#
+#png(filename="Accuracy_Change_Pre_vs_Post_CP_avg_subj.png", width=740, height=300)
+#ggplot(long_again, aes(x=TimeLoc, y=AccChange, col=presenceCP)) + 
+#  geom_point(position=pd, size=3.7) + 
+#  geom_hline(yintercept = 0, linetype='dashed') + 
+#  geom_errorbar(aes(ymin=AccChange - CI, ymax=AccChange + CI), width=.2, position=pd, size=1) +
+#  facet_grid(~probCP) + 
+#  theme_bw() + scale_color_brewer(palette="Set1") +
+#  theme(text=element_text(size=20)) + 
+#  ylab("Accuracy Increase") + xlab("100-msec window") +  
+#  labs(title="Accuracy Change Pre- vs. Post-CP", subtitle = "Threshold Coherence")
+#dev.off()
+##============================================#
 
 ##============ Priming Effect ===============#
 #subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th",
@@ -331,6 +331,32 @@ dev.off()
 #  ggtitle("Acc (DD) th-coh")
 #dev.off()
 #####################################
+
+
+######## Main result plot AVG SUBJ ##########
+# as above, but for 200-400 msec trials.
+to_plot6 <- factored_threshold[
+  coh_cat=="th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(presenceCP, viewingDuration, probCP)
+]
+to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot6[,ci:=1.96*se]
+
+pd <- position_dodge(.2) # move them .05 to the left and right
+
+png(filename="acc_dd_100-400_bypcp_bycp.png", width=1500, height=385)
+ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+  geom_point(size=4, position=pd) +
+  geom_line(size=2) +
+  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+  facet_grid(~probCP) +
+  scale_color_brewer(palette="Dark2") +
+  theme(text = element_text(size=35)) + 
+  ggtitle("Acc (DD) th-coh")
+dev.off()
+####################################
 
 ######### Acc diff plot ##########
 #to_plot <- factored_threshold[
