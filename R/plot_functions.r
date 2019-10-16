@@ -84,6 +84,28 @@ factored_threshold[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered
 #
 #dev.off()
 
+#Accuracy at 100 & 200 msec for fixed coh is invariant across all ProbCP conditions
+to_plot41 <- factored_threshold[
+  viewingDuration < 250 &
+    coh_cat == "th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(viewingDuration, probCP)
+]
+to_plot41[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot41[,ci:=1.96*se]
+
+png(filename="acc_dd_pcp_nocp_byvd.png", width=1000, height=330)
+
+ggplot(aes(x=probCP, y=accuracy), data=to_plot41) +
+  geom_point(size=3) +
+  geom_line(group=1, size=2) +
+  geom_hline(yintercept=c(.5,1), color="black") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=1) +
+  facet_grid(~viewingDuration) +
+  theme(text = element_text(size=35))
+
+dev.off()
+
 
 ## Per prob-CP condition, accuracy at 200 msec ishigher than at 300 msecon CP trials.
 #to_plot5 <- factored_threshold[
@@ -154,37 +176,37 @@ factored_threshold[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered
 #dev.off()
 ####################################
 
-######## Acc diff plot ##########
-to_plot <- factored_threshold[
-  probCP > 0 & probCP < 0.8 &
-  coh_cat=="th",
-  .(accuracy=mean(dirCorrect), numTrials=.N),
-  by=.(presenceCP, subject, viewingDuration, probCP)
-]
-to_plot[,se:=sqrt(2*accuracy * (1-accuracy) / numTrials)]
-to_plot[,numTrials:=NULL]
-
-levels(to_plot$presenceCP) <- c("noCP","CP")
-to_plot2 <- dcast(to_plot, subject+viewingDuration+probCP~presenceCP, value.var=c("accuracy","se"))
-to_plot2[,accdiff:=0]
-to_plot2[viewingDuration > 200, accdiff:=accuracy_noCP - accuracy_CP]
-to_plot2[,ci:=1.96*se_noCP]
-to_plot2[viewingDuration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
-
-pd <- position_dodge(.2) # move them .05 to the left and right
-
-png(filename="acc_diff_dd_bysubj_bypcp_bycp.png", width=800, height=1300)
-ggplot(to_plot2, aes(x=viewingDuration, y=accdiff)) +
-  geom_point(size=4, position=pd) +
-  geom_line(size=2) +
-  geom_hline(yintercept=c(0,-.5,.5), color="black", linetype="dashed") +
-  geom_errorbar(aes(ymin=accdiff-ci, ymax=accdiff+ci), width=.1, size=1.7, position=pd) +
-  facet_grid(subject~probCP) +
-  scale_color_brewer(palette="Dark2") +
-  theme(text = element_text(size=35)) + 
-  ggtitle("Acc (DD) th-coh")
-dev.off()
-####################################
+######### Acc diff plot ##########
+#to_plot <- factored_threshold[
+#  probCP > 0 & probCP < 0.8 &
+#  coh_cat=="th",
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(presenceCP, subject, viewingDuration, probCP)
+#]
+#to_plot[,se:=sqrt(2*accuracy * (1-accuracy) / numTrials)]
+#to_plot[,numTrials:=NULL]
+#
+#levels(to_plot$presenceCP) <- c("noCP","CP")
+#to_plot2 <- dcast(to_plot, subject+viewingDuration+probCP~presenceCP, value.var=c("accuracy","se"))
+#to_plot2[,accdiff:=0]
+#to_plot2[viewingDuration > 200, accdiff:=accuracy_noCP - accuracy_CP]
+#to_plot2[,ci:=1.96*se_noCP]
+#to_plot2[viewingDuration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
+#
+#pd <- position_dodge(.2) # move them .05 to the left and right
+#
+#png(filename="acc_diff_dd_bysubj_bypcp_bycp.png", width=800, height=1300)
+#ggplot(to_plot2, aes(x=viewingDuration, y=accdiff)) +
+#  geom_point(size=4, position=pd) +
+#  geom_line(size=2) +
+#  geom_hline(yintercept=c(0,-.5,.5), color="black", linetype="dashed") +
+#  geom_errorbar(aes(ymin=accdiff-ci, ymax=accdiff+ci), width=.1, size=1.7, position=pd) +
+#  facet_grid(subject~probCP) +
+#  scale_color_brewer(palette="Dark2") +
+#  theme(text = element_text(size=35)) + 
+#  ggtitle("Acc (DD) th-coh")
+#dev.off()
+#####################################
 
 ## as above, but for perceived CP as opposed to real CPs
 #to_plotx <- factored_threshold[
