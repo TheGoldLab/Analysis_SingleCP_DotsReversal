@@ -12,6 +12,27 @@ nonQuestData <- data
 factored_threshold <- data
 #############
 
+#============ Accuracy at 100 & 200 msec for fixed coh is invariant across all ProbCP conditions AVG SUBJ ===============#
+to_plot41 <- factored_threshold[
+  viewingDuration < 250 &
+    coh_cat == "th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(viewingDuration, probCP)
+]
+to_plot41[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot41[,ci:=1.96*se]
+
+png(filename="acc_dd_pcp_nocp_byvd_column.png", width=500, height=500)
+
+ggplot(aes(x=probCP, y=accuracy), data=to_plot41) +
+  geom_point(size=3) +
+  geom_line(group=1, size=2) +
+  geom_hline(yintercept=c(.5,1), color="black") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=1) +
+  facet_grid(viewingDuration~.) +
+  theme(text = element_text(size=35))
+dev.off()
+#============================================#
 
 
 ##============ Acc(400)-Acc(300) vs. Acc(200)-Acc(100) AVG SUBJ ===============#
