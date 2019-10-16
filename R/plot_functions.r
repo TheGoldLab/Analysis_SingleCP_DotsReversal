@@ -12,6 +12,41 @@ nonQuestData <- data
 factored_threshold <- data
 #############
 
+
+
+#============ Acc(400)-Acc(300) vs. Acc(200)-Acc(100) AVG SUBJ ===============#
+data[,`:=`(acc=mean(dirCorrect),
+           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
+     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
+tocast <- unique(data[coh_cat == "th", .(acc, probCP, presenceCP, viewingDuration, vv)])
+wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
+wide[,`:=`(
+  accDiffPost=acc_400 - acc_300,
+  ciPost=1.96*sqrt(vv_400+vv_300),
+  accDiffPre=acc_200 - acc_100,
+  ciPre=1.96*sqrt(vv_200+vv_100))]
+wide[,`:=`(acc_100=NULL, acc_200=NULL, acc_300=NULL, acc_400=NULL,
+           vv_100=NULL, vv_200=NULL, vv_300=NULL, vv_400=NULL)]
+listForAcc <- paste("accDiff", c("Pre", "Post"), sep = "")
+listForCI <- paste("ci", c("Pre", "Post"), sep = "")
+long_again <- melt(wide, measure = list(listForAcc, listForCI),
+               variable.name = "TimeLoc", value.name = c("AccChange", "CI"))
+levels(long_again$TimeLoc) <- c("PreCP", "PostCP")
+pd <- position_dodge(.14) 
+
+png(filename="Accuracy_Change_Pre_vs_Post_CP_avg_subj.png", width=740, height=300)
+ggplot(long_again, aes(x=TimeLoc, y=AccChange, col=presenceCP)) + 
+  geom_point(position=pd, size=3.7) + 
+  geom_hline(yintercept = 0, linetype='dashed') + 
+  geom_errorbar(aes(ymin=AccChange - CI, ymax=AccChange + CI), width=.2, position=pd, size=1) +
+  facet_grid(~probCP) + 
+  theme_bw() + scale_color_brewer(palette="Set1") +
+  theme(text=element_text(size=20)) + 
+  ylab("Accuracy Increase") + xlab("100-msec window") +  
+  labs(title="Accuracy Change Pre- vs. Post-CP", subtitle = "Threshold Coherence")
+dev.off()
+#============================================#
+
 ##============ Priming Effect ===============#
 #subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th",
 #                .(dirCorrect, subject, probCP, presenceCP, viewingDuration)]
@@ -44,35 +79,35 @@ factored_threshold <- data
 #dev.off()
 ##============================================#
 
-#============ Priming Effect Subject Average ===============#
-subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th",
-                .(dirCorrect, probCP, presenceCP, viewingDuration)]
-subdata[, `:=`(accuracy=mean(dirCorrect), vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-        by=.(viewingDuration, probCP, presenceCP)]
-tocast <- unique(subdata[,dirCorrect:=NULL])
-
-wide <- dcast(tocast, 
-              probCP + presenceCP ~ viewingDuration, value.var = c("accuracy", "vv"))
-
-for (pcp in c("0", "0.2", "0.5", "0.8")) {
-  wide[probCP == pcp & presenceCP == "CP",
-       accuracy_100 := wide[probCP == pcp & presenceCP == "noCP", accuracy_100]]
-  wide[probCP == pcp & presenceCP == "CP",
-       vv_100 := wide[probCP == pcp & presenceCP == "noCP", vv_100]]
-}
-
-wide[,`:=`(accDiff=accuracy_300 - accuracy_100,ci=1.96*sqrt(vv_100+vv_300))]
-
-png(filename="priming_effect_avg_subj.png", width=600, height=300)
-ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
-  geom_point(size=3.7) + 
-  geom_line(aes(group=probCP), size=1.5) +
-  geom_hline(yintercept = 0, linetype='dashed') + 
-  geom_errorbar(aes(ymin=accDiff - ci, ymax=accDiff + ci), width=.1, size=1) +
-  facet_grid(~probCP) + theme(text=element_text(size=20)) + ylab("Acc(300) - Acc(100)") + 
-  labs(title="Effect of pre-CP stim on post-CP acc", subtitle="threshold coherence")
-dev.off()
-#============================================#
+##============ Priming Effect Subject Average ===============#
+#subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th",
+#                .(dirCorrect, probCP, presenceCP, viewingDuration)]
+#subdata[, `:=`(accuracy=mean(dirCorrect), vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
+#        by=.(viewingDuration, probCP, presenceCP)]
+#tocast <- unique(subdata[,dirCorrect:=NULL])
+#
+#wide <- dcast(tocast, 
+#              probCP + presenceCP ~ viewingDuration, value.var = c("accuracy", "vv"))
+#
+#for (pcp in c("0", "0.2", "0.5", "0.8")) {
+#  wide[probCP == pcp & presenceCP == "CP",
+#       accuracy_100 := wide[probCP == pcp & presenceCP == "noCP", accuracy_100]]
+#  wide[probCP == pcp & presenceCP == "CP",
+#       vv_100 := wide[probCP == pcp & presenceCP == "noCP", vv_100]]
+#}
+#
+#wide[,`:=`(accDiff=accuracy_300 - accuracy_100,ci=1.96*sqrt(vv_100+vv_300))]
+#
+#png(filename="priming_effect_avg_subj.png", width=600, height=300)
+#ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
+#  geom_point(size=3.7) + 
+#  geom_line(aes(group=probCP), size=1.5) +
+#  geom_hline(yintercept = 0, linetype='dashed') + 
+#  geom_errorbar(aes(ymin=accDiff - ci, ymax=accDiff + ci), width=.1, size=1) +
+#  facet_grid(~probCP) + theme(text=element_text(size=20)) + ylab("Acc(300) - Acc(100)") + 
+#  labs(title="Effect of pre-CP stim on post-CP acc", subtitle="threshold coherence")
+#dev.off()
+##============================================#
 
 
 ##============ Acc(300) - Acc(200) ==============#
