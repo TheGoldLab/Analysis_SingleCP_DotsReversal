@@ -411,6 +411,43 @@ factored_threshold <- data
 #dev.off()
 #####################################
 
+
+
+######## Acc diff plot AVG SUBJ ##########
+to_plot <- factored_threshold[
+  probCP > 0 & probCP < 0.8 &
+  coh_cat=="th" & 
+  viewingDuration > 250,
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(presenceCP, viewingDuration, probCP)
+]
+to_plot[,se:=sqrt(2*accuracy * (1-accuracy) / numTrials)]
+to_plot[,numTrials:=NULL]
+
+levels(to_plot$presenceCP) <- c("noCP","CP")
+to_plot2 <- dcast(to_plot, viewingDuration+probCP~presenceCP, value.var=c("accuracy","se"))
+to_plot2[,accdiff:=0]
+to_plot2[viewingDuration > 200, accdiff:=accuracy_noCP - accuracy_CP]
+to_plot2[,ci:=1.96*se_noCP]
+to_plot2[viewingDuration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
+
+pd <- position_dodge(.2) # move them .05 to the left and right
+
+to_plot2[,viewingDuration:=factor(viewingDuration, ordered=T)]
+
+png(filename="acc_diff_dd_bysubj_bypcp_bycp_avg_subj.png", width=500, height=360)
+ggplot(to_plot2, aes(x=viewingDuration, y=accdiff)) +
+  geom_point(size=4, position=pd) +
+  geom_line(size=2, aes(group=1)) +
+  geom_hline(yintercept=c(0,-.5,.5), color="black", linetype="dashed") +
+  geom_errorbar(aes(ymin=accdiff-ci, ymax=accdiff+ci), width=.1, size=1.7, position=pd) +
+  facet_grid(~probCP) +
+  scale_color_brewer(palette="Dark2") +
+  theme(text = element_text(size=35)) + 
+  ggtitle("Acc (DD) th-coh")
+dev.off()
+####################################
+
 ## as above, but for perceived CP as opposed to real CPs
 #to_plotx <- factored_threshold[
 #  viewingDuration > 150 &
@@ -555,135 +592,138 @@ factored_threshold <- data
 #dev.off()
 
 #################################################
-library(reticulate)
-
-source_python("python_functions.py")
-source("accuracy_functions.r")
-
-baseC <- seq(.2, 4, .1)
-baset <- seq(.1,.4,.01)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))
-
-C <- c()
-t <- c()
-norm_ncp <- c()
-norm_cp <- c()
-lowleak_ncp <- c()
-highleak_ncp <- c()
-lowleak_cp <- c()
-highleak_cp <- c()
-
-dumbr_ncp <- c()
-dumbr_cp <- c()
-
-lowh_par_ncp <- c()
-lowh_par_cp <- c()
-highh_par_ncp <- c()
-highh_par_cp <- c()
-
-#actual leak values
-lowl <- 3
-highl <- 10
-lowh <- .2
-highh <- .8
-
-# iteration <- 1
-
-for (cc in baseC) {
-  for (tt in baset) {
-    #### extra params ####
-    d1 <- cc
-    d2 <- -cc
-    dfsion <- 1
-    CPtime <- .2
-    nbins <- 10000
-    ######################
-    
-    
-    C <- c(C, cc)
-    t <- c(t, tt)
-    norm_ncp <- c(norm_ncp, acc(cc, tt))
-    norm_cp <- c(norm_cp, acc_cp(cc, tt))
-    lowleak_ncp <- c(lowleak_ncp, acc_leak(cc, tt, lowl, F))
-    highleak_ncp <- c(highleak_ncp, acc_leak(cc, tt, highl, F))
-    lowleak_cp <- c(lowleak_cp, acc_leak(cc, tt, lowl, T))
-    highleak_cp <- c(highleak_cp, acc_leak(cc, tt, highl, T))
-    if (tt <= .2) {
-      dumbr_cp <- c(dumbr_cp, acc_dumbr(cc, 1, tt, .2, 0, TRUE))  
-    } else {
-      dumbr_cp <- c(dumbr_cp, acc_dumbr(-cc, 1, tt, .2, 0, TRUE))
-    }
-    dumbr_ncp <- c(dumbr_ncp, acc_dumbr(cc, 1, tt, .2, 0, FALSE))
-    lowh_par_cp <- c(lowh_par_cp, acc_par(d1, d2, dfsion, tt, CPtime, lowh, nbins))
-    lowh_par_ncp <- c(lowh_par_ncp, acc_par(d1, d1, dfsion, tt, CPtime, lowh, nbins))
-    highh_par_cp <- c(highh_par_cp, acc_par(d1, d2, dfsion, tt, CPtime, highh, nbins))
-    highh_par_ncp <- c(highh_par_ncp, acc_par(d1, d1, dfsion, tt, CPtime, highh, nbins))
-  }
-}
-
-data <- data.table(C, t, norm_ncp, norm_cp, lowleak_ncp, highleak_ncp, lowleak_cp, highleak_cp, dumbr_cp, dumbr_ncp, lowh_par_cp, lowh_par_ncp, highh_par_cp, highh_par_ncp)
-
-#convert to long format
-long_data = melt(data, id.vars = c("C", "t"),
-                measure.vars = c("norm_ncp", "norm_cp", "lowleak_ncp", "highleak_ncp", "lowleak_cp", "highleak_cp", "dumbr_cp", "dumbr_ncp", "lowh_par_cp", "lowh_par_ncp", "highh_par_cp", "highh_par_ncp"))
-long_data[,Pwrong := 1-value]
-
-long_data[,CP:="no-CP"]
-long_data[,model:="DDM"]
-
-long_data[variable == "norm_cp" |
-            variable == "lowleak_cp" |
-            variable == "highleak_cp" |
-            variable == "dumbr_cp" | 
-            variable == "lowh_par_cp" | 
-            variable == "highh_par_cp", `:=`(CP="CP")]
-long_data[variable == "lowleak_cp" | variable == "lowleak_ncp", `:=`(model="Low Leak")]
-long_data[variable == "highleak_cp" | variable == "highleak_ncp", `:=`(model="High Leak")]
-long_data[variable == "dumbr_cp" | variable == "dumbr_ncp", `:=`(model="DumbR")]
-long_data[variable == "lowh_par_cp" | variable == "lowh_par_ncp", `:=`(model="PAR low h")]
-long_data[variable == "highh_par_cp" | variable == "highh_par_ncp", `:=`(model="PAR high h")]
-long_data[,model:=factor(model, levels = c("DDM", "Low Leak", "High Leak", "DumbR", "PAR low h", "PAR high h"))]
-long_data[,CP:=factor(CP, levels=c("no-CP", "CP"))]
 
 
-
-## HEATMAPS 
-#ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
-#      geom_tile() +
-#      ggtitle("Theoretical Accuracy") + 
-#      scale_fill_gradientn(colors=colorRampPalette(c("white","royalblue","seagreen","orange","red","brown"))(500),name="Accuracy\n[P(correct)]") +
-#      labs(x = "Time [sec]",y="SNR [|d|/sigma]") +
-#      facet_grid(model~CP) + 
-#      theme(text=element_text(size=20)) +
-#      theme_bw()
-
-png(filename="theo_acc_curves_singleSNR.png", width=1350, height=600)
-ggplot(aes(x=t, y=value, col=model), data=long_data[C==1.5,]) + 
-  # geom_hline(yintercept=.5, color='black', inherit.aes=FALSE) +  # buggy because of facet_wrap. See https://github.com/tidyverse/ggplot2/issues/2091
-  stat_identity(yintercept=0.5, geom='hline', color='black', inherit.aes=TRUE) +
-  geom_line(aes(group=interaction(model, CP), color=model, linetype=CP), size=1.5) +
-  ylab("P(correct)") + xlab("time (s)") +
-  labs(title = "Theoretical Curves Perfect Accumulator",
-       subtitle = "CP vs. no-CP trials", 
-       caption = paste("low leak =",lowl,"; high leak =",highl, "; low h = ", lowh, "; high h = ", highh),
-       col="") +
-  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
-dev.off()
-
-tmp <- long_data[C==1.5, ]
-tmp[, Pwrong:=NULL]
-filtered <- dcast(tmp, C + t + model ~ CP, value.var = "value")
-names(filtered)<-c("C", "t", "model", "noCP", "CP")
-
-#Difference:
-png(filename="theo_acc_diff_curves_singleSNR.png", width=1350, height=600)
-ggplot(aes(x=t, y=noCP - CP, col=model), data=filtered) + 
-  geom_line(aes(group=model),size=1.5) +
-  # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
-  #            linetype="dotted") +
-  ylab("Diff Acc") + xlab("time (s)") +
-  labs(title = "Accuracy Differential",
-       subtitle = "Acc(no-CP)-Acc(CP)", 
-       caption = paste("low leak =",lowl,"; high leak =",highl),
-       col="") +
-  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
-dev.off()
+################## LATEST THEO - SINGLE SNR #####################
+#library(reticulate)
+#
+#source_python("python_functions.py")
+#source("accuracy_functions.r")
+#
+#baseC <- seq(.2, 4, .1)
+#baset <- seq(.1,.4,.01)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))
+#
+#C <- c()
+#t <- c()
+#norm_ncp <- c()
+#norm_cp <- c()
+#lowleak_ncp <- c()
+#highleak_ncp <- c()
+#lowleak_cp <- c()
+#highleak_cp <- c()
+#
+#dumbr_ncp <- c()
+#dumbr_cp <- c()
+#
+#lowh_par_ncp <- c()
+#lowh_par_cp <- c()
+#highh_par_ncp <- c()
+#highh_par_cp <- c()
+#
+##actual leak values
+#lowl <- 3
+#highl <- 10
+#lowh <- .2
+#highh <- .8
+#
+## iteration <- 1
+#
+#for (cc in baseC) {
+#  for (tt in baset) {
+#    #### extra params ####
+#    d1 <- cc
+#    d2 <- -cc
+#    dfsion <- 1
+#    CPtime <- .2
+#    nbins <- 10000
+#    ######################
+#    
+#    
+#    C <- c(C, cc)
+#    t <- c(t, tt)
+#    norm_ncp <- c(norm_ncp, acc(cc, tt))
+#    norm_cp <- c(norm_cp, acc_cp(cc, tt))
+#    lowleak_ncp <- c(lowleak_ncp, acc_leak(cc, tt, lowl, F))
+#    highleak_ncp <- c(highleak_ncp, acc_leak(cc, tt, highl, F))
+#    lowleak_cp <- c(lowleak_cp, acc_leak(cc, tt, lowl, T))
+#    highleak_cp <- c(highleak_cp, acc_leak(cc, tt, highl, T))
+#    if (tt <= .2) {
+#      dumbr_cp <- c(dumbr_cp, acc_dumbr(cc, 1, tt, .2, 0, TRUE))  
+#    } else {
+#      dumbr_cp <- c(dumbr_cp, acc_dumbr(-cc, 1, tt, .2, 0, TRUE))
+#    }
+#    dumbr_ncp <- c(dumbr_ncp, acc_dumbr(cc, 1, tt, .2, 0, FALSE))
+#    lowh_par_cp <- c(lowh_par_cp, acc_par(d1, d2, dfsion, tt, CPtime, lowh, nbins))
+#    lowh_par_ncp <- c(lowh_par_ncp, acc_par(d1, d1, dfsion, tt, CPtime, lowh, nbins))
+#    highh_par_cp <- c(highh_par_cp, acc_par(d1, d2, dfsion, tt, CPtime, highh, nbins))
+#    highh_par_ncp <- c(highh_par_ncp, acc_par(d1, d1, dfsion, tt, CPtime, highh, nbins))
+#  }
+#}
+#
+#data <- data.table(C, t, norm_ncp, norm_cp, lowleak_ncp, highleak_ncp, lowleak_cp, highleak_cp, dumbr_cp, dumbr_ncp, lowh_par_cp, lowh_par_ncp, highh_par_cp, highh_par_ncp)
+#
+##convert to long format
+#long_data = melt(data, id.vars = c("C", "t"),
+#                measure.vars = c("norm_ncp", "norm_cp", "lowleak_ncp", "highleak_ncp", "lowleak_cp", "highleak_cp", "dumbr_cp", "dumbr_ncp", "lowh_par_cp", "lowh_par_ncp", "highh_par_cp", "highh_par_ncp"))
+#long_data[,Pwrong := 1-value]
+#
+#long_data[,CP:="no-CP"]
+#long_data[,model:="DDM"]
+#
+#long_data[variable == "norm_cp" |
+#            variable == "lowleak_cp" |
+#            variable == "highleak_cp" |
+#            variable == "dumbr_cp" | 
+#            variable == "lowh_par_cp" | 
+#            variable == "highh_par_cp", `:=`(CP="CP")]
+#long_data[variable == "lowleak_cp" | variable == "lowleak_ncp", `:=`(model="Low Leak")]
+#long_data[variable == "highleak_cp" | variable == "highleak_ncp", `:=`(model="High Leak")]
+#long_data[variable == "dumbr_cp" | variable == "dumbr_ncp", `:=`(model="DumbR")]
+#long_data[variable == "lowh_par_cp" | variable == "lowh_par_ncp", `:=`(model="PAR low h")]
+#long_data[variable == "highh_par_cp" | variable == "highh_par_ncp", `:=`(model="PAR high h")]
+#long_data[,model:=factor(model, levels = c("DDM", "Low Leak", "High Leak", "DumbR", "PAR low h", "PAR high h"))]
+#long_data[,CP:=factor(CP, levels=c("no-CP", "CP"))]
+#
+#
+#
+### HEATMAPS 
+##ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
+##      geom_tile() +
+##      ggtitle("Theoretical Accuracy") + 
+##      scale_fill_gradientn(colors=colorRampPalette(c("white","royalblue","seagreen","orange","red","brown"))(500),name="Accuracy\n[P(correct)]") +
+##      labs(x = "Time [sec]",y="SNR [|d|/sigma]") +
+##      facet_grid(model~CP) + 
+##      theme(text=element_text(size=20)) +
+##      theme_bw()
+#
+#png(filename="theo_acc_curves_singleSNR.png", width=1350, height=600)
+#ggplot(aes(x=t, y=value, col=model), data=long_data[C==1.5,]) + 
+#  # geom_hline(yintercept=.5, color='black', inherit.aes=FALSE) +  # buggy because of facet_wrap. See https://github.com/tidyverse/ggplot2/issues/2091
+#  stat_identity(yintercept=0.5, geom='hline', color='black', inherit.aes=TRUE) +
+#  geom_line(aes(group=interaction(model, CP), color=model, linetype=CP), size=1.5) +
+#  ylab("P(correct)") + xlab("time (s)") +
+#  labs(title = "Theoretical Curves Perfect Accumulator",
+#       subtitle = "CP vs. no-CP trials", 
+#       caption = paste("low leak =",lowl,"; high leak =",highl, "; low h = ", lowh, "; high h = ", highh),
+#       col="") +
+#  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
+#dev.off()
+#
+#tmp <- long_data[C==1.5, ]
+#tmp[, Pwrong:=NULL]
+#filtered <- dcast(tmp, C + t + model ~ CP, value.var = "value")
+#names(filtered)<-c("C", "t", "model", "noCP", "CP")
+#
+##Difference:
+#png(filename="theo_acc_diff_curves_singleSNR.png", width=1350, height=600)
+#ggplot(aes(x=t, y=noCP - CP, col=model), data=filtered) + 
+#  geom_line(aes(group=model),size=1.5) +
+#  # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
+#  #            linetype="dotted") +
+#  ylab("Diff Acc") + xlab("time (s)") +
+#  labs(title = "Accuracy Differential",
+#       subtitle = "Acc(no-CP)-Acc(CP)", 
+#       caption = paste("low leak =",lowl,"; high leak =",highl),
+#       col="") +
+#  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
+#dev.off()
