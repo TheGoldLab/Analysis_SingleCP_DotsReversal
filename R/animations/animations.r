@@ -111,8 +111,8 @@ get_anim <- function() {
 
 #-------------------- ACTUAL CODE -----------------------#
 
-g <- get_anim()
-anim_save("test4.gif", g)
+#g <- get_anim()
+#anim_save("test4.gif", g)
 
 #time <- seq(12)
 #x <- -time

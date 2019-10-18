@@ -10,28 +10,66 @@ library(data.table)
 ```
 
 ```{r}
-str(gapminder)
-head(gapminder)
+# str(gapminder)
+# head(gapminder)
 ```
 
 ```{r}
-dt <- as.data.table(gapminder)
-dt[,meanLifeExp:=mean(lifeExp), by=.(year, continent)]
-newdt <- unique(dt[, .(meanLifeExp, year)])
-p <- ggplot(
-  dt,
-  aes(x = year, y=meanLifeExp, group=1)) +
-  geom_line(show.legend = FALSE) +
-  facet_grid(~continent) +
-  labs(x = "year", y = "Mean Life expectancy") + 
-  transition_reveal(year)
+# dt <- as.data.table(gapminder)
+# dt[,meanLifeExp:=mean(lifeExp), by=.(year, continent)]
+# newdt <- unique(dt[, .(meanLifeExp, year)])
+# p <- ggplot(
+#   dt,
+#   aes(x = year, y=meanLifeExp, group=1)) +
+#   geom_line(show.legend = FALSE) +
+#   facet_grid(~continent) +
+#   labs(x = "year", y = "Mean Life expectancy") + 
+#   transition_reveal(year)
 ```
 
 ```{r}
-animate(p)
+#animate(p)
 ```
 
 ```{r}
-anim_save("test5.gif", p)
+# BUG HERE, WHY???
+#anim_save("test5.gif", p)
+```
+
+```{r}
+source("animations.r")
+```
+
+```{r}
+d1 <- get_acc_data()
+```
+
+```{r}
+levels(d1$model)
+```
+
+```{r}
+d1[,`:=`(Pwrong=NULL, C=NULL, variable=NULL)]
+d1[,`:=`(modelClass="ResetAtCP")]
+d1[model=="DDM",modelClass:="Perfect Accum."]
+d1[model=="Low Leak" | model=="High Leak", modelClass:="Leak"]
+```
+
+```{r}
+d1[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "ResetAtCP"))]
+```
+
+```{r}
+str(d1)
+```
+
+```{r}
+head(d1)
+```
+
+```{r}
+ggplot(d1, aes(x=t, y=value, group=model, col=model)) + geom_line() +
+  facet_grid(modelClass~CP) +
+  transition_reveal(t)
 ```
 
