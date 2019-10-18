@@ -31,7 +31,7 @@ source("accuracy_functions.r")
 ```{r, echo=FALSE}
 
 baseC <- c(1.5)
-baset <- seq(.1,.4,.01)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))
+baset <- seq(.1,.4,.1)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))Z
 
 C <- c()
 t <- c()
@@ -197,15 +197,19 @@ library(gganimate)
 anim <- ggplot(aes(x=t, y=value, col=model), data=long_data[C==1.5]) + 
   # geom_hline(yintercept=.5, color='black', inherit.aes=FALSE) +  # buggy because of facet_wrap. See https://github.com/tidyverse/ggplot2/issues/2091
   stat_identity(yintercept=0.5, geom='hline', color='black', inherit.aes=TRUE) +
-  geom_line(aes(group=model), size=1.5) +
+  geom_line(size=1.5) +
   facet_wrap(model~CP) +
   ylab("P(correct)") + xlab("time (s)") +
   labs(title = "Theoretical Curves Perfect Accumulator",
        subtitle = "CP vs. no-CP trials", 
        caption = paste("low leak =",lowl,"; high leak =",highl, "; low h = ", lowh, "; high h = ", highh),
        col="") +
-  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) +
+  # theme(text=element_text(size=35), legend.key.width = unit(5, "line")) +
   transition_time(t)
+```
+
+```{r}
+anim_save("animation.mp4", anim)
 ```
 
 ```{r}
