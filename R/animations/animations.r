@@ -111,28 +111,28 @@ source("../REF_FUNCTIONS/accuracy_functions.r")
 
 #-------------------- ACTUAL CODE -----------------------#
 
-#time <- seq(12)
-#x <- -time
-#data <- data.table(time, x)
-#
-#g <- ggplot(data, aes(x=time, y=x, group=1)) + geom_line() +
-#	transition_time(time)
-#anim_save("test2.gif", g)
-#anim_save("test2.mp4", g)
-#
-##animate(anim, renderer = gifski_renderer("gganim.gif"))
+time <- seq(12)
+x <- -time
+data <- data.table(time, x)
 
-library(gapminder)
-p <- ggplot(
-  gapminder,
-  aes(x = gdpPercap, y=lifeExp, size = pop, colour = country)
-  ) +
-  geom_point(show.legend = FALSE, alpha = 0.7) +
-  scale_color_viridis_d() +
-  scale_size(range = c(2, 12)) +
-  scale_x_log10() +
-  labs(x = "GDP per capita", y = "Life expectancy") + 
-  transition_time(year) +
-  labs(title = "Year: {frame_time}")
-anim_save("test3.gif", p)
-anim_save("test3.mp4", p)
+g <- ggplot(data, aes(x=time, y=x, group=1)) + geom_line() +
+	transition_reveal(time)
+anim_save("test2.gif", g)
+anim_save("test2.mp4", g)
+
+#animate(anim, renderer = gifski_renderer("gganim.gif"))
+
+#library(gapminder)
+#p <- ggplot(
+#  gapminder,
+#  aes(x = gdpPercap, y=lifeExp, size = pop, colour = country)
+#  ) +
+#  geom_point(show.legend = FALSE, alpha = 0.7) +
+#  scale_color_viridis_d() +
+#  scale_size(range = c(2, 12)) +
+#  scale_x_log10() +
+#  labs(x = "GDP per capita", y = "Life expectancy") + 
+#  transition_time(year) +
+#  labs(title = "Year: {frame_time}")
+#anim_save("test3.gif", p)
+#anim_save("test3.mp4", p)

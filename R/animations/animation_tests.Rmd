@@ -6,6 +6,7 @@ output: html_notebook
 library(gapminder)
 library(gganimate)
 library(ggplot2)
+library(data.table)
 ```
 
 ```{r}
@@ -14,17 +15,15 @@ head(gapminder)
 ```
 
 ```{r}
-
+dt <- as.data.table(gapminder)
+dt[,meanLifeExp:=mean(lifeExp), by=year]
+newdt <- unique(dt[, .(meanLifeExp, year)])
 p <- ggplot(
-  gapminder,
-  aes(x = gdpPercap, y=lifeExp, size = pop, colour = country)
-  ) +
-  geom_point(show.legend = FALSE, alpha = 0.7) +
-  scale_color_viridis_d() +
-  scale_size(range = c(2, 12)) +
-  scale_x_log10() +
-  labs(x = "GDP per capita", y = "Life expectancy") + 
-  transition_time(year) +
+  newdt,
+  aes(x = year, y=meanLifeExp, group=1)) +
+  geom_line(show.legend = FALSE) +
+  labs(x = "year", y = "Mean Life expectancy") + 
+  transition_reveal(year) +
   labs(title = "Year: {frame_time}")
 ```
 
