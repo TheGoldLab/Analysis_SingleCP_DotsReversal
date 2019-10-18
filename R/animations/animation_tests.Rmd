@@ -16,18 +16,22 @@ head(gapminder)
 
 ```{r}
 dt <- as.data.table(gapminder)
-dt[,meanLifeExp:=mean(lifeExp), by=year]
+dt[,meanLifeExp:=mean(lifeExp), by=.(year, continent)]
 newdt <- unique(dt[, .(meanLifeExp, year)])
 p <- ggplot(
-  newdt,
+  dt,
   aes(x = year, y=meanLifeExp, group=1)) +
   geom_line(show.legend = FALSE) +
+  facet_grid(~continent) +
   labs(x = "year", y = "Mean Life expectancy") + 
-  transition_reveal(year) +
-  labs(title = "Year: {frame_time}")
+  transition_reveal(year)
 ```
 
 ```{r}
 animate(p)
+```
+
+```{r}
+anim_save("test5.gif", p)
 ```
 
