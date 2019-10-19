@@ -6,9 +6,10 @@ use_python("/home/adrian/anaconda3/envs/r-environment/bin/python", required = T)
 source_python("../REF_FUNCTIONS/python_functions.py")
 source("../REF_FUNCTIONS/accuracy_functions.r")
 
+frame_dur <- 1/60
 get_acc_data <- function(){
   baseC <- c(1.5)
-  baset <- seq(.1,.4,.1)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))Z
+  baset <- c(seq(frame_dur-.001,.2,frame_dur),seq(.2 + frame_dur,.4,frame_dur))#seq(.1,.4,.1)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))Z
   
   C <- c()
   t <- c()
