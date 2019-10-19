@@ -116,31 +116,86 @@ sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = highh_reset_vals, N = n
 # Comparison of mean trajectories between the two models
 
 # get mean trajectories
-meanPA <- rowMeans(PAmodel)
-meanLinLow <- rowMeans(linModelLowLeak)
-meanLinHigh <- rowMeans(linModelHighLeak)
-meanZeroReset <- c(rowMeans(ZeroResetmodel1), rowMeans(ZeroResetmodel2))
-meanLowhReset <- c(rowMeans(LowhResetmodel1), rowMeans(LowhResetmodel2))
-meanHighhReset <- c(rowMeans(HighhResetmodel1), rowMeans(HighhResetmodel2))
-meanPAnocp <- rowMeans(PAmodelNoCP)
-meanLinLownocp <- rowMeans(linModelLowLeakNoCP)
-meanLinHighnocp <- rowMeans(linModelHighLeakNoCP)
-meanZeroResetnocp <- c(rowMeans(ZeroResetmodel1), rowMeans(ZeroResetmodel3))
-meanLowhResetnocp <- c(rowMeans(LowhResetmodel1), rowMeans(LowhResetmodel2NoCP))
-meanHighhResetnocp <- c(rowMeans(HighhResetmodel1), rowMeans(HighhResetmodel2NoCP))
+# meanPA <- rowMeans(PAmodel)
+# meanLinLow <- rowMeans(linModelLowLeak)
+# meanLinHigh <- rowMeans(linModelHighLeak)
+# meanZeroReset <- c(rowMeans(ZeroResetmodel1), rowMeans(ZeroResetmodel2))
+# meanLowhReset <- c(rowMeans(LowhResetmodel1), rowMeans(LowhResetmodel2))
+# meanHighhReset <- c(rowMeans(HighhResetmodel1), rowMeans(HighhResetmodel2))
+# meanPAnocp <- rowMeans(PAmodelNoCP)
+# meanLinLownocp <- rowMeans(linModelLowLeakNoCP)
+# meanLinHighnocp <- rowMeans(linModelHighLeakNoCP)
+# meanZeroResetnocp <- c(rowMeans(ZeroResetmodel1), rowMeans(ZeroResetmodel3))
+# meanLowhResetnocp <- c(rowMeans(LowhResetmodel1), rowMeans(LowhResetmodel2NoCP))
+# meanHighhResetnocp <- c(rowMeans(HighhResetmodel1), rowMeans(HighhResetmodel2NoCP))
+
+last_ix_before_cp <- function(timev){
+  tx <- sort(abs(timev-cp), index.return=T)$ix[1]
+  if (timev[tx] > cp) {
+    tx <- tx - 1
+  }
+  return(tx)
+}
+
+meanPA <- function(ttt, drift, hasCP, start_offset){
+  if (hasCP) {
+    trunc_ix <- last_ix_before_cp(ttt)
+    return(start_offset+c(drift * ttt[1:trunc_ix], -drift*ttt[-(1:trunc_ix)]))
+  } else {
+    return(start_offset + drift * ttt)
+  }
+}
+
+meanLeak <- function(ttt, drift, hasCP, leakk){
+  # leakk is positive scalar
+  evolve <- function(time_vec, start_pt, ddrift){
+    cf <- ddrift / leakk
+    return(start_pt*exp(leakk*time_vec)+cf * (1-exp(-leakk*time_vec)))
+  }
+  if (hasCP) {
+    trunc_ix <- last_ix_before_cp(ttt)
+    first_half <- evolve(ttt[1:trunc_ix], 0, drift)
+    return(c(first_half, evolve(ttt[-(1:trunc_ix)]-cp, tail(first_half, 1), -drift)))
+  } else {
+    return(evolve(ttt, 0, drift))
+  }
+}
+
+meanReset <- function(ttt, hasCP, reset_func){
+  if (hasCP) {
+    trunc_ix <- last_ix_before_cp(ttt)
+    first_half <- meanPA(ttt[1:trunc_ix], drift, FALSE, 0)
+    start_pt <- reset_func(tail(first_half, 1))
+    return(c(first_half, meanPA(ttt[-(1:trunc_ix)]-cp, -drift, FALSE, start_pt)))
+  } else {
+    return(meanPA(ttt, drift, FALSE, 0))
+  }
+}
+
+zeroreset <- function(val){
+  return(0)
+}
+
+lowhreset <- function(val){
+  return(reset_evidence(val, lowh))
+}
+highhreset <- function(val){
+  return(reset_evidence(val, highh))
+}
+
 means_df <- data.frame("time" = tt,
-                       "PAcp" = meanPA,
-                       "lowLeakcp" = meanLinLow,
-                       "HighLeakcp" = meanLinHigh,
-                       "ZeroResetcp" = meanZeroReset,
-                       "LowHresetcp" = meanLowhReset,
-                       "HighHresetcp" = meanHighhReset,
-                       "PAnoCP" = meanPAnocp,
-                       "lowLeaknoCP" = meanLinLownocp,
-                       "HighLeaknoCP" = meanLinHighnocp,
-                       "ZeroResetnoCP" = meanZeroResetnocp,
-                       "LowHresetnoCP" = meanLowhResetnocp,
-                       "HighHresetnoCP" = meanHighhResetnocp)
+                       "PAcp" = meanPA(tt, d0, TRUE,0),
+                       "lowLeakcp" = meanLeak(tt, d0, TRUE, lowLeak),
+                       "HighLeakcp" = meanLinHigh(tt, d0, TRUE, highLeak),
+                       "ZeroResetcp" = meanReset(tt, TRUE, zeroreset),
+                       "LowHresetcp" = meanReset(tt, TRUE, lowhreset),
+                       "HighHresetcp" = meanReset(tt, TRUE, highhreset),
+                       "PAnoCP" = meanPA(tt, d0, FALSE,0),
+                       "lowLeaknoCP" = meanLinLownocp(tt, d0, FALSE, lowLeak),
+                       "HighLeaknoCP" = meanLinHighnocp(tt, d0, FALSE, highLeak),
+                       "ZeroResetnoCP" = meanReset(tt, FALSE, zeroreset),
+                       "LowHresetnoCP" = meanReset(tt, FALSE, lowhreset),
+                       "HighHresetnoCP" = meanReset(tt, FALSE, highhreset))
 ```
 
 ```{r, fig.width=10, fig.height=10}
