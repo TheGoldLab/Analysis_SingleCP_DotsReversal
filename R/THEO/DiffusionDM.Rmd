@@ -22,8 +22,8 @@ rm(list=ls()) # clear existing vars in environment
 ## PA model
 ```{r}
 #Set up parameters
-d0<- 1.5 # drift magnitude
-s0<- 1 # stdev magnitude
+d0 <- 1.5 # drift magnitude
+s0 <- 1 # stdev magnitude
 cp <- 0.2 # change point time
 
 viewing_duration <- .4;
@@ -34,18 +34,14 @@ t <- 0:num_time_points  # time
 dt <- 1/num_time_points # time step in sec
 tt <- seq(0,viewing_duration, length.out=num_time_points + 1) # in sec
 cp_idx <- floor(num_time_points/2)
-```
 
-```{r}
 #Simulate 'num_traj' trajectories from the normative model
 s <- expression(s0)
 d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp)))
 sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=d,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> PAmodel
-```
 
 ## Linear-leak models
-```{r}
 #Simulate 'num_traj' trajectories from the linear-leak model
 lowLeak <- 3
 d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp))-lowLeak*x)
@@ -55,11 +51,8 @@ highLeak <- 10
 d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp))-highLeak*x)
 sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=d,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> linModelHighLeak
-```
-
 
 ## Reset models
-```{r}
 # ZERO RESET
 short_viewing_duration <- .2;
 
@@ -73,10 +66,7 @@ sde.sim(t0 = 0, T = short_viewing_duration, X0 = 0, N = num_time_points_short, d
 new_drift <- expression(-d0)
 sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = 0, N = num_time_points_short-1, drift=new_drift,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> ZeroResetmodel2
-```
 
-
-```{r}
 # CLEVER RESETS
 
 # First Epoch (pre CP)
@@ -106,11 +96,10 @@ sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = lowh_reset_vals, N = nu
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> LowhResetmodel2
 sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = highh_reset_vals, N = num_time_points_short-1, drift=new_drift,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> HighhResetmodel2
-```
 
 
 # Comparison of mean trajectories between the two models
-```{r}
+
 # get mean trajectories
 meanPA <- rowMeans(PAmodel)
 meanLinLow <- rowMeans(linModelLowLeak)
@@ -118,14 +107,13 @@ meanLinHigh <- rowMeans(linModelHighLeak)
 meanZeroReset <- c(rowMeans(ZeroResetmodel1), rowMeans(ZeroResetmodel2))
 meanLowhReset <- c(rowMeans(LowhResetmodel1), rowMeans(LowhResetmodel2))
 meanHighhReset <- c(rowMeans(HighhResetmodel1), rowMeans(HighhResetmodel2))
-means_df <- data.frame("time" = tt, 
-                "PA" = meanPA,
-                "lowLeak" = meanLinLow, 
-                "HighLeak" = meanLinHigh, 
-                "ZeroReset" = meanZeroReset,
-                "LowHreset" = meanLowhReset,
-                "HighHreset" = meanHighhReset)
-head(means_df)
+means_df <- data.frame("time" = tt,
+                       "PA" = meanPA,
+                       "lowLeak" = meanLinLow,
+                       "HighLeak" = meanLinHigh,
+                       "ZeroReset" = meanZeroReset,
+                       "LowHreset" = meanLowhReset,
+                       "HighHreset" = meanHighhReset)
 ```
 
 ```{r}
@@ -175,69 +163,69 @@ gg + theme(plot.title=element_text(size=bf,
            panel.grid.minor = element_blank()) # remove minor grid
 ```
 
-# Comparison of accuracy profiles between the two models
-```{r}
-pos <- PAmodel>0
-neg <- PAmodel<=0
-spos<-rowSums(pos)
-sneg<-rowSums(neg)
-accPA <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
+<!-- # Comparison of accuracy profiles between the two models -->
+<!-- ```{r} -->
+<!-- pos <- PAmodel>0 -->
+<!-- neg <- PAmodel<=0 -->
+<!-- spos<-rowSums(pos) -->
+<!-- sneg<-rowSums(neg) -->
+<!-- accPA <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj -->
 
-pos <- linModelLowLeak>0
-neg <- linModelLowLeak<=0
-spos<-rowSums(pos)
-sneg<-rowSums(neg)
-accLinLow <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
+<!-- pos <- linModelLowLeak>0 -->
+<!-- neg <- linModelLowLeak<=0 -->
+<!-- spos<-rowSums(pos) -->
+<!-- sneg<-rowSums(neg) -->
+<!-- accLinLow <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj -->
 
-pos <- linModelHighLeak>0
-neg <- linModelHighLeak<=0
-spos<-rowSums(pos)
-sneg<-rowSums(neg)
-accLinHigh <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
+<!-- pos <- linModelHighLeak>0 -->
+<!-- neg <- linModelHighLeak<=0 -->
+<!-- spos<-rowSums(pos) -->
+<!-- sneg<-rowSums(neg) -->
+<!-- accLinHigh <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj -->
 
-pos <- linModelHighLeak>0
-neg <- linModelHighLeak<=0
-spos<-rowSums(pos)
-sneg<-rowSums(neg)
-accLinHigh <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
-```
+<!-- pos <- linModelHighLeak>0 -->
+<!-- neg <- linModelHighLeak<=0 -->
+<!-- spos<-rowSums(pos) -->
+<!-- sneg<-rowSums(neg) -->
+<!-- accLinHigh <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj -->
+<!-- ``` -->
 
-```{r}
-# plot commands
-accuracy_df <- data.frame("time" = tt, 
-                 "normModel" = accPA,
-                 "linModelLow" = accLinLow, 
-                 "linModelHigh"= accLinHigh)
-#write.csv(df,"acc_means.csv")
+<!-- ```{r} -->
+<!-- # plot commands -->
+<!-- accuracy_df <- data.frame("time" = tt,  -->
+<!--                  "normModel" = accPA, -->
+<!--                  "linModelLow" = accLinLow,  -->
+<!--                  "linModelHigh"= accLinHigh) -->
+<!-- #write.csv(df,"acc_means.csv") -->
 
-df <- melt(accuracy_df,id=c("time"))
-colnames(df)[2] <- "model"
-cp_time=0.2
+<!-- df <- melt(accuracy_df,id=c("time")) -->
+<!-- colnames(df)[2] <- "model" -->
+<!-- cp_time=0.2 -->
 
-# Add plot components --------------------------------
-gg <- ggplot(df, aes(x=time, y=value)) + 
-  geom_line(aes(col=model), size=1.5) + 
-  geom_vline(xintercept = cp_time, linetype="dashed", 
-             color = "blue", size=1.5) +
-  geom_hline(yintercept = 0, color="black")+
-  xlim(c(0.0001, viewing_duration)) + ylim(c(0, 1)) + 
-  labs(title="Accuracy", y="% correct", x="time",subtitle="1,000 realizations")
+<!-- # Add plot components -------------------------------- -->
+<!-- gg <- ggplot(df, aes(x=time, y=value)) +  -->
+<!--   geom_line(aes(col=model), size=1.5) +  -->
+<!--   geom_vline(xintercept = cp_time, linetype="dashed",  -->
+<!--              color = "blue", size=1.5) + -->
+<!--   geom_hline(yintercept = 0, color="black")+ -->
+<!--   xlim(c(0.0001, viewing_duration)) + ylim(c(0, 1)) +  -->
+<!--   labs(title="Accuracy", y="% correct", x="time",subtitle="1,000 realizations") -->
 
-# Modify theme components -------------------------------------------
-bf <- 20
-sf <- 17
-gg + theme(plot.title=element_text(size=bf, 
-                                   face="bold", 
-                                   lineheight=1.2),  # title
-           plot.subtitle=element_text(size=sf-3, 
-                                      family="American Typewriter"),  # subtitle
-           plot.caption=element_text(size=sf),  # caption
-           axis.title.x=element_text(size=(sf+2)),  # X axis title
-           axis.title.y=element_text(size=(sf+2)),  # Y axis title
-           axis.text.x=element_text(size=sf),  # X axis text
-           axis.text.y=element_text(size=sf), # Y axis text
-           legend.title = element_text(size=sf, color = "firebrick"),
-           legend.text = element_text(size=sf-2),
-           panel.grid.minor = element_blank()) # remove minor grid
-```
+<!-- # Modify theme components ------------------------------------------- -->
+<!-- bf <- 20 -->
+<!-- sf <- 17 -->
+<!-- gg + theme(plot.title=element_text(size=bf,  -->
+<!--                                    face="bold",  -->
+<!--                                    lineheight=1.2),  # title -->
+<!--            plot.subtitle=element_text(size=sf-3,  -->
+<!--                                       family="American Typewriter"),  # subtitle -->
+<!--            plot.caption=element_text(size=sf),  # caption -->
+<!--            axis.title.x=element_text(size=(sf+2)),  # X axis title -->
+<!--            axis.title.y=element_text(size=(sf+2)),  # Y axis title -->
+<!--            axis.text.x=element_text(size=sf),  # X axis text -->
+<!--            axis.text.y=element_text(size=sf), # Y axis text -->
+<!--            legend.title = element_text(size=sf, color = "firebrick"), -->
+<!--            legend.text = element_text(size=sf-2), -->
+<!--            panel.grid.minor = element_blank()) # remove minor grid -->
+<!-- ``` -->
 
