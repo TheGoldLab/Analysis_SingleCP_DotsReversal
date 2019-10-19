@@ -17,10 +17,6 @@ library('ggplot2')
 library('reshape2')
 rm(list=ls()) # clear existing vars in environment
 ```
-```{r}
-# install.packages("fBasics")
-?seq
-```
 
 # Produce trajectories for various models
 ## PA model
@@ -64,20 +60,53 @@ sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=d,
 
 ## Reset models
 ```{r}
+# ZERO RESET
 short_viewing_duration <- .2;
 
-num_traj=100;
-num_time_points_short=250;
+num_time_points_short=num_time_points / 2;
 
 #Simulate 'num_traj' trajectories from the normative model
 d <- expression(d0)
 sde.sim(t0 = 0, T = short_viewing_duration, X0 = 0, N = num_time_points_short, drift=d,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> ZeroResetmodel1
-sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = 0, N = num_time_points_short-1, drift=d,
+
+new_drift <- expression(-d0)
+sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = 0, N = num_time_points_short-1, drift=new_drift,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> ZeroResetmodel2
 ```
 
 
+```{r}
+# CLEVER RESETS
+
+# First Epoch (pre CP)
+sde.sim(t0 = 0, T = short_viewing_duration, X0 = 0, N = num_time_points_short, drift=d,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> LowhResetmodel1
+sde.sim(t0 = 0, T = short_viewing_duration, X0 = 0, N = num_time_points_short, drift=d,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> HighhResetmodel1
+
+lowh <- 0.2
+highh <- 0.8
+
+# get end values of 2N trajectories
+all_end <- as.vector(c(LowhResetmodel1[num_time_points_short + 1,],HighhResetmodel1[num_time_points_short+1,]))
+
+reset_evidence <- function(ev, h) {
+  return(ev + log((h * exp(-ev)+1-h)/(h * exp(ev)+1-h)))
+}
+
+# reset half of them with low h and the other half with high h
+lowh_reset_vals <- reset_evidence(all_end[1:num_traj/2], lowh)
+highh_reset_vals <- reset_evidence(all_end[num_traj/2+1], highh)
+
+# simulate second epoch with appropriate starting points
+# Don't forget the possibly new drift rate!
+
+sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = lowh_reset_vals, N = num_time_points_short-1, drift=new_drift,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> LowhResetmodel2
+sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = highh_reset_vals, N = num_time_points_short-1, drift=new_drift,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> HighhResetmodel2
+```
 
 
 # Comparison of mean trajectories between the two models
@@ -87,15 +116,20 @@ meanPA <- rowMeans(PAmodel)
 meanLinLow <- rowMeans(linModelLowLeak)
 meanLinHigh <- rowMeans(linModelHighLeak)
 meanZeroReset <- c(rowMeans(ZeroResetmodel1), rowMeans(ZeroResetmodel2))
+meanLowhReset <- c(rowMeans(LowhResetmodel1), rowMeans(LowhResetmodel2))
+meanHighhReset <- c(rowMeans(HighhResetmodel1), rowMeans(HighhResetmodel2))
 means_df <- data.frame("time" = tt, 
                 "PA" = meanPA,
                 "lowLeak" = meanLinLow, 
                 "HighLeak" = meanLinHigh, 
-                "ZeroReset" = meanZeroReset)
+                "ZeroReset" = meanZeroReset,
+                "LowHreset" = meanLowhReset,
+                "HighHreset" = meanHighhReset)
 head(means_df)
 ```
 
 ```{r}
+library(data.table)
 # plotting script
 options(scipen=999)
 theme_set(theme_bw())
@@ -104,7 +138,13 @@ theme_set(theme_bw())
 X <- melt(means_df,id=c("time"))
 head(X)
 colnames(X)[2] <- "model"
-cp_time=0.5
+
+X <- as.data.table(X)
+X[,`:=`(modelClass="ResetAtCP")]
+X[model=="PA",modelClass:="Perfect Accum."]
+X[model=="lowLeak" | model=="HighLeak", modelClass:="Leak"]
+X[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "ResetAtCP"))]
+cp_time=0.2
 
 # Add plot components --------------------------------
 gg <- ggplot(X, aes(x=time, y=value)) + 
@@ -112,8 +152,10 @@ gg <- ggplot(X, aes(x=time, y=value)) +
   geom_vline(xintercept = cp_time, linetype="dashed", 
              color = "blue", size=1.5) +
   geom_hline(yintercept = 0, color="black")+
+  facet_grid(modelClass~.) +
   xlim(c(0, .4)) + #ylim(c(-1, 1)) + 
   labs(title="Mean Trajectories", y="evidence", x="time",subtitle=paste(num_traj,"realizations", sep=" "))
+
 
 # Modify theme components -------------------------------------------
 bf <- 20
@@ -152,6 +194,12 @@ neg <- linModelHighLeak<=0
 spos<-rowSums(pos)
 sneg<-rowSums(neg)
 accLinHigh <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
+
+pos <- linModelHighLeak>0
+neg <- linModelHighLeak<=0
+spos<-rowSums(pos)
+sneg<-rowSums(neg)
+accLinHigh <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
 ```
 
 ```{r}
@@ -164,7 +212,7 @@ accuracy_df <- data.frame("time" = tt,
 
 df <- melt(accuracy_df,id=c("time"))
 colnames(df)[2] <- "model"
-cp_time=0.5
+cp_time=0.2
 
 # Add plot components --------------------------------
 gg <- ggplot(df, aes(x=time, y=value)) + 
@@ -172,7 +220,7 @@ gg <- ggplot(df, aes(x=time, y=value)) +
   geom_vline(xintercept = cp_time, linetype="dashed", 
              color = "blue", size=1.5) +
   geom_hline(yintercept = 0, color="black")+
-  xlim(c(0.0001, 1)) + ylim(c(0, 1)) + 
+  xlim(c(0.0001, viewing_duration)) + ylim(c(0, 1)) + 
   labs(title="Accuracy", y="% correct", x="time",subtitle="1,000 realizations")
 
 # Modify theme components -------------------------------------------
