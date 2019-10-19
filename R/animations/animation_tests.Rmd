@@ -78,6 +78,7 @@ head(d1)
 model_list=c("PA", "Low Leak", "High Leak", "Zero Reset", "Low-h Reset", "High-h Reset")
 anim <- ggplot(d1, aes(x=time, y=value, group=model, col=model)) + geom_line(size=2) +
   facet_grid(modelClass~CP) + geom_hline(yintercept = 0.5, linetype="dashed") +
+  geom_vline(xintercept = 0.2, color="blue", linetype="dashed") +
   ylab("Accuracy") + xlab("Viewing Duration (s)") + 
   scale_color_discrete(name="Model", labels=model_list)
   #transition_reveal(t)
@@ -88,7 +89,7 @@ plot(anim)
 ```
 
 ```{r}
-#anim_save('accuracies.gif',anim)
+anim_save('accuracies.gif',anim + transition_reveal(time))
 ```
 
 ```{r}

@@ -17,50 +17,81 @@ library('ggplot2')
 library('reshape2')
 rm(list=ls()) # clear existing vars in environment
 ```
+```{r}
+# install.packages("fBasics")
+?seq
+```
 
 # Produce trajectories for various models
-## Normative model
+## PA model
 ```{r}
 #Set up parameters
-d0<- 1 # drift magnitude
+d0<- 1.5 # drift magnitude
 s0<- 1 # stdev magnitude
-cp <- 0.5 # change point time
+cp <- 0.2 # change point time
 
-viewing_duration <- 1;
+viewing_duration <- .4;
 
-num_traj=500;
+num_traj=100;
 num_time_points=500;
 t <- 0:num_time_points  # time
 dt <- 1/num_time_points # time step in sec
-tt <- dt * t # in sec
+tt <- seq(0,viewing_duration, length.out=num_time_points + 1) # in sec
 cp_idx <- floor(num_time_points/2)
 ```
 
 ```{r}
 #Simulate 'num_traj' trajectories from the normative model
 s <- expression(s0)
-d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp))-2*sinh(x))
+d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp)))
 sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=d,
-        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> normModel
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> PAmodel
 ```
 
-## Linear-leak model
+## Linear-leak models
 ```{r}
 #Simulate 'num_traj' trajectories from the linear-leak model
-linLeak <- 4
-d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp))-linLeak*x)
+lowLeak <- 3
+d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp))-lowLeak*x)
 sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=d,
-        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> linModel
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> linModelLowLeak
+highLeak <- 10
+d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp))-highLeak*x)
+sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=d,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> linModelHighLeak
 ```
+
+
+## Reset models
+```{r}
+short_viewing_duration <- .2;
+
+num_traj=100;
+num_time_points_short=250;
+
+#Simulate 'num_traj' trajectories from the normative model
+d <- expression(d0)
+sde.sim(t0 = 0, T = short_viewing_duration, X0 = 0, N = num_time_points_short, drift=d,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> ZeroResetmodel1
+sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = 0, N = num_time_points_short-1, drift=d,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> ZeroResetmodel2
+```
+
+
+
 
 # Comparison of mean trajectories between the two models
 ```{r}
 # get mean trajectories
-meanNorm <- rowMeans(normModel)
-meanLin <- rowMeans(linModel)
+meanPA <- rowMeans(PAmodel)
+meanLinLow <- rowMeans(linModelLowLeak)
+meanLinHigh <- rowMeans(linModelHighLeak)
+meanZeroReset <- c(rowMeans(ZeroResetmodel1), rowMeans(ZeroResetmodel2))
 means_df <- data.frame("time" = tt, 
-                "normModel" = meanNorm,
-                "linModel" = meanLin)
+                "PA" = meanPA,
+                "lowLeak" = meanLinLow, 
+                "HighLeak" = meanLinHigh, 
+                "ZeroReset" = meanZeroReset)
 head(means_df)
 ```
 
@@ -81,8 +112,8 @@ gg <- ggplot(X, aes(x=time, y=value)) +
   geom_vline(xintercept = cp_time, linetype="dashed", 
              color = "blue", size=1.5) +
   geom_hline(yintercept = 0, color="black")+
-  xlim(c(0, 1)) + #ylim(c(-1, 1)) + 
-  labs(title="Mean Trajectories", y="evidence", x="time",subtitle="1,000 realizations")
+  xlim(c(0, .4)) + #ylim(c(-1, 1)) + 
+  labs(title="Mean Trajectories", y="evidence", x="time",subtitle=paste(num_traj,"realizations", sep=" "))
 
 # Modify theme components -------------------------------------------
 bf <- 20
@@ -104,24 +135,31 @@ gg + theme(plot.title=element_text(size=bf,
 
 # Comparison of accuracy profiles between the two models
 ```{r}
-pos <- normModel>0
-neg <- normModel<=0
+pos <- PAmodel>0
+neg <- PAmodel<=0
 spos<-rowSums(pos)
 sneg<-rowSums(neg)
-accNorm <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
+accPA <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
 
-pos <- linModel>0
-neg <- linModel<=0
+pos <- linModelLowLeak>0
+neg <- linModelLowLeak<=0
 spos<-rowSums(pos)
 sneg<-rowSums(neg)
-accLin <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
+accLinLow <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
+
+pos <- linModelHighLeak>0
+neg <- linModelHighLeak<=0
+spos<-rowSums(pos)
+sneg<-rowSums(neg)
+accLinHigh <- c(spos[1:cp_idx],sneg[(cp_idx+1):(num_time_points+1)]) / num_traj
 ```
 
 ```{r}
 # plot commands
 accuracy_df <- data.frame("time" = tt, 
-                 "normModel" = accNorm,
-                 "linModel" = accLin)
+                 "normModel" = accPA,
+                 "linModelLow" = accLinLow, 
+                 "linModelHigh"= accLinHigh)
 #write.csv(df,"acc_means.csv")
 
 df <- melt(accuracy_df,id=c("time"))
