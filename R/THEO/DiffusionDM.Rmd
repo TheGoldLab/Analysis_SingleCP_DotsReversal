@@ -188,6 +188,18 @@ highhreset <- function(val){
 }
 
 means_df <- data.frame("time" = tt,
+                       "singlePAcp" = PAmodel[,"X1"],
+                       "singlelowLeakcp" = linModelLowLeak[,"X1"],
+                       "singleHighLeakcp" = linModelHighLeak[,"X1"],
+                       "singleZeroResetcp" = c(ZeroResetmodel1[,"X1"], ZeroResetmodel2[,"X1"]),
+                       "singleLowHresetcp" = c(LowhResetmodel1[,"X1"], LowhResetmodel2[,"X1"]),
+                       "singleHighHresetcp" = c(HighhResetmodel1[,"X2"], HighhResetmodel2[,"X1"]),  #cheat
+                       "singlePAnoCP" = PAmodelNoCP[,"X1"],
+                       "singlelowLeaknoCP" = linModelLowLeakNoCP[,"X1"],
+                       "singleHighLeaknoCP" = linModelHighLeakNoCP[,"X1"],
+                       "singleZeroResetnoCP" = c(ZeroResetmodel1[,"X2"], ZeroResetmodel3[,"X1"]),  #cheat
+                       "singleLowHresetnoCP" = c(LowhResetmodel1[,"X1"], LowhResetmodel2NoCP[,"X1"]),
+                       "singleHighHresetnoCP" = c(HighhResetmodel1[,"X2"], HighhResetmodel2NoCP[,"X1"]), # cheat        
                        "PAcp" = meanPA(tt, d0, TRUE,0),
                        "lowLeakcp" = meanLeak(tt, d0, TRUE, lowLeak),
                        "HighLeakcp" = meanLeak(tt, d0, TRUE, highLeak),
@@ -215,8 +227,8 @@ colnames(X)[2] <- "model"
 
 X <- as.data.table(X)
 X[,`:=`(modelClass="Reset")]
-X[model=="PAcp" | model=="PAnoCP",modelClass:="Perfect Accum."]
-X[model=="lowLeakcp" | model=="HighLeakcp" | model=="lowLeaknoCP" | model=="HighLeaknoCP", modelClass:="Leak"]
+X[model=="singlePAcp" | model=="singlePAnoCP"|model=="PAcp" | model=="PAnoCP",modelClass:="Perfect Accum."]
+X[model=="singlelowLeakcp" | model=="singleHighLeakcp" | model=="singlelowLeaknoCP" | model=="singleHighLeaknoCP"| model=="lowLeakcp" | model=="HighLeakcp" | model=="lowLeaknoCP" | model=="HighLeaknoCP", modelClass:="Leak"]
 X[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "Reset"))]
 
 X[,CP:="CP"]
@@ -225,33 +237,58 @@ X[model == "PAnoCP" |
     model == "HighLeaknoCP" | 
     model == "ZeroResetnoCP" | 
     model == "LowHresetnoCP" | 
-    model == "HighHresetnoCP", CP:="no-CP"]
+    model == "HighHresetnoCP" |
+    model == "singlePAnoCP" |
+    model == "singlelowLeaknoCP" | 
+    model == "singleHighLeaknoCP" | 
+    model == "singleZeroResetnoCP" | 
+    model == "singleLowHresetnoCP" | 
+    model == "singleHighHresetnoCP", CP:="no-CP"]
 X[,CP:=factor(CP)]
 print(levels(X$CP))
 X$CP = factor(X$CP,levels(X$CP)[c(2,1)])
 
 X[,model2:="PA"]
-X[model == "lowLeaknoCP" | model == "lowLeakcp", model2:="LowLeak"]
-X[model == "HighLeaknoCP" | model == "HighLeakcp", model2:="HighLeak"]
-X[model == "ZeroResetnoCP" | model == "ZeroResetcp", model2:="ZeroReset"]
-X[model == "LowHresetnoCP" | model == "LowHresetcp", model2:="lowHreset"]
-X[model == "HighHresetnoCP" | model == "HighHresetcp", model2:="highHreset"]
+X[model == "singlelowLeaknoCP" | model == "singlelowLeakcp" | model == "lowLeaknoCP" | model == "lowLeakcp", model2:="LowLeak"]
+X[model == "singleHighLeaknoCP" | model == "singleHighLeakcp" | model == "HighLeaknoCP" | model == "HighLeakcp", model2:="HighLeak"]
+X[model == "singleZeroResetnoCP" | model == "singleZeroResetcp"|model == "ZeroResetnoCP" | model == "ZeroResetcp", model2:="ZeroReset"]
+X[model == "singleLowHresetnoCP" | model == "singleLowHresetcp"|model == "LowHresetnoCP" | model == "LowHresetcp", model2:="lowHreset"]
+X[model == "singleHighHresetnoCP" | model == "singleHighHresetcp"|model == "HighHresetnoCP" | model == "HighHresetcp", model2:="highHreset"]
 
 X[,model2:=factor(model2)]
 print(levels(X$model2))
 X$model2 = factor(X$model2,levels(X$model2)[c(5,4,2,6,3,1)])
 
+
+X[,ttype:="mean"]
+X[model == "singlePAcp" |
+    model == "singlelowLeakcp" | 
+    model == "singleHighLeakcp" | 
+    model == "singleZeroResetcp" | 
+    model == "singleLowHresetcp" | 
+    model == "singleHighHresetcp" |
+    model == "singlePAnoCP" |
+    model == "singlelowLeaknoCP" | 
+    model == "singleHighLeaknoCP" | 
+    model == "singleZeroResetnoCP" | 
+    model == "singleLowHresetnoCP" | 
+    model == "singleHighHresetnoCP", ttype:="trajectory"]
+
 cp_time=0.2
 
 # Add plot components --------------------------------
-gg <- ggplot(X, aes(x=time, y=value)) + 
-  geom_line(aes(col=model2), size=1.5) + 
+gg <- ggplot(X, aes(x=time, y=value, group=model)) + 
+  geom_line(aes(col=model2, linetype=ttype), size=1.5) + 
   geom_vline(xintercept = cp_time, linetype="dashed", 
              color = "blue", size=1.5) +
   geom_hline(yintercept = 0, color="black")+
   facet_grid(modelClass~CP) +
   xlim(c(0, .4)) + #ylim(c(-1, 1)) + 
-  labs(title="Mean Trajectories", y="evidence", x="time",subtitle=paste(num_traj,"realizations", sep=" "))
+  labs(title="Mean + Trajectories",
+       y="evidence",
+       x="time",
+       linetype="",
+       subtitle=paste(num_traj,"realizations", sep=" "))
 
 
 # Modify theme components -------------------------------------------
