@@ -28,7 +28,7 @@ cp <- 0.2 # change point time
 
 viewing_duration <- .4;
 
-num_traj=100;
+num_traj=1;
 num_time_points=500;
 t <- 0:num_time_points  # time
 dt <- 1/num_time_points # time step in sec
@@ -38,8 +38,11 @@ cp_idx <- floor(num_time_points/2)
 #Simulate 'num_traj' trajectories from the normative model
 s <- expression(s0)
 d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp)))
+nocpd <- expression(d0)
 sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=d,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> PAmodel
+sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=nocpd,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> PAmodelNoCP
 
 ## Linear-leak models
 #Simulate 'num_traj' trajectories from the linear-leak model
@@ -47,10 +50,15 @@ lowLeak <- 3
 d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp))-lowLeak*x)
 sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=d,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> linModelLowLeak
+sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=nocpd,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> linModelLowLeakNoCP
+
 highLeak <- 10
 d <- expression(d0*(Heaviside(-t,-cp)-Heaviside(t,cp))-highLeak*x)
 sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=d,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> linModelHighLeak
+sde.sim(t0 = 0, T = viewing_duration, X0 = 0, N = num_time_points, drift=nocpd,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> linModelHighLeakNoCP
 
 ## Reset models
 # ZERO RESET
@@ -65,7 +73,10 @@ sde.sim(t0 = 0, T = short_viewing_duration, X0 = 0, N = num_time_points_short, d
 
 new_drift <- expression(-d0)
 sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = 0, N = num_time_points_short-1, drift=new_drift,
-        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> ZeroResetmodel2
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> ZeroResetmodel2  # CP
+
+sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = 0, N = num_time_points_short-1, drift=d,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> ZeroResetmodel3  # NO CP
 
 # CLEVER RESETS
 
@@ -87,7 +98,7 @@ reset_evidence <- function(ev, h) {
 
 # reset half of them with low h and the other half with high h
 lowh_reset_vals <- reset_evidence(all_end[1:num_traj/2], lowh)
-highh_reset_vals <- reset_evidence(all_end[num_traj/2+1], highh)
+highh_reset_vals <- reset_evidence(all_end[num_traj/2+1:num_traj], highh)
 
 # simulate second epoch with appropriate starting points
 # Don't forget the possibly new drift rate!
@@ -97,6 +108,10 @@ sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = lowh_reset_vals, N = nu
 sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = highh_reset_vals, N = num_time_points_short-1, drift=new_drift,
         sigma=s, sigma.x=0, method = "euler",M=num_traj) -> HighhResetmodel2
 
+sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = lowh_reset_vals, N = num_time_points_short-1, drift=d,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> LowhResetmodel2NoCP
+sde.sim(t0 = cp+.01, T = cp+short_viewing_duration, X0 = highh_reset_vals, N = num_time_points_short-1, drift=d,
+        sigma=s, sigma.x=0, method = "euler",M=num_traj) -> HighhResetmodel2NoCP
 
 # Comparison of mean trajectories between the two models
 
@@ -107,16 +122,28 @@ meanLinHigh <- rowMeans(linModelHighLeak)
 meanZeroReset <- c(rowMeans(ZeroResetmodel1), rowMeans(ZeroResetmodel2))
 meanLowhReset <- c(rowMeans(LowhResetmodel1), rowMeans(LowhResetmodel2))
 meanHighhReset <- c(rowMeans(HighhResetmodel1), rowMeans(HighhResetmodel2))
+meanPAnocp <- rowMeans(PAmodelNoCP)
+meanLinLownocp <- rowMeans(linModelLowLeakNoCP)
+meanLinHighnocp <- rowMeans(linModelHighLeakNoCP)
+meanZeroResetnocp <- c(rowMeans(ZeroResetmodel1), rowMeans(ZeroResetmodel3))
+meanLowhResetnocp <- c(rowMeans(LowhResetmodel1), rowMeans(LowhResetmodel2NoCP))
+meanHighhResetnocp <- c(rowMeans(HighhResetmodel1), rowMeans(HighhResetmodel2NoCP))
 means_df <- data.frame("time" = tt,
-                       "PA" = meanPA,
-                       "lowLeak" = meanLinLow,
-                       "HighLeak" = meanLinHigh,
-                       "ZeroReset" = meanZeroReset,
-                       "LowHreset" = meanLowhReset,
-                       "HighHreset" = meanHighhReset)
+                       "PAcp" = meanPA,
+                       "lowLeakcp" = meanLinLow,
+                       "HighLeakcp" = meanLinHigh,
+                       "ZeroResetcp" = meanZeroReset,
+                       "LowHresetcp" = meanLowhReset,
+                       "HighHresetcp" = meanHighhReset,
+                       "PAnoCP" = meanPAnocp,
+                       "lowLeaknoCP" = meanLinLownocp,
+                       "HighLeaknoCP" = meanLinHighnocp,
+                       "ZeroResetnoCP" = meanZeroResetnocp,
+                       "LowHresetnoCP" = meanLowhResetnocp,
+                       "HighHresetnoCP" = meanHighhResetnocp)
 ```
 
-```{r}
+```{r, fig.width=10, fig.height=10}
 library(data.table)
 # plotting script
 options(scipen=999)
@@ -128,19 +155,40 @@ head(X)
 colnames(X)[2] <- "model"
 
 X <- as.data.table(X)
-X[,`:=`(modelClass="ResetAtCP")]
-X[model=="PA",modelClass:="Perfect Accum."]
-X[model=="lowLeak" | model=="HighLeak", modelClass:="Leak"]
-X[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "ResetAtCP"))]
+X[,`:=`(modelClass="Reset")]
+X[model=="PAcp" | model=="PAnoCP",modelClass:="Perfect Accum."]
+X[model=="lowLeakcp" | model=="HighLeakcp" | model=="lowLeaknoCP" | model=="HighLeaknoCP", modelClass:="Leak"]
+X[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "Reset"))]
+
+X[,CP:="CP"]
+X[model == "PAnoCP" |
+    model == "lowLeaknoCP" | 
+    model == "HighLeaknoCP" | 
+    model == "ZeroResetnoCP" | 
+    model == "LowHresetnoCP" | 
+    model == "HighHresetnoCP", CP:="no-CP"]
+X[,CP:=factor(CP)]
+X$CP = factor(X$CP,levels(X$CP)[c(2,1)])
+
+X[,model2:="PA"]
+X[model == "lowLeaknoCP" | model == "lowLeakcp", model2:="LowLeak"]
+X[model == "HighLeaknoCP" | model == "HighLeakcp", model2:="HighLeak"]
+X[model == "ZeroResetnoCP" | model == "ZeroResetcp", model2:="ZeroReset"]
+X[model == "LowHresetnoCP" | model == "LowHresetcp", model2:="lowHreset"]
+X[model == "HighHresetnoCP" | model == "HighHresetcp", model2:="highHreset"]
+
+X[,model2:=factor(model2)]
+X$model2 = factor(X$model2,levels(X$model2)[c(5,4,2,6,3,1)])
+
 cp_time=0.2
 
 # Add plot components --------------------------------
 gg <- ggplot(X, aes(x=time, y=value)) + 
-  geom_line(aes(col=model), size=1.5) + 
+  geom_line(aes(col=model2), size=1.5) + 
   geom_vline(xintercept = cp_time, linetype="dashed", 
              color = "blue", size=1.5) +
   geom_hline(yintercept = 0, color="black")+
-  facet_grid(modelClass~.) +
+  facet_grid(modelClass~CP) +
   xlim(c(0, .4)) + #ylim(c(-1, 1)) + 
   labs(title="Mean Trajectories", y="evidence", x="time",subtitle=paste(num_traj,"realizations", sep=" "))
 

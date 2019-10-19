@@ -55,13 +55,13 @@ levels(d1$model)
 
 ```{r}
 d1[,`:=`(Pwrong=NULL, C=NULL, variable=NULL)]
-d1[,`:=`(modelClass="ResetAtCP")]
+d1[,`:=`(modelClass="Reset")]
 d1[model=="DDM",modelClass:="Perfect Accum."]
 d1[model=="Low Leak" | model=="High Leak", modelClass:="Leak"]
 ```
 
 ```{r}
-d1[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "ResetAtCP"))]
+d1[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "Reset"))]
 ```
 
 ```{r}
