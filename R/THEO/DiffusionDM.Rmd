@@ -275,6 +275,7 @@ X[model == "singlePAcp" |
     model == "singleHighHresetnoCP", ttype:="trajectory"]
 
 cp_time=0.2
+model_list=c("PA", "Low Leak", "High Leak", "Zero Reset", "Low-h Reset", "High-h Reset")
 
 # Add plot components --------------------------------
 gg <- ggplot(X, aes(x=time, y=value, group=model)) + 
@@ -284,29 +285,40 @@ gg <- ggplot(X, aes(x=time, y=value, group=model)) +
   geom_hline(yintercept = 0, color="black")+
   facet_grid(modelClass~CP) +
   xlim(c(0, .4)) + #ylim(c(-1, 1)) + 
-  labs(title="Mean + Trajectories",
-       y="evidence",
-       x="time",
-       linetype="",
-       subtitle=paste(num_traj,"realizations", sep=" "))
+  labs(title="Single Trial",
+       y="Evidence",
+       x="Viewing Duration (s)",
+       linetype="") + 
+  scale_color_discrete(name="Model", labels=model_list)
 
+#this block is an example imported from animations_tests.Rmd
+# anim <- ggplot(d1, aes(x=time, y=value, group=model, col=model)) + geom_line(size=2) +
+#   facet_grid(modelClass~CP) + geom_hline(yintercept = 0.5, linetype="dashed") +
+#   geom_vline(xintercept = 0.2, color="blue", linetype="dashed") +
+#   ylab("Accuracy") + xlab("Viewing Duration (s)") + 
+#   scale_color_discrete(name="Model", labels=model_list)
 
 # Modify theme components -------------------------------------------
 bf <- 20
 sf <- 17
-gg + theme(plot.title=element_text(size=bf, 
-                                   face="bold", 
-                                   lineheight=1.2),  # title
-           plot.subtitle=element_text(size=sf-3, 
-                                      family="American Typewriter"),  # subtitle
-           plot.caption=element_text(size=sf),  # caption
-           axis.title.x=element_text(size=(sf+2)),  # X axis title
-           axis.title.y=element_text(size=(sf+2)),  # Y axis title
-           axis.text.x=element_text(size=sf),  # X axis text
-           axis.text.y=element_text(size=sf), # Y axis text
-           legend.title = element_text(size=sf, color = "firebrick"),
-           legend.text = element_text(size=sf-2),
-           panel.grid.minor = element_blank()) # remove minor grid
+gg <- gg + theme(plot.title=element_text(size=bf, 
+                                         face="bold", 
+                                         lineheight=1.2),  # title
+                 plot.subtitle=element_text(size=sf-3, 
+                                            family="American Typewriter"),  # subtitle
+                 plot.caption=element_text(size=sf),  # caption
+                 axis.title.x=element_text(size=(sf+2)),  # X axis title
+                 axis.title.y=element_text(size=(sf+2)),  # Y axis title
+                 axis.text.x=element_text(size=sf),  # X axis text
+                 axis.text.y=element_text(size=sf), # Y axis text
+                 legend.title = element_text(size=sf, color = "firebrick"),
+                 legend.text = element_text(size=sf-2),
+                 panel.grid.minor = element_blank()) # remove minor grid
+```
+
+```{r}
+library(gganimate)
+anim_save('evidence.gif',gg + transition_reveal(time))
 ```
 
 <!-- # Comparison of accuracy profiles between the two models -->
