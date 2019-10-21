@@ -39,38 +39,40 @@ factored_threshold <- data
 ##============================================#
 
 
-##============ Acc(400)-Acc(300) vs. Acc(200)-Acc(100) AVG SUBJ ===============#
-#data[,`:=`(acc=mean(dirCorrect),
-#           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-#     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
-#tocast <- unique(data[coh_cat == "th", .(acc, probCP, presenceCP, viewingDuration, vv)])
-#wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
-#wide[,`:=`(
-#  accDiffPost=acc_400 - acc_300,
-#  ciPost=1.96*sqrt(vv_400+vv_300),
-#  accDiffPre=acc_200 - acc_100,
-#  ciPre=1.96*sqrt(vv_200+vv_100))]
-#wide[,`:=`(acc_100=NULL, acc_200=NULL, acc_300=NULL, acc_400=NULL,
-#           vv_100=NULL, vv_200=NULL, vv_300=NULL, vv_400=NULL)]
-#listForAcc <- paste("accDiff", c("Pre", "Post"), sep = "")
-#listForCI <- paste("ci", c("Pre", "Post"), sep = "")
-#long_again <- melt(wide, measure = list(listForAcc, listForCI),
-#               variable.name = "TimeLoc", value.name = c("AccChange", "CI"))
-#levels(long_again$TimeLoc) <- c("PreCP", "PostCP")
-#pd <- position_dodge(.14) 
-#
-#png(filename="Accuracy_Change_Pre_vs_Post_CP_avg_subj.png", width=740, height=300)
-#ggplot(long_again, aes(x=TimeLoc, y=AccChange, col=presenceCP)) + 
-#  geom_point(position=pd, size=3.7) + 
-#  geom_hline(yintercept = 0, linetype='dashed') + 
-#  geom_errorbar(aes(ymin=AccChange - CI, ymax=AccChange + CI), width=.2, position=pd, size=1) +
-#  facet_grid(~probCP) + 
-#  theme_bw() + scale_color_brewer(palette="Set1") +
-#  theme(text=element_text(size=20)) + 
-#  ylab("Accuracy Increase") + xlab("100-msec window") +  
-#  labs(title="Accuracy Change Pre- vs. Post-CP", subtitle = "Threshold Coherence")
-#dev.off()
-##============================================#
+#============ Acc(400)-Acc(300) vs. Acc(200)-Acc(100) AVG SUBJ ===============#
+# sfn3.png
+data[,`:=`(acc=mean(dirCorrect),
+           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
+     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
+tocast <- unique(data[coh_cat == "th", .(acc, probCP, presenceCP, viewingDuration, vv)])
+wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
+wide[,`:=`(
+  accDiffPost=acc_400 - acc_300,
+  ciPost=1.96*sqrt(vv_400+vv_300),
+  accDiffPre=acc_200 - acc_100,
+  ciPre=1.96*sqrt(vv_200+vv_100))]
+wide[,`:=`(acc_100=NULL, acc_200=NULL, acc_300=NULL, acc_400=NULL,
+           vv_100=NULL, vv_200=NULL, vv_300=NULL, vv_400=NULL)]
+listForAcc <- paste("accDiff", c("Pre", "Post"), sep = "")
+listForCI <- paste("ci", c("Pre", "Post"), sep = "")
+long_again <- melt(wide, measure = list(listForAcc, listForCI),
+               variable.name = "TimeLoc", value.name = c("AccChange", "CI"))
+levels(long_again$TimeLoc) <- c("pre", "post")
+pd <- position_dodge(.14) 
+
+png(filename="sfn3.png", width=900, height=400)
+ggplot(long_again, aes(x=TimeLoc, y=AccChange, col=presenceCP)) + 
+  geom_hline(yintercept = 0, linetype='dashed') + 
+  geom_errorbar(aes(ymin=AccChange - CI, ymax=AccChange + CI), width=.2, position=pd, size=1.2) +
+  geom_point(position=pd, size=6.5) + 
+  facet_grid(~probCP) + 
+  theme(text=element_text(size=35)) + 
+  ylab("Accuracy Increase") + xlab("100-ms epoch") +  
+  labs(title="Accuracy Change pre- vs. post-CP") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
+dev.off()
+#============================================#
 
 ##============ Priming Effect ===============#
 #subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th",
@@ -167,41 +169,41 @@ factored_threshold <- data
 #dev.off()
 ##=======================================================#
 
-#============ Acc(300) - Acc(200) AVG across subjects ==============#
-# snf2.png
-data[,`:=`(acc=mean(dirCorrect),
-           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
-tocast <- unique(data[(viewingDuration == 200 | viewingDuration == 300) & coh_cat == "th", 
-                      .(acc, probCP, presenceCP, viewingDuration, vv)])
-wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
-
-# fill NA values for vd200 at CP trials to vd200 at noCP trials
-for (pcp in c("0", "0.2", "0.5", "0.8")) {
-  wide[probCP == pcp & presenceCP == "CP",
-       acc_200 := wide[probCP == pcp & presenceCP == "noCP", acc_200]]
-  wide[probCP == pcp & presenceCP == "CP",
-       vv_200 := wide[probCP == pcp & presenceCP == "noCP", vv_200]]
-}
-
-wide[,`:=`(accDiff=acc_300 - acc_200,ci=1.96*sqrt(vv_200+vv_300))]
-
-png(filename="sfn2.png", width=800, height=400)
-ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
-  geom_line(aes(group=probCP), size=2.2) +
-  geom_hline(yintercept = 0, linetype='dashed') + 
-  geom_errorbar(aes(ymin=accDiff - ci, ymax=accDiff + ci), width=.13, size=1.2) +
-  geom_point(aes(col=presenceCP), size=6.5) + 
-  facet_grid(~probCP) + 
-  theme(text=element_text(size=35)) + 
-  ylab("Acc(300) - Acc(200)") + 
-  xlab("Presence of CP") +
-  labs(title="Accumulation across CP") + 
-  theme(plot.title = element_text(hjust = 0.5),
-	axis.text.x=element_blank()) +
-  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
-dev.off()
-#=======================================================#
+##============ Acc(300) - Acc(200) AVG across subjects ==============#
+## snf2.png
+#data[,`:=`(acc=mean(dirCorrect),
+#           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
+#     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
+#tocast <- unique(data[(viewingDuration == 200 | viewingDuration == 300) & coh_cat == "th", 
+#                      .(acc, probCP, presenceCP, viewingDuration, vv)])
+#wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
+#
+## fill NA values for vd200 at CP trials to vd200 at noCP trials
+#for (pcp in c("0", "0.2", "0.5", "0.8")) {
+#  wide[probCP == pcp & presenceCP == "CP",
+#       acc_200 := wide[probCP == pcp & presenceCP == "noCP", acc_200]]
+#  wide[probCP == pcp & presenceCP == "CP",
+#       vv_200 := wide[probCP == pcp & presenceCP == "noCP", vv_200]]
+#}
+#
+#wide[,`:=`(accDiff=acc_300 - acc_200,ci=1.96*sqrt(vv_200+vv_300))]
+#
+#png(filename="sfn2.png", width=800, height=400)
+#ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
+#  geom_line(aes(group=probCP), size=2.2) +
+#  geom_hline(yintercept = 0, linetype='dashed') + 
+#  geom_errorbar(aes(ymin=accDiff - ci, ymax=accDiff + ci), width=.13, size=1.2) +
+#  geom_point(aes(col=presenceCP), size=6.5) + 
+#  facet_grid(~probCP) + 
+#  theme(text=element_text(size=35)) + 
+#  ylab("Acc(300) - Acc(200)") + 
+#  xlab("Presence of CP") +
+#  labs(title="Accumulation across CP") + 
+#  theme(plot.title = element_text(hjust = 0.5),
+#	axis.text.x=element_blank()) +
+#  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
+#dev.off()
+##=======================================================#
 
 
 ##============ 100 msec window integration ==============#
