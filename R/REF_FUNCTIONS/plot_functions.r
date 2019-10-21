@@ -3,6 +3,10 @@ library(data.table)
 library(ggforce)
 source("explore_functions.r")
 
+# The palette with black:  ref = http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
+                # black      golden     blue       green      yellow   dark blue    orange     pink
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
 ############# SET UP DATA.TABLES NEEDED
 
 data <- get_full_data()
@@ -355,28 +359,33 @@ factored_threshold <- data
 
 
 ######### Main result plot AVG SUBJ ##########
-## as above, but for 200-400 msec trials.
-#to_plot6 <- factored_threshold[
-#  coh_cat=="th",
-#  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, viewingDuration, probCP)
-#]
-#to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-#to_plot6[,ci:=1.96*se]
-#
-#pd <- position_dodge(.2) # move them .05 to the left and right
-#
-#png(filename="acc_dd_100-400_bypcp_bycp.png", width=1500, height=385)
-#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
-#  geom_point(size=4, position=pd) +
-#  geom_line(size=2) +
-#  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
-#  facet_grid(~probCP) +
-#  scale_color_brewer(palette="Dark2") +
-#  theme(text = element_text(size=35)) + 
-#  ggtitle("Acc (DD) th-coh")
-#dev.off()
+# sfn1.png
+to_plot6 <- factored_threshold[
+  coh_cat=="th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(presenceCP, viewingDuration, probCP)
+]
+to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot6[,ci:=1.96*se]
+
+pd <- position_dodge(.2) # move them .05 to the left and right
+
+png(filename="sfn1.png", width=1500, height=385)
+ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+  geom_point(size=4, position=pd) +
+  geom_line(size=2) +
+  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+  facet_grid(~probCP) +
+  scale_color_brewer(palette="Dark2") +
+  theme(text = element_text(size=35)) + 
+  ggtitle("Accuracy across 5 subjects") + 
+  xlab("Viewing Duration (ms)") +
+  ylab("P(Correct)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
+#  labs(color="")
+dev.off()
 #####################################
 
 ######### Acc diff plot ##########
@@ -413,40 +422,40 @@ factored_threshold <- data
 
 
 
-######## Acc diff plot AVG SUBJ ##########
-to_plot <- factored_threshold[
-  probCP > 0 & probCP < 0.8 &
-  coh_cat=="th" & 
-  viewingDuration > 250,
-  .(accuracy=mean(dirCorrect), numTrials=.N),
-  by=.(presenceCP, viewingDuration, probCP)
-]
-to_plot[,se:=sqrt(2*accuracy * (1-accuracy) / numTrials)]
-to_plot[,numTrials:=NULL]
-
-levels(to_plot$presenceCP) <- c("noCP","CP")
-to_plot2 <- dcast(to_plot, viewingDuration+probCP~presenceCP, value.var=c("accuracy","se"))
-to_plot2[,accdiff:=0]
-to_plot2[viewingDuration > 200, accdiff:=accuracy_noCP - accuracy_CP]
-to_plot2[,ci:=1.96*se_noCP]
-to_plot2[viewingDuration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
-
-pd <- position_dodge(.2) # move them .05 to the left and right
-
-to_plot2[,viewingDuration:=factor(viewingDuration, ordered=T)]
-
-png(filename="acc_diff_dd_bysubj_bypcp_bycp_avg_subj.png", width=500, height=360)
-ggplot(to_plot2, aes(x=viewingDuration, y=accdiff)) +
-  geom_point(size=4, position=pd) +
-  geom_line(size=2, aes(group=1)) +
-  geom_hline(yintercept=c(0,-.5,.5), color="black", linetype="dashed") +
-  geom_errorbar(aes(ymin=accdiff-ci, ymax=accdiff+ci), width=.1, size=1.7, position=pd) +
-  facet_grid(~probCP) +
-  scale_color_brewer(palette="Dark2") +
-  theme(text = element_text(size=35)) + 
-  ggtitle("Acc (DD) th-coh")
-dev.off()
-####################################
+######### Acc diff plot AVG SUBJ ##########
+#to_plot <- factored_threshold[
+#  probCP > 0 & probCP < 0.8 &
+#  coh_cat=="th" & 
+#  viewingDuration > 250,
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(presenceCP, viewingDuration, probCP)
+#]
+#to_plot[,se:=sqrt(2*accuracy * (1-accuracy) / numTrials)]
+#to_plot[,numTrials:=NULL]
+#
+#levels(to_plot$presenceCP) <- c("noCP","CP")
+#to_plot2 <- dcast(to_plot, viewingDuration+probCP~presenceCP, value.var=c("accuracy","se"))
+#to_plot2[,accdiff:=0]
+#to_plot2[viewingDuration > 200, accdiff:=accuracy_noCP - accuracy_CP]
+#to_plot2[,ci:=1.96*se_noCP]
+#to_plot2[viewingDuration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
+#
+#pd <- position_dodge(.2) # move them .05 to the left and right
+#
+#to_plot2[,viewingDuration:=factor(viewingDuration, ordered=T)]
+#
+#png(filename="acc_diff_dd_bysubj_bypcp_bycp_avg_subj.png", width=500, height=360)
+#ggplot(to_plot2, aes(x=viewingDuration, y=accdiff)) +
+#  geom_point(size=4, position=pd) +
+#  geom_line(size=2, aes(group=1)) +
+#  geom_hline(yintercept=c(0,-.5,.5), color="black", linetype="dashed") +
+#  geom_errorbar(aes(ymin=accdiff-ci, ymax=accdiff+ci), width=.1, size=1.7, position=pd) +
+#  facet_grid(~probCP) +
+#  scale_color_brewer(palette="Dark2") +
+#  theme(text = element_text(size=35)) + 
+#  ggtitle("Acc (DD) th-coh")
+#dev.off()
+#####################################
 
 ## as above, but for perceived CP as opposed to real CPs
 #to_plotx <- factored_threshold[
