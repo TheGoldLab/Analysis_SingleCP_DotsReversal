@@ -167,34 +167,41 @@ factored_threshold <- data
 #dev.off()
 ##=======================================================#
 
-##============ Acc(300) - Acc(200) AVG across subjects ==============#
-#data[,`:=`(acc=mean(dirCorrect),
-#           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-#     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
-#tocast <- unique(data[(viewingDuration == 200 | viewingDuration == 300) & coh_cat == "th", 
-#                      .(acc, probCP, presenceCP, viewingDuration, vv)])
-#wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
-#
-## fill NA values for vd200 at CP trials to vd200 at noCP trials
-#for (pcp in c("0", "0.2", "0.5", "0.8")) {
-#  wide[probCP == pcp & presenceCP == "CP",
-#       acc_200 := wide[probCP == pcp & presenceCP == "noCP", acc_200]]
-#  wide[probCP == pcp & presenceCP == "CP",
-#       vv_200 := wide[probCP == pcp & presenceCP == "noCP", vv_200]]
-#}
-#
-#wide[,`:=`(accDiff=acc_300 - acc_200,ci=1.96*sqrt(vv_200+vv_300))]
-#
-#png(filename="Acc300-Acc200_avg_subj.png", width=600, height=300)
-#ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
-#  geom_point(size=3.7) + 
-#  geom_line(aes(group=probCP), size=1.5) +
-#  geom_hline(yintercept = 0, linetype='dashed') + 
-#  geom_errorbar(aes(ymin=accDiff - ci, ymax=accDiff + ci), width=.1, size=1) +
-#  facet_grid(~probCP) + theme(text=element_text(size=20)) + ylab("Acc(300) - Acc(200)") + 
-#  labs(title="Accuracy difference around CP", subtitle="threshold coherence")
-#dev.off()
-##=======================================================#
+#============ Acc(300) - Acc(200) AVG across subjects ==============#
+# snf2.png
+data[,`:=`(acc=mean(dirCorrect),
+           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
+     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
+tocast <- unique(data[(viewingDuration == 200 | viewingDuration == 300) & coh_cat == "th", 
+                      .(acc, probCP, presenceCP, viewingDuration, vv)])
+wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
+
+# fill NA values for vd200 at CP trials to vd200 at noCP trials
+for (pcp in c("0", "0.2", "0.5", "0.8")) {
+  wide[probCP == pcp & presenceCP == "CP",
+       acc_200 := wide[probCP == pcp & presenceCP == "noCP", acc_200]]
+  wide[probCP == pcp & presenceCP == "CP",
+       vv_200 := wide[probCP == pcp & presenceCP == "noCP", vv_200]]
+}
+
+wide[,`:=`(accDiff=acc_300 - acc_200,ci=1.96*sqrt(vv_200+vv_300))]
+
+png(filename="sfn2.png", width=800, height=400)
+ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
+  geom_line(aes(group=probCP), size=2.2) +
+  geom_hline(yintercept = 0, linetype='dashed') + 
+  geom_errorbar(aes(ymin=accDiff - ci, ymax=accDiff + ci), width=.13, size=1.2) +
+  geom_point(aes(col=presenceCP), size=6.5) + 
+  facet_grid(~probCP) + 
+  theme(text=element_text(size=35)) + 
+  ylab("Acc(300) - Acc(200)") + 
+  xlab("Presence of CP") +
+  labs(title="Accumulation across CP") + 
+  theme(plot.title = element_text(hjust = 0.5),
+	axis.text.x=element_blank()) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
+dev.off()
+#=======================================================#
 
 
 ##============ 100 msec window integration ==============#
@@ -359,33 +366,33 @@ factored_threshold <- data
 
 
 ######### Main result plot AVG SUBJ ##########
-# sfn1.png
-to_plot6 <- factored_threshold[
-  coh_cat=="th",
-  .(accuracy=mean(dirCorrect), numTrials=.N),
-  by=.(presenceCP, viewingDuration, probCP)
-]
-to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plot6[,ci:=1.96*se]
-
-pd <- position_dodge(.2) # move them .05 to the left and right
-
-png(filename="sfn1.png", width=1500, height=385)
-ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
-  geom_point(size=4, position=pd) +
-  geom_line(size=2) +
-  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
-  facet_grid(~probCP) +
-  scale_color_brewer(palette="Dark2") +
-  theme(text = element_text(size=35)) + 
-  ggtitle("Accuracy across 5 subjects") + 
-  xlab("Viewing Duration (ms)") +
-  ylab("P(Correct)") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
-#  labs(color="")
-dev.off()
+## sfn1.png
+#to_plot6 <- factored_threshold[
+#  coh_cat=="th",
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(presenceCP, viewingDuration, probCP)
+#]
+#to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+#to_plot6[,ci:=1.96*se]
+#
+#pd <- position_dodge(.2) # move them .05 to the left and right
+#
+#png(filename="sfn1.png", width=1500, height=385)
+#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+#  geom_point(size=4, position=pd) +
+#  geom_line(size=2) +
+#  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+#  facet_grid(~probCP) +
+#  scale_color_brewer(palette="Dark2") +
+#  theme(text = element_text(size=35)) + 
+#  ggtitle("Accuracy across 5 subjects") + 
+#  xlab("Viewing Duration (ms)") +
+#  ylab("P(Correct)") +
+#  theme(plot.title = element_text(hjust = 0.5)) +
+#  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
+##  labs(color="")
+#dev.off()
 #####################################
 
 ######### Acc diff plot ##########
