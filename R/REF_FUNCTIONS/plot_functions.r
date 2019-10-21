@@ -396,6 +396,35 @@ factored_threshold <- data
 ##  labs(color="")
 #dev.off()
 ######################################
+########## accuracy AVG SUBJ ##########
+
+to_plot6 <- factored_threshold[
+  coh_cat=="th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(viewingDuration, probCP)
+]
+to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot6[,ci:=1.96*se]
+
+pd <- position_dodge(.2) # move them .05 to the left and right
+
+png(filename="bare_acc.png", width=1500, height=385)
+ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy)) +
+  geom_point(size=4, position=pd) +
+  geom_line(size=2.2) +
+  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
+  facet_grid(~probCP) +
+  scale_color_brewer(palette="Dark2") +
+  theme(text = element_text(size=35)) + 
+  ggtitle("Accuracy across 5 subjects") + 
+  xlab("Viewing Duration (ms)") +
+  ylab("P(Correct)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
+#  labs(color="")
+dev.off()
+######################################
 
 ######### Acc diff plot ##########
 #to_plot <- factored_threshold[
@@ -1050,49 +1079,49 @@ factored_threshold <- data
 
 
 #----------------------------- END sfn4.png --------------------------#
-#------------------------------START sfn5.png ------------------------#
-
-# sfn5.png
-
-library(gganimate)
-library(ggplot2)
-library(data.table)
-
-old_wd <- getwd()
-setwd('/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/R/animations/')
-
-# BUG HERE, WHY???
-#anim_save("test5.gif", p)
-
-source("animations.r")
-
-theme_set(theme_bw())
-
-d1 <- get_acc_data()
-
-d1[,`:=`(Pwrong=NULL, C=NULL, variable=NULL)]
-d1[,`:=`(modelClass="Reset")]
-d1[model=="DDM",modelClass:="Perfect Accum."]
-d1[model=="Low Leak" | model=="High Leak", modelClass:="Leak"]
-
-d1[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "Reset"))]
-
-names(d1) <- c("time", "value", "CP", "model", "modelClass")
-
-model_list=c("PA", "Low Leak", "High Leak", "Zero Reset", "Low-h Reset", "High-h Reset")
-anim <- ggplot(d1, aes(x=time, y=value, group=model, col=model)) + geom_line(size=4) +
-  facet_grid(modelClass~CP) + geom_hline(yintercept = 0.5, linetype="dashed") +
-  geom_vline(xintercept = 0.2, color="blue", size=1.5, linetype="dashed") +
-  guides(colour=FALSE) + # turn legend off
-  xlim(c(0,.4)) +
-  ylab("Accuracy") + xlab("Viewing Duration (s)") + ggtitle("Theoretical Accuracy") + 
-  scale_color_discrete(name="Model", labels=model_list) + theme(text=element_text(size=35),
-                plot.title = element_text(hjust = 0.5),
-                 panel.grid.minor = element_blank()) # remove minor grid
-  #transition_reveal(t)
-
-setwd(old_wd)
-png(filename="sfn5.png", width=1100, height=900)
-plot(anim)
-dev.off()
-#anim_save('accuracies.gif',anim + transition_reveal(time))
+##------------------------------START sfn5.png ------------------------#
+#
+## sfn5.png
+#
+#library(gganimate)
+#library(ggplot2)
+#library(data.table)
+#
+#old_wd <- getwd()
+#setwd('/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/R/animations/')
+#
+## BUG HERE, WHY???
+##anim_save("test5.gif", p)
+#
+#source("animations.r")
+#
+#theme_set(theme_bw())
+#
+#d1 <- get_acc_data()
+#
+#d1[,`:=`(Pwrong=NULL, C=NULL, variable=NULL)]
+#d1[,`:=`(modelClass="Reset")]
+#d1[model=="DDM",modelClass:="Perfect Accum."]
+#d1[model=="Low Leak" | model=="High Leak", modelClass:="Leak"]
+#
+#d1[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "Reset"))]
+#
+#names(d1) <- c("time", "value", "CP", "model", "modelClass")
+#
+#model_list=c("PA", "Low Leak", "High Leak", "Zero Reset", "Low-h Reset", "High-h Reset")
+#anim <- ggplot(d1, aes(x=time, y=value, group=model, col=model)) + geom_line(size=4) +
+#  facet_grid(modelClass~CP) + geom_hline(yintercept = 0.5, linetype="dashed") +
+#  geom_vline(xintercept = 0.2, color="blue", size=1.5, linetype="dashed") +
+#  guides(colour=FALSE) + # turn legend off
+#  xlim(c(0,.4)) +
+#  ylab("Accuracy") + xlab("Viewing Duration (s)") + ggtitle("Theoretical Accuracy") + 
+#  scale_color_discrete(name="Model", labels=model_list) + theme(text=element_text(size=35),
+#                plot.title = element_text(hjust = 0.5),
+#                 panel.grid.minor = element_blank()) # remove minor grid
+#  #transition_reveal(t)
+#
+#setwd(old_wd)
+#png(filename="sfn5.png", width=1100, height=900)
+#plot(anim)
+#dev.off()
+##anim_save('accuracies.gif',anim + transition_reveal(time))
