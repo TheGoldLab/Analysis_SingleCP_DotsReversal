@@ -47,9 +47,13 @@ setwd(old_wd)
 # png(filename="sfn5.png", width=1100, height=900)
 # plot(anim)
 # dev.off()
-animate(anim + transition_reveal(time), height = 900, width =1100)
-anim_save("accuracy.gif")
+
 #anim_save('accuracies.gif',anim + transition_reveal(time))
 
+```
+
+```{r}
+animate(anim + transition_reveal(time), height = 900, width =1100)
+anim_save("accuracy.gif")
 ```
 
