@@ -1,0 +1,55 @@
+```{r}
+library(data.table)
+library(ggforce)
+library(gganimate)
+source("explore_functions.r")
+```
+```{r}
+##------------------------------START sfn5.png ------------------------#
+
+# sfn5.png
+library(ggplot2)
+
+old_wd <- getwd()
+setwd('/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/R/animations/')
+
+# BUG HERE, WHY???
+#anim_save("test5.gif", p)
+
+source("animations.r")
+
+theme_set(theme_bw())
+
+d1 <- get_acc_data()
+
+d1[,`:=`(Pwrong=NULL, C=NULL, variable=NULL)]
+d1[,`:=`(modelClass="Reset")]
+d1[model=="DDM",modelClass:="Perfect Accum."]
+d1[model=="Low Leak" | model=="High Leak", modelClass:="Leak"]
+
+d1[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "Reset"))]
+
+names(d1) <- c("time", "value", "CP", "model", "modelClass")
+
+model_list=c("PA", "Low Leak", "High Leak", "Zero Reset", "Low-h Reset", "High-h Reset")
+anim <- ggplot(d1, aes(x=time, y=value, group=model, col=model)) + geom_line(size=4) +
+ facet_grid(modelClass~CP) + geom_hline(yintercept = 0.5, linetype="dashed") +
+ geom_vline(xintercept = 0.2, color="blue", size=1.5, linetype="dashed") +
+ guides(colour=FALSE) + # turn legend off
+ xlim(c(0,.4)) +
+ ylab("Accuracy") + xlab("Viewing Duration (s)") + ggtitle("Theoretical Accuracy") +
+ scale_color_discrete(name="Model", labels=model_list) + theme(text=element_text(size=35),
+               plot.title = element_text(hjust = 0.5),
+                panel.grid.minor = element_blank()) # remove minor grid
+ #transition_reveal(t)
+
+setwd(old_wd)
+# png(filename="sfn5.png", width=1100, height=900)
+# plot(anim)
+# dev.off()
+animate(anim + transition_reveal(time), height = 900, width =1100)
+anim_save("accuracy.gif")
+#anim_save('accuracies.gif',anim + transition_reveal(time))
+
+```
+
