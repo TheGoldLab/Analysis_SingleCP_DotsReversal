@@ -30,8 +30,8 @@ source("accuracy_functions.r")
 
 ```{r, echo=FALSE}
 
-baseC <- seq(.2, 4, .1)
-baset <- seq(.1,.4,.01)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))
+baseC <- c(1.5)
+baset <- seq(.1,.4,.1)#c(seq(.1, .2, .01), seq(.201,.25,.001), seq(.26,.4, .01))Z
 
 C <- c()
 t <- c()
@@ -134,56 +134,85 @@ long_data[,CP:=factor(CP, levels=c("no-CP", "CP"))]
 
 ```{r, fig.width=12, fig.height=15}
 # Plotting
-ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
-      geom_tile() +
-      ggtitle("Theoretical Accuracy") + 
-      scale_fill_gradientn(colors=colorRampPalette(c("white","royalblue","seagreen","orange","red","brown"))(500),name="Accuracy\n[P(correct)]") +
-      labs(x = "Time [sec]",y="SNR [|d|/sigma]") +
-      facet_grid(model~CP) + 
-      theme(text=element_text(size=20)) +
-      theme_bw()
+# ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
+#       geom_tile() +
+#       ggtitle("Theoretical Accuracy") + 
+#       scale_fill_gradientn(colors=colorRampPalette(c("white","royalblue","seagreen","orange","red","brown"))(500),name="Accuracy\n[P(correct)]") +
+#       labs(x = "Time [sec]",y="SNR [|d|/sigma]") +
+#       facet_grid(model~CP) + 
+#       theme(text=element_text(size=20)) +
+#       theme_bw()
 ```
 
 Let's pick 3 SNR values and visualize accuracy as a function of time.
 ```{r, fig.width=28, fig.height=11.5}
-ggplot(aes(x=t, y=value, col=CP), data=long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001,]) + 
+# ggplot(aes(x=t, y=value, col=CP), data=long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001,]) + 
+#   # geom_hline(yintercept=.5, color='black', inherit.aes=FALSE) +  # buggy because of facet_wrap. See https://github.com/tidyverse/ggplot2/issues/2091
+#   stat_identity(yintercept=0.5, geom='hline', color='black', inherit.aes=TRUE) +
+#   geom_line(aes(group=interaction(model, CP), linetype=model), size=1.5) +
+#   facet_wrap(~factor(C)) +
+#   ylab("P(correct)") + xlab("time (s)") +
+#   labs(title = "Theoretical Curves Perfect Accumulator",
+#        subtitle = "CP vs. no-CP trials", 
+#        caption = paste("low leak =",lowl,"; high leak =",highl, "; low h = ", lowh, "; high h = ", highh),
+#        col="") +
+#   theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
+```
+
+```{r}
+# tmp <- long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001, ]
+# tmp[, Pwrong:=NULL]
+# filtered <- dcast(tmp, C + t + model ~ CP, value.var = "value")
+# names(filtered)<-c("C", "t", "model", "noCP", "CP")
+# #    family_id age_mother dob_child1 dob_child2 dob_child3
+# # 1:         1         30 1998-11-26 2000-01-29       <NA>
+# # 2:         2         27 1996-06-22       <NA>       <NA>
+# # 3:         3         26 2002-07-11 2004-04-05 2007-09-02
+# head(filtered)
+# str(filtered)
+```
+
+
+
+Difference:
+```{r, fig.width=28, fig.height=9.5}
+# ggplot(aes(x=t, y=noCP - CP, col=model, group=C), data=filtered) + 
+#   geom_line(aes(group=model),size=1.5) +
+#   # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
+#   #            linetype="dotted") +
+#   facet_wrap(~factor(C)) +
+#   ylab("Diff Acc") + xlab("time (s)") +
+#   labs(title = "Accuracy Differential",
+#        subtitle = "Acc(no-CP)-Acc(CP)", 
+#        caption = paste("low leak =",lowl,"; high leak =",highl),
+#        col="") +
+#   theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
+```
+# ANIMATIONS
+```{r}
+library(gganimate)
+```
+
+```{r, fig.width=12, fig.height=15}
+anim <- ggplot(aes(x=t, y=value, col=model), data=long_data[C==1.5]) + 
   # geom_hline(yintercept=.5, color='black', inherit.aes=FALSE) +  # buggy because of facet_wrap. See https://github.com/tidyverse/ggplot2/issues/2091
   stat_identity(yintercept=0.5, geom='hline', color='black', inherit.aes=TRUE) +
-  geom_line(aes(group=interaction(model, CP), linetype=model), size=1.5) +
-  facet_wrap(~factor(C)) +
+  geom_line(size=1.5) +
+  facet_wrap(model~CP) +
   ylab("P(correct)") + xlab("time (s)") +
   labs(title = "Theoretical Curves Perfect Accumulator",
        subtitle = "CP vs. no-CP trials", 
        caption = paste("low leak =",lowl,"; high leak =",highl, "; low h = ", lowh, "; high h = ", highh),
        col="") +
-  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
+  # theme(text=element_text(size=35), legend.key.width = unit(5, "line")) +
+  transition_time(t)
 ```
 
 ```{r}
-tmp <- long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001, ]
-tmp[, Pwrong:=NULL]
-filtered <- dcast(tmp, C + t + model ~ CP, value.var = "value")
-names(filtered)<-c("C", "t", "model", "noCP", "CP")
-#    family_id age_mother dob_child1 dob_child2 dob_child3
-# 1:         1         30 1998-11-26 2000-01-29       <NA>
-# 2:         2         27 1996-06-22       <NA>       <NA>
-# 3:         3         26 2002-07-11 2004-04-05 2007-09-02
-head(filtered)
-str(filtered)
+anim_save("animation.mp4", anim)
 ```
 
-Difference:
-```{r, fig.width=28, fig.height=9.5}
-ggplot(aes(x=t, y=noCP - CP, col=model, group=C), data=filtered) + 
-  geom_line(aes(group=model),size=1.5) +
-  # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
-  #            linetype="dotted") +
-  facet_wrap(~factor(C)) +
-  ylab("Diff Acc") + xlab("time (s)") +
-  labs(title = "Accuracy Differential",
-       subtitle = "Acc(no-CP)-Acc(CP)", 
-       caption = paste("low leak =",lowl,"; high leak =",highl),
-       col="") +
-  theme(text=element_text(size=35), legend.key.width = unit(5, "line")) 
+```{r}
+animate(anim, renderer = ffmpeg_renderer()) 
 ```
 

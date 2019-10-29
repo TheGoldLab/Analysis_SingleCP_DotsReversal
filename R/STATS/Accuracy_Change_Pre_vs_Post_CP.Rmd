@@ -1,0 +1,74 @@
+---
+title: "Accuracy Change Pre- vs. Post-CP"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+```{r}
+library(data.table)
+library(ggplot2)
+source("explore_functions.r")
+```
+
+```{r}
+data <- get_full_data()
+data[,`:=`(acc=mean(dirCorrect),
+           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
+     by=.(viewingDuration, subject, probCP, presenceCP, coh_cat)]
+tocast <- unique(data[coh_cat == "th", .(acc, subject, probCP, presenceCP, viewingDuration, vv)])
+```
+
+```{r}
+wide <- dcast(tocast, 
+              subject + probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
+```
+
+```{r}
+# head(tocast)
+
+# fill NA values for vd200 at CP trials to vd200 at noCP trials
+# for (subj in c("S1", "S2", "S3", "S4", "S5")) {
+#   for (pcp in c("0", "0.2", "0.5", "0.8")) {
+#   wide[subject == subj & probCP == pcp & presenceCP == "CP", 
+#        acc_200 := wide[subject == subj & probCP == pcp & presenceCP == "noCP", acc_200]]
+#   wide[subject == subj & probCP == pcp & presenceCP == "CP", 
+#        vv_200 := wide[subject == subj & probCP == pcp & presenceCP == "noCP", vv_200]]
+#   }
+# }
+
+wide[,`:=`(
+  accDiffPost=acc_400 - acc_300,
+  ciPost=1.96*sqrt(vv_400+vv_300),
+  accDiffPre=acc_200 - acc_100,
+  ciPre=1.96*sqrt(vv_200+vv_100))]
+wide[,`:=`(acc_100=NULL, acc_200=NULL, acc_300=NULL, acc_400=NULL,
+           vv_100=NULL, vv_200=NULL, vv_300=NULL, vv_400=NULL)]
+```
+
+```{r}
+listForAcc <- paste("accDiff", c("Pre", "Post"), sep = "")
+listForCI <- paste("ci", c("Pre", "Post"), sep = "")
+long_again <- melt(wide, measure = list(listForAcc, listForCI),
+               variable.name = "TimeLoc", value.name = c("AccChange", "CI"))
+levels(long_again$TimeLoc) <- c("PreCP", "PostCP")
+```
+
+```{r}
+str(long_again)
+head(long_again)
+```
+
+
+```{r, fig.width=10, fig.height=10}
+pd <- position_dodge(.14) 
+ggplot(long_again, aes(x=TimeLoc, y=AccChange, col=presenceCP)) + 
+  geom_point(position=pd, size=3) + 
+  geom_hline(yintercept = 0, linetype='dashed') + 
+  geom_errorbar(aes(ymin=AccChange - CI, ymax=AccChange + CI), width=.2, position=pd, size=1) +
+  facet_grid(subject~probCP) + 
+  theme_bw() + scale_color_brewer(palette="Set1") +
+  theme(text=element_text(size=20)) + 
+  ylab("Accuracy Change") + 
+  labs(title="Accuracy Change Pre- vs. Post-CP", subtitle = "Threshold Coherence")
+```
