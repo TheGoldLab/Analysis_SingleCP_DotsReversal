@@ -1,55 +1,42 @@
 % this script is the standard pre-processing step to convert the data that
 % we need for our analysis from .mat to .csv format.
+% Since the loading of a .mat file currently causes MATLAB to crash on
+% every second attempt, the script can only load one .mat file in a given
+% MATLAB session. For this reason, metadata about the loading/dumping is
+% stored in another file named metaDump.csv
+% The present script reads off the subject and session number to load and
+% dump in the current execution, and if everything succeeds, the
+% metaDump.csv file is updated (a new row is appended).
+
+% clear all
+% tbUseProject('Analysis_SingleCP_DotsReversal');
+% dump_path = '/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/MATLAB/metaDumpDotsReproducibility.csv';
+% %% Load metadata
+% metadata = loadjson('subj_metadata.json');
+% subjects = fieldnames(metadata); % 5x1 cell of strings
+% disp(subjects)
+% metadump = readtable(dump_path);  % required to know which subject and session to load
+% subjNumber = metadump.subject(end);
+% curr_session = metadump.session(end);
 % 
-clear all
-tbUseProject('SingleCP_DotsReversal_DataAnalysis');
-pilot_number = '18';               % should be a string
-npilot = str2double(pilot_number); % pilot number as double
-% clear classes
-% clear mex
-% clear
+% subjStruct = metadata.(subjects{subjNumber});
+% sessions = fieldnames(subjStruct);  % session names for 
+% disp(sessions)
+timestamp='2019_09_27_11_29';
+datapath = ['/Users/joshuagold/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/data/DotsReproducibilityTest/raw/',timestamp,'/'];
+filename = [timestamp, '_topsDataLog.mat'];
+disp(datapath)
 
-%% Folders and path variables
-
-studyTag = 'SingleCP_DotsReversal'; 
-
-% mapping of Pilot data to timestamps
-% ======  DO NOT ERASE!! ======
-% '2019_03_27_10_49' = Pilot 12
-% '2019_04_04_16_59' = Pilot 13
-% '2019_04_04_18_00' = Pilot 14
-% '2019_04_26_12_05' = test dots dump in office, no dots info in dataset
-% '2019_04_26_13_17' = 2nd test of dots dump in office, there is dots info
-% '2019_04_29_11_04' = Pilot 15
-% '2019_04_29_14_07' = Pilot 16
-% '2019_04_30_10_33' = Pilot 17
-% '2019_04_30_14_54' = Pilot 18
-% '2019_04_30_15_51' = Pilot 19
-% =============================
-timestamp.pilot12 = '2019_03_27_10_49';
-timestamp.pilot13 = '2019_04_04_16_59';
-timestamp.pilot14 = '2019_04_04_18_00';
-timestamp.pilot15 = '2019_04_29_11_04';
-timestamp.pilot16 = '2019_04_29_14_07';
-timestamp.pilot17 = '2019_04_30_10_33';
-timestamp.pilot18 = '2019_04_30_14_54';
-timestamp.pilot19 = '2019_04_30_15_51';
-
-data_timestamp = timestamp.(['pilot',pilot_number]); 
-
-% location of .csv files to output
-csvPath = ['data/Pilot',pilot_number,'/'];
-fileNameWithoutExt = ['pilot',pilot_number];
-
+csvPath = datapath;
+fileNameWithoutExt = timestamp;
 %% FIRA.ecodes data
-[topNode, FIRA] = ...
-    topsTreeNodeTopNode.loadRawData(studyTag,...
-    data_timestamp);
-% T=array2table(FIRA.ecodes.data, 'VariableNames', FIRA.ecodes.name);
-% writetable(T,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
+[topNode, FIRA] = load_SingleCP_file(datapath,filename);
 
+writetable(FIRA,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
+disp('FIRA written')
 %% Dots data
 % columns of following matrix represent the following variables
+subjNumber=99;
 dotsColNames = {...
     'xpos', ...
     'ypos', ...
@@ -83,10 +70,23 @@ for taskID=1:length(topNode.children)
             
             fullMatrix(start_block:end_block,:) = [...
                 squeeze(dotsPositions(:,:,frame)'),...
-                repmat([frame,dumpTime,npilot,taskID],numDots,1)];
+                repmat([frame,dumpTime,subjNumber,taskID],numDots,1)];
         end
    end
 end
 U=array2table(fullMatrix, 'VariableNames', dotsColNames);
 writetable(U,[csvPath,fileNameWithoutExt,'_dotsPositions.csv'],...
     'WriteRowNames',true)
+disp('dots written')
+% %% Update 
+% if curr_session < length(sessions)
+%     metadump(end+1,:) = {subjNumber, curr_session+1};
+%     writetable(metadump, dump_path, 'WriteRowNames',false);
+%     disp('updated session number in metaDump.csv')
+% elseif subjNumber < length(subjects)
+%     metadump(end+1, :) = {subjNumber + 1, 1};
+%     writetable(metadump, dump_path, 'WriteRowNames',false);
+%     disp('updated subject number in metaDump.csv')
+% else
+%     disp('all dumped, for all subjects and all sessions')
+% end

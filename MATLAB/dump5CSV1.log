@@ -1,0 +1,277 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2016 The MathWorks, Inc.
+               R2016a Update 7 (9.0.0.960322) 64-bit (maci64)
+                             September 20, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+Resetting path to factory state.
+Adding "ToolboxToolbox" to path at "/Users/adrian/Documents/MATLAB/ToolboxToolbox".
+    ----------------------------------------------------
+	Your MATLAB license will expire in 40 days.
+	Please contact your system administrator or
+	MathWorks to renew this license.
+    ----------------------------------------------------
+
+	Academic License
+
+>> >> >> >> >> >> >> >> >> >> >> >> Locating project "Analysis_SingleCP_DotsReversal" within "/Users/adrian/Documents/MATLAB/projects".
+  Found at "/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal".
+Local copy of ToolboxToolbox is up to date.
+Updating "ToolboxRegistry".
+Already up to date.
+Found "Analysis_SingleCP_DotsReversal" and skipping update.
+Updating "Task_SingleCP_DotsReversal_dev".
+From https://github.com/TheGoldLab/Task_SingleCP_DotsReversal
+ * branch            dev        -> FETCH_HEAD
+Already up to date.
+Updating "Lab_Matlab_Control_stable".
+From https://github.com/TheGoldLab/Lab_Matlab_Control
+ * branch            stable     -> FETCH_HEAD
+Already up to date.
+Updating "Lab_Matlab_Utilities".
+Already up to date.
+Updating "mgl".
+Already up to date.
+Updating "mQUESTPlus".
+Already up to date.
+Resetting path to factory state.
+Adding "ToolboxToolbox" to path at "/Users/adrian/Documents/MATLAB/ToolboxToolbox".
+Adding "Analysis_SingleCP_DotsReversal" to path at "/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal".
+Adding "Task_SingleCP_DotsReversal_dev" to path at "/Users/adrian/Documents/MATLAB/toolboxes/Task_SingleCP_DotsReversal_dev".
+Adding "Lab_Matlab_Control_stable" to path at "/Users/adrian/Documents/MATLAB/toolboxes/Lab_Matlab_Control_stable".
+Adding "Lab_Matlab_Utilities" to path at "/Users/adrian/Documents/MATLAB/toolboxes/Lab_Matlab_Utilities".
+Adding "mgl" to path at "/Users/adrian/Documents/MATLAB/toolboxes/mgl".
+Adding "mQUESTPlus" to path at "/Users/adrian/Documents/MATLAB/toolboxes/mQUESTPlus".
+Checking for "Analysis_SingleCP_DotsReversal" local hook.
+Checking for "Task_SingleCP_DotsReversal_dev" local hook.
+Checking for "Lab_Matlab_Control_stable" local hook.
+Checking for "Lab_Matlab_Utilities" local hook.
+Checking for "mgl" local hook.
+Checking for "mQUESTPlus" local hook.
+Looks good: 6 resolved toolboxes deployed OK.
+>> >> >> >>     'c577366758027956b21fcb95a8db0d1e'
+    'x30bdd3d8ad24d522dc158030fb5c18d7'
+    'c71c3808bc33ba05928e1bc5f93a9078'
+    'x5f5dbb54ed21cfeb4ac045e0328181cc'
+    'x648f9ad78ad1211c172d1a1cd2c5af3f'
+
+>> >> >> >> >> >> >>     'session1'
+    'session2'
+    'session3'
+    'session4'
+    'session5'
+    'session6'
+    'session7'
+
+>> >> >> >> /Users/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_31/
+>> >> >> >> >> FIRA defined
+/Users/adrian/SingleCP_DotsReversal/raw/2019_06_24_13_31/
+2019_06_24_13_31_topsDataLog.mat
+in the loop
+Quest
+in the loop
+Block2
+in the loop
+{Error using load_SingleCP_file (line 25)
+Cannot concatenate the table variable 'trialStart' because it is a cell in one
+table and a non-cell in another.
+} 
+>> >> {Undefined function or variable 'FIRA'.
+} 
+>> FIRA written
+>> >> >> >> >> >> >> >> {Undefined variable "topNode" or class "topNode.children".
+} 
+>> >> >> dots written
+>> >> updated session number in metaDump.csv
+>> 
+------------------------------------------------------------------------
+       Segmentation violation detected at Mon Jul 22 12:15:02 2019
+------------------------------------------------------------------------
+
+Configuration:
+  Crash Decoding      : Disabled
+  Crash Mode          : continue (default)
+  Current Graphics Driver: Unknown software 
+  Current Visual      : None
+  Default Encoding    : ISO-8859-1
+  Host Name           : ristretto.psych.upenn.edu
+  MATLAB Architecture : maci64
+  MATLAB Root         : /Applications/MATLAB_R2016a.app
+  MATLAB Version      : 9.0.0.960322 (R2016a) Update 7
+  OpenGL              : software
+  Operating System    : Darwin 14.5.0 Darwin Kernel Version 14.5.0: Sun Sep 25 22:07:15 PDT 2016; root:xnu-2782.50.9~1/RELEASE_X86_64 x86_64
+  Processor ID        : x86 Family 6 Model 23 Stepping 10, GenuineIntel
+  Virtual Machine     : Java 1.7.0_75-b13 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
+  Window System       : None
+
+Fault Count: 1
+
+
+Abnormal termination:
+Segmentation violation
+
+Register State (from fault):
+  RAX = 000000010ee87a00  RBX = 0000000000000810
+  RCX = 000000010ee87a00  RDX = 0000000000000008
+  RSP = 000000010ee88400  RBP = 0000000000000012
+  RSI = 00007fa655853b88  RDI = 000000010a3b0000
+
+   R8 = 00000001137ba8f0   R9 = 00007fff8c25bb1d
+  R10 = 0000000000000407  R11 = 00000001137ba920
+  R12 = 000000010a3b0000  R13 = 0000000000000810
+  R14 = 00000001137ba840  R15 = 000000010efc6dc5
+
+  RIP = 00000001137ba870  RFL = 000000010efc761c
+
+   CS = 00000001137ba920   FS = 0000000000000a00   GS = 0000000000000000
+
+Stack Trace (from fault):
+[  0] 0x000000010cd5e314 /Applications/MATLAB_R2016a.app/bin/maci64/libmwfl.dylib+00037652 _ZN2fl4diag15stacktrace_base7captureERKNS0_14thread_contextEm+00000052
+[  1] 0x000000010cd61899 /Applications/MATLAB_R2016a.app/bin/maci64/libmwfl.dylib+00051353 _ZN2fl4test17terminate_handledEv+00000937
+[  2] 0x000000010cd6126c /Applications/MATLAB_R2016a.app/bin/maci64/libmwfl.dylib+00049772 _ZN2fl4diag13terminate_logEPKcPK17__darwin_ucontext+00000188
+[  3] 0x000000010f7fd9c0 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcr.dylib+00428480 _Z32mnRunPathDependentInitializationv+00003024
+[  4] 0x000000010f7fdc92 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcr.dylib+00429202 _Z32mnRunPathDependentInitializationv+00003746
+[  5] 0x000000010f7fbeea /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcr.dylib+00421610 mnFatalSignalHandler+00000154
+[  6] 0x00007fff96418f1a           /usr/lib/system/libsystem_platform.dylib+00020250 _sigtramp+00000026
+[  7] 0x0074002f00420041                                   <unknown-module>+00000000
+[  8] 0x000000010efc6dc5 /Users/adrian/Documents/MATLAB/toolboxes/Lab_Matlab_Control_stable/snow-dots/mex/dotsMgl/dotsMglDeleteVertexBufferObject.mexmaci64+00003525 dotsMglClearGLErrors+00000021
+[  9] 0x000000010efc761c /Users/adrian/Documents/MATLAB/toolboxes/Lab_Matlab_Control_stable/snow-dots/mex/dotsMgl/dotsMglDeleteVertexBufferObject.mexmaci64+00005660 mexFunction+00000028
+[ 10] 0x0000000110571d34 /Applications/MATLAB_R2016a.app/bin/maci64/libmex.dylib+00073012 mexRunMexFile+00000084
+[ 11] 0x000000011056e0d1 /Applications/MATLAB_R2016a.app/bin/maci64/libmex.dylib+00057553 _ZN7Mfh_mex30runMexFileWithSignalProtectionEiPP11mxArray_tagiS2_+00000113
+[ 12] 0x000000011056e25b /Applications/MATLAB_R2016a.app/bin/maci64/libmex.dylib+00057947 _ZN7Mfh_mex13dispatch_fileEiPP11mxArray_tagiS2_+00000203
+[ 13] 0x000000010f90547c /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_dispatcher.dylib+00402556 _ZN8Mfh_file16dispatch_fh_implEMS_FviPP11mxArray_tagiS2_EiS2_iS2_+00000796
+[ 14] 0x000000010f9058f3 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_dispatcher.dylib+00403699 _ZN8Mfh_file11dispatch_fhEiPP11mxArray_tagiS2_+00000035
+[ 15] 0x0000000110c8aaee /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+06855406 _ZN9MathWorks3lxe17LxeDispatcherImpl12apply_handleEPNS0_29DispatcherFunctionHandleTokenEmPNS0_6xvalueEmPKS4_+00000910
+[ 16] 0x0000000110dadab5 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+08047285 _ZN9MathWorks3lxe38cpp_primitive_template_fn_with_contextIXadL_ZNS0_16ans_apply_handleEPvNS_2ts4TypeEPKvS2_S2_EEEEbS2_S4_S6_S2_S2_+00000021
+[ 17] 0x0000000110814077 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02175095 _ZN9MathWorks3lxe13IrInterpreter17ApplyCppPrimitiveEPN2ir4termES4_RKNS_2ts4TypeES8_+00000407
+[ 18] 0x000000011081326f /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02171503 _ZN9MathWorks3lxe13IrInterpreter31process_application_of_constantEPN2ir4termE+00001999
+[ 19] 0x0000000110811738 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02164536 _ZN9MathWorks3lxe13IrInterpreter13applyConstantEPN2ir4termE+00000248
+[ 20] 0x000000011080fc12 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02157586 _ZN9MathWorks3lxe12IRTreeWalker9applyTermEPN2ir4termE+00000098
+[ 21] 0x00000001108100df /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02158815 _ZN9MathWorks3lxe12IRTreeWalker11getNextIRPCENS0_9irpc_typeE+00000559
+[ 22] 0x0000000110811429 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02163753 _ZN9MathWorks3lxe13IrInterpreter9tree_walkERKNS0_9irpc_typeES4_+00000185
+[ 23] 0x00000001108112f6 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02163446 _ZN9MathWorks3lxe13IrInterpreter9InterpretEv+00000086
+[ 24] 0x00000001108f1c13 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+03083283 _ZN9MathWorks3lxe15ExecutionDriver9ThreadRunEv+00003283
+[ 25] 0x00000001108f54f0 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+03097840 _ZN9MathWorks3lxe12IrEngineImpl5ApplyERKN2ir6IrTreeEPvS6_+00000352
+[ 26] 0x0000000110b6dc03 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+05688323 _ZN9MathWorks3lxe17IrEngineDecorator5ApplyERKN2ir6IrTreeEPvS6_+00000211
+[ 27] 0x0000000110c80bf0 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+06814704 _ZN9MathWorks3lxe27FileBasedMatlabCodeFunction16DispatchFunctionEiPP11mxArray_tagiS4_+00000848
+[ 28] 0x000000010f90547c /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_dispatcher.dylib+00402556 _ZN8Mfh_file16dispatch_fh_implEMS_FviPP11mxArray_tagiS2_EiS2_iS2_+00000796
+[ 29] 0x000000010f9058f3 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_dispatcher.dylib+00403699 _ZN8Mfh_file11dispatch_fhEiPP11mxArray_tagiS2_+00000035
+[ 30] 0x0000000113c68d32 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+01183026 _ZNK4mcos17MScopedMethodInfo6invokeEPKNS_9COSClientERiPNS_8COSValueEiPKS5_+00000530
+[ 31] 0x0000000113c89829 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+01316905 _ZN4mcos13MDestructorMIC2ENS_9COSStringENS_9COSNameIDEPKcPNS_17MDefinedClassInfoEbb+00001369
+[ 32] 0x0000000113b8e017 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00286743 _ZN4mcos22ClassDefinitionManager20callCachedDestructorENS_15COSInterfacePtrE+00000199
+[ 33] 0x0000000113b4c771 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00018289 _ZN4mcos9COSClassI14callDestructorENS_15COSInterfacePtrE+00000305
+[ 34] 0x0000000113b9319d /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00307613 _ZN4mcos22ClassDefinitionManager15destroyInstanceEPNS_12COSInterfaceE+00000093
+[ 35] 0x0000000113b727a0 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00173984 _ZN4mcos13COSInterfaceI10destroyRefEv+00000288
+[ 36] 0x000000010e12fbaf /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos.dylib+00019375 _ZN4mcos15COSInterfacePtr7releaseEv+00000079
+[ 37] 0x0000000113c8d183 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+01331587 _Z24omDestroyElementListenerPvPK11mxArray_tag+00000227
+[ 38] 0x000000010cf32c67 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00068711 _ZN6matrix6detail10noninlined12mx_array_api21postdestroy_containerEP11mxArray_tag+00002375
+[ 39] 0x000000010cf31ca7 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00064679 _ZN6matrix6detail10noninlined12mx_array_api12destroy_leafEP11mxArray_tagb+00000119
+[ 40] 0x000000010cf320e3 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00065763 _ZN6matrix6detail10noninlined12mx_array_api16try_destroy_leafEP11mxArray_tag+00000371
+[ 41] 0x000000010cf32229 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00066089 _ZN6matrix6detail10noninlined12mx_array_api21try_destroy_containerEP11mxArray_tag+00000265
+[ 42] 0x000000010cf2cdbf /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00044479 _ZN6matrix6detail10noninlined12mx_array_api31try_nonrecursive_mxDestroyArrayEP11mxArray_tag+00000031
+[ 43] 0x0000000113b67b1b /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00129819 _ZN4mcos15COSGenericPropI12destroyValueENS_15COSInterfacePtrE+00000299
+[ 44] 0x0000000113b65eb6 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00122550 _ZN4mcos16COSGenericClassI18deallocateInstanceEPNS_12COSInterfaceEPv+00000214
+[ 45] 0x0000000113b93359 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00308057 _ZN4mcos22ClassDefinitionManager18deallocateInstanceEPNS_12COSInterfaceE+00000217
+[ 46] 0x0000000113b727c3 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00174019 _ZN4mcos13COSInterfaceI10destroyRefEv+00000323
+[ 47] 0x000000010e12fbaf /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos.dylib+00019375 _ZN4mcos15COSInterfacePtr7releaseEv+00000079
+[ 48] 0x0000000113c8d183 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+01331587 _Z24omDestroyElementListenerPvPK11mxArray_tag+00000227
+[ 49] 0x000000010cf32c67 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00068711 _ZN6matrix6detail10noninlined12mx_array_api21postdestroy_containerEP11mxArray_tag+00002375
+[ 50] 0x000000010cf31ca7 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00064679 _ZN6matrix6detail10noninlined12mx_array_api12destroy_leafEP11mxArray_tagb+00000119
+[ 51] 0x000000010cf320e3 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00065763 _ZN6matrix6detail10noninlined12mx_array_api16try_destroy_leafEP11mxArray_tag+00000371
+[ 52] 0x000000010cf2cdaf /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00044463 _ZN6matrix6detail10noninlined12mx_array_api31try_nonrecursive_mxDestroyArrayEP11mxArray_tag+00000015
+[ 53] 0x0000000113b67b1b /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00129819 _ZN4mcos15COSGenericPropI12destroyValueENS_15COSInterfacePtrE+00000299
+[ 54] 0x0000000113b65eb6 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00122550 _ZN4mcos16COSGenericClassI18deallocateInstanceEPNS_12COSInterfaceEPv+00000214
+[ 55] 0x0000000113b93359 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00308057 _ZN4mcos22ClassDefinitionManager18deallocateInstanceEPNS_12COSInterfaceE+00000217
+[ 56] 0x0000000113b727c3 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00174019 _ZN4mcos13COSInterfaceI10destroyRefEv+00000323
+[ 57] 0x000000010e12fbaf /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos.dylib+00019375 _ZN4mcos15COSInterfacePtr7releaseEv+00000079
+[ 58] 0x0000000113c8d183 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+01331587 _Z24omDestroyElementListenerPvPK11mxArray_tag+00000227
+[ 59] 0x000000010cf32c67 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00068711 _ZN6matrix6detail10noninlined12mx_array_api21postdestroy_containerEP11mxArray_tag+00002375
+[ 60] 0x000000010cf31ca7 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00064679 _ZN6matrix6detail10noninlined12mx_array_api12destroy_leafEP11mxArray_tagb+00000119
+[ 61] 0x000000010cf320e3 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00065763 _ZN6matrix6detail10noninlined12mx_array_api16try_destroy_leafEP11mxArray_tag+00000371
+[ 62] 0x000000010cf32229 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00066089 _ZN6matrix6detail10noninlined12mx_array_api21try_destroy_containerEP11mxArray_tag+00000265
+[ 63] 0x000000010cf2cdbf /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00044479 _ZN6matrix6detail10noninlined12mx_array_api31try_nonrecursive_mxDestroyArrayEP11mxArray_tag+00000031
+[ 64] 0x0000000113b67b1b /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00129819 _ZN4mcos15COSGenericPropI12destroyValueENS_15COSInterfacePtrE+00000299
+[ 65] 0x0000000113b65eb6 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00122550 _ZN4mcos16COSGenericClassI18deallocateInstanceEPNS_12COSInterfaceEPv+00000214
+[ 66] 0x0000000113b93359 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00308057 _ZN4mcos22ClassDefinitionManager18deallocateInstanceEPNS_12COSInterfaceE+00000217
+[ 67] 0x0000000113b727c3 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00174019 _ZN4mcos13COSInterfaceI10destroyRefEv+00000323
+[ 68] 0x000000010e12fbaf /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos.dylib+00019375 _ZN4mcos15COSInterfacePtr7releaseEv+00000079
+[ 69] 0x0000000113c8d183 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+01331587 _Z24omDestroyElementListenerPvPK11mxArray_tag+00000227
+[ 70] 0x000000010cf32c67 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00068711 _ZN6matrix6detail10noninlined12mx_array_api21postdestroy_containerEP11mxArray_tag+00002375
+[ 71] 0x000000010cf31ca7 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00064679 _ZN6matrix6detail10noninlined12mx_array_api12destroy_leafEP11mxArray_tagb+00000119
+[ 72] 0x000000010cf320e3 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00065763 _ZN6matrix6detail10noninlined12mx_array_api16try_destroy_leafEP11mxArray_tag+00000371
+[ 73] 0x000000010cf32229 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00066089 _ZN6matrix6detail10noninlined12mx_array_api21try_destroy_containerEP11mxArray_tag+00000265
+[ 74] 0x000000010cf2ce0c /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00044556 _ZN6matrix6detail10noninlined12mx_array_api31try_nonrecursive_mxDestroyArrayEP11mxArray_tag+00000108
+[ 75] 0x0000000123bdbf4d /Applications/MATLAB_R2016a.app/bin/maci64/libmwcontainers.dylib+00462669 _ZN6matlab9container3Map8TypedMapIdP11mxArray_tagNSt3__14lessIdEEED2Ev+00000077
+[ 76] 0x0000000123bdb02e /Applications/MATLAB_R2016a.app/bin/maci64/libmwcontainers.dylib+00458798 _ZN6matlab9container3Map8TypedMapIdP11mxArray_tagNSt3__14lessIdEEEC2ENS5_12basic_stringIcNS5_11char_traitsIcEENS5_9allocatorIcEEEESE_+00000254
+[ 77] 0x0000000123c02946 /Applications/MATLAB_R2016a.app/bin/maci64/libmwcontainers.dylib+00620870 _ZN6matlab9container3Map18MapToMatlabAdapterC2EPN4mcos12COSInterfaceE+00000310
+[ 78] 0x0000000113b932ed /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00307949 _ZN4mcos22ClassDefinitionManager18deallocateInstanceEPNS_12COSInterfaceE+00000109
+[ 79] 0x0000000113b727c3 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00174019 _ZN4mcos13COSInterfaceI10destroyRefEv+00000323
+[ 80] 0x000000010e12fbaf /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos.dylib+00019375 _ZN4mcos15COSInterfacePtr7releaseEv+00000079
+[ 81] 0x0000000113c8d183 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+01331587 _Z24omDestroyElementListenerPvPK11mxArray_tag+00000227
+[ 82] 0x000000010cf32c67 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00068711 _ZN6matrix6detail10noninlined12mx_array_api21postdestroy_containerEP11mxArray_tag+00002375
+[ 83] 0x000000010cf31ca7 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00064679 _ZN6matrix6detail10noninlined12mx_array_api12destroy_leafEP11mxArray_tagb+00000119
+[ 84] 0x000000010cf320e3 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00065763 _ZN6matrix6detail10noninlined12mx_array_api16try_destroy_leafEP11mxArray_tag+00000371
+[ 85] 0x000000010cf2cdaf /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00044463 _ZN6matrix6detail10noninlined12mx_array_api31try_nonrecursive_mxDestroyArrayEP11mxArray_tag+00000015
+[ 86] 0x0000000123bba9cd /Applications/MATLAB_R2016a.app/bin/maci64/libmwcontainers.dylib+00326093 _ZN6matlab9container3Map8TypedMapINSt3__112basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEEP11mxArray_tagNS3_4lessIS9_EEED2Ev+00000077
+[ 87] 0x0000000123bb922e /Applications/MATLAB_R2016a.app/bin/maci64/libmwcontainers.dylib+00320046 _ZN6matlab9container3Map8TypedMapINSt3__112basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEEP11mxArray_tagNS3_4lessIS9_EEEC2ES9_S9_+00000254
+[ 88] 0x0000000123c02946 /Applications/MATLAB_R2016a.app/bin/maci64/libmwcontainers.dylib+00620870 _ZN6matlab9container3Map18MapToMatlabAdapterC2EPN4mcos12COSInterfaceE+00000310
+[ 89] 0x0000000113b932ed /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00307949 _ZN4mcos22ClassDefinitionManager18deallocateInstanceEPNS_12COSInterfaceE+00000109
+[ 90] 0x0000000113b727c3 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00174019 _ZN4mcos13COSInterfaceI10destroyRefEv+00000323
+[ 91] 0x000000010e12fbaf /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos.dylib+00019375 _ZN4mcos15COSInterfacePtr7releaseEv+00000079
+[ 92] 0x0000000113c8d183 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+01331587 _Z24omDestroyElementListenerPvPK11mxArray_tag+00000227
+[ 93] 0x000000010cf32c67 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00068711 _ZN6matrix6detail10noninlined12mx_array_api21postdestroy_containerEP11mxArray_tag+00002375
+[ 94] 0x000000010cf31ca7 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00064679 _ZN6matrix6detail10noninlined12mx_array_api12destroy_leafEP11mxArray_tagb+00000119
+[ 95] 0x000000010cf320e3 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00065763 _ZN6matrix6detail10noninlined12mx_array_api16try_destroy_leafEP11mxArray_tag+00000371
+[ 96] 0x000000010cf2cdaf /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00044463 _ZN6matrix6detail10noninlined12mx_array_api31try_nonrecursive_mxDestroyArrayEP11mxArray_tag+00000015
+[ 97] 0x0000000113b67b1b /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00129819 _ZN4mcos15COSGenericPropI12destroyValueENS_15COSInterfacePtrE+00000299
+[ 98] 0x0000000113b65eb6 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00122550 _ZN4mcos16COSGenericClassI18deallocateInstanceEPNS_12COSInterfaceEPv+00000214
+[ 99] 0x0000000113b93359 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00308057 _ZN4mcos22ClassDefinitionManager18deallocateInstanceEPNS_12COSInterfaceE+00000217
+[100] 0x0000000113b727c3 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+00174019 _ZN4mcos13COSInterfaceI10destroyRefEv+00000323
+[101] 0x000000010e12fbaf /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos.dylib+00019375 _ZN4mcos15COSInterfacePtr7releaseEv+00000079
+[102] 0x0000000113c8d183 /Applications/MATLAB_R2016a.app/bin/maci64/libmwmcos_impl.dylib+01331587 _Z24omDestroyElementListenerPvPK11mxArray_tag+00000227
+[103] 0x000000010cf32c67 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00068711 _ZN6matrix6detail10noninlined12mx_array_api21postdestroy_containerEP11mxArray_tag+00002375
+[104] 0x000000010cf31ca7 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00064679 _ZN6matrix6detail10noninlined12mx_array_api12destroy_leafEP11mxArray_tagb+00000119
+[105] 0x000000010cf320e3 /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00065763 _ZN6matrix6detail10noninlined12mx_array_api16try_destroy_leafEP11mxArray_tag+00000371
+[106] 0x000000010cf2cdaf /Applications/MATLAB_R2016a.app/bin/maci64/libmx.dylib+00044463 _ZN6matrix6detail10noninlined12mx_array_api31try_nonrecursive_mxDestroyArrayEP11mxArray_tag+00000015
+[107] 0x00000001122d9919 /Applications/MATLAB_R2016a.app/bin/maci64/libmwlxetypes.dylib+00108825 _ZN9MathWorks3lxe6xvalue5clearENS1_13UninitializedE+00000137
+[108] 0x0000000110b5d4fe /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+05620990 _ZN9MathWorks3lxe17MapBasedWorkspace8ClearAllEv+00000222
+[109] 0x0000000110c97e0a /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+06909450 _ZN9MathWorks3lxe20MatlabCodeLoadModule5clearEv+00000122
+[110] 0x000000010f8f529b /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_dispatcher.dylib+00336539 mdClearFunctionsByName+00000363
+[111] 0x0000000110bb411e /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+05976350 _ZN9MathWorks3lxe5Clear8ClearAllEv+00000062
+[112] 0x0000000110bb43af /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+05977007 _ZN9MathWorks3lxe5Clear27ImplementCodeClearOperationENS0_8CodeTypeEPKc+00000303
+[113] 0x0000000110bb4642 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+05977666 _ZN9MathWorks3lxe5Clear7ExecuteEv+00000226
+[114] 0x0000000110bb47d4 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+05978068 _ZN9MathWorks3lxe9LxeBridge12FullClearFcnEiPP11mxArray_tagiS4_+00000068
+[115] 0x000000010f8c0966 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_dispatcher.dylib+00121190 _Z14new_fh_builtinPFviPP11mxArray_tagiS1_EPKcP11MdispatcherP13Mlm_MATLAB_fniiiiibbbi+00001318
+[116] 0x000000010f8a7854 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_dispatcher.dylib+00018516 _ZN13Mfh_MATLAB_fn11dispatch_fhEiPP11mxArray_tagiS2_+00000500
+[117] 0x0000000110c8aaee /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+06855406 _ZN9MathWorks3lxe17LxeDispatcherImpl12apply_handleEPNS0_29DispatcherFunctionHandleTokenEmPNS0_6xvalueEmPKS4_+00000910
+[118] 0x0000000110dadab5 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+08047285 _ZN9MathWorks3lxe38cpp_primitive_template_fn_with_contextIXadL_ZNS0_16ans_apply_handleEPvNS_2ts4TypeEPKvS2_S2_EEEEbS2_S4_S6_S2_S2_+00000021
+[119] 0x0000000110814077 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02175095 _ZN9MathWorks3lxe13IrInterpreter17ApplyCppPrimitiveEPN2ir4termES4_RKNS_2ts4TypeES8_+00000407
+[120] 0x000000011081326f /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02171503 _ZN9MathWorks3lxe13IrInterpreter31process_application_of_constantEPN2ir4termE+00001999
+[121] 0x0000000110811738 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02164536 _ZN9MathWorks3lxe13IrInterpreter13applyConstantEPN2ir4termE+00000248
+[122] 0x000000011080fc12 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02157586 _ZN9MathWorks3lxe12IRTreeWalker9applyTermEPN2ir4termE+00000098
+[123] 0x00000001108100df /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02158815 _ZN9MathWorks3lxe12IRTreeWalker11getNextIRPCENS0_9irpc_typeE+00000559
+[124] 0x0000000110811429 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02163753 _ZN9MathWorks3lxe13IrInterpreter9tree_walkERKNS0_9irpc_typeES4_+00000185
+[125] 0x00000001108112f6 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+02163446 _ZN9MathWorks3lxe13IrInterpreter9InterpretEv+00000086
+[126] 0x00000001108f1c13 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+03083283 _ZN9MathWorks3lxe15ExecutionDriver9ThreadRunEv+00003283
+[127] 0x00000001108f54f0 /Applications/MATLAB_R2016a.app/bin/maci64/libmwm_lxe.dylib+03097840 _ZN9MathWorks3lxe12IrEngineImpl5ApplyERKN2ir6IrTreeEPvS6_+00000352
+
+
+This error was detected while a MEX-file was running. If the MEX-file
+is not an official MathWorks function, please examine its source code
+for errors. Please consult the External Interfaces Guide for information
+on debugging MEX-files.
+
+If this problem is reproducible, please submit a Service Request via:
+    http://www.mathworks.com/support/contact_us/
+
+A technical support engineer might contact you with further information.
+
+Thank you for your help.** This crash report has been saved to disk as /Users/adrian/matlab_crash_dump.2556-1 **
+
+
+
+MATLAB is exiting because of fatal error

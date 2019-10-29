@@ -1,0 +1,20 @@
+$ python consistency_checks.py log
+
+comparing with theoretical Block3
+
+comparing with theoretical Block4
+
+comparing with theoretical Block3
+reconstructed dataframe does not match theory
+
+2019_06_21_13_34 ('/home/adrian/SingleCP_DotsReversal/raw/2019_06_21_13_34/2019_06_21_13_34customFIRA.csv', 'daa4d2be5663975a4d788f8a5187e93c')
+
+Traceback (most recent call last):
+  File "consistency_checks.py", line 1565, in <module>
+    valid_meta_data = produce_valid_metadata(original_meta)
+  File "consistency_checks.py", line 905, in produce_valid_metadata
+    session_dict = match_data(session_info, meta_data_import)
+  File "consistency_checks.py", line 861, in match_data
+    raise ValueError('data match failed')
+ValueError: data match failed
+

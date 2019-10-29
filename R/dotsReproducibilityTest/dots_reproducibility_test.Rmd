@@ -1,0 +1,30 @@
+---
+title: "Dots Reproducibility Test"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+
+```{r}
+library(data.table)
+library(ggplot2)
+# source("explore_functions.r")
+```
+
+# Cross-sessions comparison of dotsPositions.csv files
+```{r}
+file1 <- fread("/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_10_01_11_53/2019_10_01_11_53_dotsPositions.csv")
+file1[,`:=`(seqDumpTime=NULL,pilotID=NULL,taskID=NULL)]
+
+file2 <- fread("/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_10_01_12_06/2019_10_01_12_06_dotsPositions.csv")
+file2[,`:=`(seqDumpTime=NULL,pilotID=NULL,taskID=NULL)]
+```
+
+```{r}
+match <- file2[1:6100,]==file1
+```
+
+```{r}
+colSums(match)
+```

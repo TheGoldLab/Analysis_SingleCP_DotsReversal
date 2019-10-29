@@ -1,0 +1,6 @@
+running
+  '/home/adrian/anaconda3/envs/r-environment/lib/R/bin/R --slave --no-restore --file=dotsReproducibilityTest.r'
+
+Loading required package: ggplot2
+null device 
+          1 

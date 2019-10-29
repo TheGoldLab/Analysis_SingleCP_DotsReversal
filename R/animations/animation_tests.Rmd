@@ -1,0 +1,99 @@
+---
+title: "Animation Tests"
+output: html_notebook
+---
+```{r}
+library(gapminder)
+library(gganimate)
+library(ggplot2)
+library(data.table)
+```
+
+```{r}
+# str(gapminder)
+# head(gapminder)
+setwd('/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/R/animations/')
+```
+
+```{r}
+# dt <- as.data.table(gapminder)
+# dt[,meanLifeExp:=mean(lifeExp), by=.(year, continent)]
+# newdt <- unique(dt[, .(meanLifeExp, year)])
+# p <- ggplot(
+#   dt,
+#   aes(x = year, y=meanLifeExp, group=1)) +
+#   geom_line(show.legend = FALSE) +
+#   facet_grid(~continent) +
+#   labs(x = "year", y = "Mean Life expectancy") + 
+#   transition_reveal(year)
+```
+
+```{r}
+#animate(p)
+```
+
+```{r}
+# BUG HERE, WHY???
+#anim_save("test5.gif", p)
+```
+
+```{r}
+source("animations.r")
+```
+
+```{r}
+theme_set(theme_bw())
+```
+
+```{r}
+d1 <- get_acc_data()
+```
+
+```{r}
+levels(d1$model)
+```
+
+```{r}
+d1[,`:=`(Pwrong=NULL, C=NULL, variable=NULL)]
+d1[,`:=`(modelClass="Reset")]
+d1[model=="DDM",modelClass:="Perfect Accum."]
+d1[model=="Low Leak" | model=="High Leak", modelClass:="Leak"]
+```
+
+```{r}
+d1[,modelClass:=factor(modelClass, levels = c("Perfect Accum.", "Leak", "Reset"))]
+```
+
+```{r}
+str(d1)
+```
+
+```{r}
+names(d1) <- c("time", "value", "CP", "model", "modelClass")
+# d1[,var:="accuracy"]
+head(d1)
+```
+
+```{r}
+model_list=c("PA", "Low Leak", "High Leak", "Zero Reset", "Low-h Reset", "High-h Reset")
+anim <- ggplot(d1, aes(x=time, y=value, group=model, col=model)) + geom_line(size=2) +
+  facet_grid(modelClass~CP) + geom_hline(yintercept = 0.5, linetype="dashed") +
+  geom_vline(xintercept = 0.2, color="blue", linetype="dashed") +
+  ylab("Accuracy") + xlab("Viewing Duration (s)") + 
+  scale_color_discrete(name="Model", labels=model_list)
+  #transition_reveal(t)
+```
+
+```{r}
+plot(anim)
+```
+
+```{r}
+anim_save('accuracies.gif',anim + transition_reveal(time))
+```
+
+```{r}
+# seq(0, .4,1/60) 
+# seq(1/60,.2,1/60 )
+```
+
