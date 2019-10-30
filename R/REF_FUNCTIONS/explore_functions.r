@@ -40,6 +40,7 @@ get_full_data <- function(probCPasFactor = TRUE, excludeQuest = TRUE) {
 
 
   # add factor coherence category 
+  data[, coh_cat:="0"]
   data[coherence > 0, coh_cat:= "th"]
   data[coherence==100, coh_cat:="100"]
   data[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered=T)]
