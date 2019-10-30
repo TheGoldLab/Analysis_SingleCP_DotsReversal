@@ -1,0 +1,158 @@
+---
+title: "CPD investigation"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+```{r}
+library(ggplot2)
+library(data.table)
+source("/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/R/REF_FUNCTIONS/explore_functions.r")
+```
+
+```{r}
+d <- get_full_data()
+```
+
+# Accuracy at Change-Point Detection Task
+```{r}
+acc_cpd <- unique(d[,.(acc=sum(cpCorrect)/.N, numTrials=.N), by=.(subject, probCP, viewingDuration, coh_cat)])
+acc_cpd[, `:=`(ci=1.96*sqrt(acc * (1-acc) / numTrials))]
+acc_cpd_avg_subj <- unique(d[,.(acc=sum(cpCorrect)/.N, numTrials=.N), by=.(probCP, viewingDuration, coh_cat)])
+acc_cpd_avg_subj[, `:=`(ci=1.96*sqrt(acc * (1-acc) / numTrials))]
+```
+
+```{r}
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+
+```{r, fig.width=9, fig.height=13}
+ggplot(acc_cpd, aes(x=probCP, y=acc, group=coh_cat, col=coh_cat)) + geom_point(size=4) + geom_line(size=1.5) + 
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=acc-ci, ymax=acc+ci), width=.3, size=.7) +
+  facet_grid(subject ~ viewingDuration) +
+  scale_color_manual(values=cbbPalette) +
+  # scale_color_brewer(palette = "Dark2") +
+  theme_bw() +
+  theme(text=element_text(size=17)) + ylim(0,1) 
+```
+
+## Average across subjects
+```{r, fig.width=9}
+ggplot(acc_cpd_avg_subj, aes(x=probCP, y=acc, group=coh_cat, col=coh_cat)) + geom_point(size=4) + geom_line(size=1.5) + 
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=acc-ci, ymax=acc+ci), width=.3, size=.7) +
+  facet_grid(~ viewingDuration) +
+  scale_color_manual(values=cbbPalette) +
+  # scale_color_brewer(palette = "Dark2") +
+  theme_bw() +
+  theme(text=element_text(size=17)) + ylim(0,1) 
+```
+
+
+# ROC plane
+```{r}
+d_modified <- d[probCP > 0 & coh_cat != "100"]
+d_modified[, `:=`(respondedCP=0, isCP=0)]
+d_modified[cpChoice == "CP", respondedCP:=1]
+d_modified[presenceCP == "CP", isCP:=1]
+dd <- d_modified[,.(isCP, respondedCP, subject, probCP, dirChoice, dirCorrect, cpCorrect, viewingDuration, coh_cat)]
+roc_cpd <- unique(dd[,.(propCP=sum(respondedCP)/.N, trueProp=sum(isCP)/.N, numTrials=.N), 
+                     by=.(subject, probCP, viewingDuration, coh_cat)])
+roc_cpd[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciTrueProp=1.96*sqrt(trueProp * (1-trueProp) / numTrials))]
+
+roc_cpd_avg_subj <- unique(dd[,
+                              .(propCP=sum(respondedCP)/.N, trueProp=sum(isCP)/.N, numTrials=.N), 
+                              by=.(probCP, viewingDuration, coh_cat)])
+roc_cpd_avg_subj[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciTrueProp=1.96*sqrt(trueProp * (1-trueProp) / numTrials))]
+```
+
+```{r, fig.width=9, fig.height=13}
+ggplot(roc_cpd, aes(x=probCP, y=propCP, group=coh_cat, col=coh_cat)) + 
+  geom_point(size=4) + 
+  geom_line(size=1.5) + 
+  geom_line(aes(x=probCP, y=trueProp)) + 
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
+  facet_grid(subject ~ viewingDuration) +
+  scale_color_manual(values=cbbPalette) +
+  # scale_color_brewer(palette = "Dark2") +
+  theme_bw() +
+  theme(text=element_text(size=17))
+```
+
+## Average across 5 subjects
+
+```{r, fig.width=9}
+ggplot(roc_cpd_avg_subj, aes(x=probCP, y=propCP, group=coh_cat, col=coh_cat)) + 
+  geom_point(size=4) + 
+  geom_line(size=1.5) + 
+  geom_line(aes(x=probCP, y=trueProp)) + 
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
+  facet_grid(~ viewingDuration) +
+  scale_color_manual(values=cbbPalette) +
+  # scale_color_brewer(palette = "Dark2") +
+  theme_bw() +
+  theme(text=element_text(size=17))
+```
+# Hit/FA/Miss/CR
+```{r}
+roc2 <- d[,.(presenceCP, cpChoice, subject, viewingDuration, probCP)]
+roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
+roc2[presenceCP == "CP" & cpChoice == "CP", cpd:="Hit"]
+roc2[presenceCP == "noCP" & cpChoice == "CP", cpd:="FA"]
+roc2[presenceCP == "noCP" & cpChoice == "noCP", cpd:="CR"]
+roc2[,cpd:=factor(cpd, levels = c("Hit", "FA", "CR", "Miss"))]
+```
+
+```{r}
+roc2[cpd=="Miss", `:=`(len=.N), by=.(subject, viewingDuration, probCP)]
+roc2[cpd=="CR", len:=.N, by=.(subject, viewingDuration, probCP)]
+roc2[cpd=="Hit", len:=.N, by=.(subject, viewingDuration, probCP)]
+roc2[cpd=="FA", len:=.N, by=.(subject, viewingDuration, probCP)]
+roc2 <- unique(roc2[,`:=`(presenceCP=NULL, cpChoice=NULL)])
+rocflat <- dcast(roc2, subject + viewingDuration + probCP ~ cpd, value.var="len")
+names(rocflat)[4] <- "NAvals"
+rocflat[,`:=`(total=0)]
+rocflat[!is.na(Miss),`:=`(total=total + Miss)]
+rocflat[!is.na(Hit),`:=`(total=total + Hit)]
+rocflat[!is.na(FA),`:=`(total=total + FA)]
+rocflat[!is.na(CR),`:=`(total=total + CR)]
+rocflat[,Hit:=Hit/total]
+rocflat[,Miss:=Miss / total]
+rocflat[,CR:=CR / total]
+rocflat[,FA:=FA / total]
+rocflat[,total:=NULL]
+roc3 <- melt(rocflat, measure.vars = c("Hit", "FA", "Miss", "CR", "NAvals"), variable.name = "cpd", value.name = "len")
+head(roc3)
+```
+
+
+<!--
+dose is probCP
+supp is cpd
+       cpd  probCP  len
+## 1   Miss 0.5     6.8
+## 2   Hit  0       15.0
+## 3   Hit  0.2     33.0
+## 4   CR   0.8     4.2
+## 5   FA   0.2     10.0
+## 6   CR   0.8     29.5
+
+# Use position=position_dodge()
+ggplot(data=df2, aes(x=dose, y=len, fill=supp)) +
+geom_bar(stat="identity", position=position_dodge())
+-->
+
+```{r,fig.width=10, fig.height=10}
+ggplot(data=roc3, aes(x=probCP, y=len, fill=cpd)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  facet_grid(subject~viewingDuration) +
+  theme_bw() +
+  ylab("%") +
+  theme(text=element_text(size=17))
+```
+
