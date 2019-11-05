@@ -6,82 +6,67 @@ output: html_notebook
 ```{r}
 library(data.table)
 library(ggplot2)
+source("process.r")
 ```
 
 ```{r}
-DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/2019_11_05_10_27/'
+DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/2019_11_05_13_18/'
 ```
 
 ```{r}
-t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
-t2 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task100_date_2019_11_05_10_27.csv'))
+#t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
+t2 <- get_full_data(paste0(DATA_FOLDER, 'completed4AFCtrials_task100_date_2019_11_05_13_18.csv'))
 ```
 
-```{r}
-t1
-```
 
 ```{r}
 t2
 ```
 
-```{r}
-# removes (inplace) columns unnecessary for analysis
-process_raw <- function(dt, restrict2task = TRUE, probCPasFactor = TRUE) {
-  dt <- dt[!is.na(dirChoice)]  # delete rows where dirChoice is NA
-  dt[,`:=`(finalDuration=NULL,
-           dummyBlank=NULL,
-           cpScreenOn=NULL,
-           feedbackOn=NULL,
-           blankScreen=NULL,
-           targetOn=NULL,
-           fixationStart=NULL,
-           randSeedBase=NULL,
-           trialEnd=NULL,
-           trialStart=NULL)]
-  if (restrict2task) {
-    dt <- dt[taskID == 100]
-  }
-  
-  # set variables with appropriate type
-  dt[, `:=`(
-    subject=as.factor(subject),
-    dirChoice=as.factor(dirChoice),
-    cpChoice=factor(cpChoice),  # doesn't create level for NA values
-    dirCorrect=as.integer(dirCorrect),
-    cpCorrect=as.integer(cpCorrect),
-    direction=as.factor(direction),
-    reversal=factor(reversal, ordered=TRUE),
-    duration=as.integer(duration * 1000)
-  )]
-  
-  if (probCPasFactor) {
-    dt[,probCP:=factor(probCP, ordered = TRUE)]
-  }
-  
-  # render levels more human-friendly
-  levels(dt$dirChoice) <- c('left', 'right')
-  levels(dt$cpChoice) <- c('noCP', 'CP')
-  levels(dt$direction) <- c('right', 'left')
-  levels(dt$reversal) <- c('noCP', 'CP')
-  
-  
-  # add factor coherence category 
-  dt[, coh_cat:="0"]
-  dt[coherence > 0, coh_cat:="th"]
-  dt[coherence==100, coh_cat:="100"]
-  dt[,coh_cat:=factor(coh_cat, levels=c("0", "th", "100"), ordered=T)]
 
-  return(dt)
-}
-```
-
-```{r}
-t2 <- process_raw(t2)
-```
 
 ```{r}
 str(t2)
+```
+
+```{r}
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+acc <- t2[coh_cat=="th",dirAcc:=sum(dirCorrect)/.N, by=.(coh_cat, presenceCP, duration)]
+ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point() + geom_line() +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP"))
+```
+
+```{r}
+cpd <- t2[coh_cat=="th",cpAcc:=sum(cpCorrect)/.N, by=.(coh_cat, presenceCP, duration)]
+ggplot(unique(cpd[coh_cat=="th",.(cpAcc, presenceCP, duration)]), 
+       aes(x=duration, y=cpAcc, col=presenceCP)) + geom_point() + geom_line() +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP"))
+```
+
+```{r}
+d_modified <- t2[coh_cat != "100"]
+d_modified[, `:=`(respondedCP=0, isCP=0)]
+d_modified[cpChoice == "CP", respondedCP:=1]
+d_modified[presenceCP == "CP", isCP:=1]
+dd <- d_modified[,.(isCP, respondedCP, subject, probCP, dirChoice, dirCorrect, cpCorrect, duration, coh_cat)]
+roc_cpd_avg_subj <- unique(dd[,
+                             .(propCP=sum(respondedCP)/.N, trueProp=sum(isCP)/.N, numTrials=.N),
+                             by=.(probCP, duration, coh_cat)])
+roc_cpd_avg_subj[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciTrueProp=1.96*sqrt(trueProp * (1-trueProp) / numTrials))]
+
+## Average across 5 subjects
+
+ggplot(roc_cpd_avg_subj, aes(x=duration, y=propCP, group=coh_cat, col=coh_cat)) +
+ geom_point(size=4) +
+ geom_line(size=1.5) +
+ geom_line(aes(x=duration, y=trueProp)) +
+ geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+ geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
+ scale_color_manual(values=cbbPalette) +
+ # scale_color_brewer(palette = "Dark2") +
+ theme_bw() +
+ theme(text=element_text(size=17))
 ```
 
 
