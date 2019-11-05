@@ -1,0 +1,57 @@
+---
+title: "CPD investigation"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+```{r}
+library(ggplot2)
+library(data.table)
+source("/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/R/REF_FUNCTIONS/explore_functions.r")
+```
+
+```{r}
+d <- get_full_data()
+d<-d[probCP>0]
+```
+
+
+```{r}
+ggplot(d, aes(x=dirCorrect, y=cpCorrect)) + geom_count() +
+  facet_grid(viewingDuration+presenceCP~probCP)
+```
+The pb with the plot above is that area might represent absolute count as opposed to proportion...
+
+Would it make sense to plot P(dirCorrect) as a function of P(cpCorrect)?
+
+```{r}
+# adding the by=viewingDuration doesn't change much the big picture
+two_acc <- unique(d[,.(dirAcc=sum(dirCorrect)/.N, cpAcc=sum(cpCorrect)/.N,
+                       numTrials=.N), by=.(probCP, coh_cat, presenceCP)])
+two_acc[, `:=`(ciDir=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials),
+               ciCP=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
+```
+
+```{r, fig.height=7}
+ggplot(two_acc, aes(x=cpAcc, y=dirAcc, col=coh_cat)) + 
+  geom_point(size=5) + geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0.5,linetype="dashed")+
+  facet_grid(presenceCP~probCP) + xlim(0,1) + ylim(0,1) +
+  scale_color_brewer(palette = "Dark2") + theme(text=element_text(size=17)) + 
+  ggtitle("Direction Discrimination vs. CP-detection")
+```
+
+```{r}
+two_acc2 <- unique(d[,.(dirAcc=sum(dirCorrect)/.N, cpAcc=sum(cpCorrect)/.N,
+                       numTrials=.N), by=.(probCP, viewingDuration, coh_cat, presenceCP, subject)])
+two_acc2[, `:=`(ciDir=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials),
+               ciCP=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
+```
+
+```{r, fig.height=15, fig.width=11}
+ggplot(two_acc2, aes(x=cpAcc, y=dirAcc, col=coh_cat, group=viewingDuration)) + 
+  geom_point(size=2.5) + geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0.5,linetype="dashed")+
+  facet_grid(subject+presenceCP~probCP) + xlim(0,1) + ylim(0,1) +
+  scale_color_brewer(palette = "Dark2") + theme(text=element_text(size=17))
+```
+
