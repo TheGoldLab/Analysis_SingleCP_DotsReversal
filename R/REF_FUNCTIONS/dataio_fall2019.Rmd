@@ -10,42 +10,33 @@ source("process.r")
 ```
 
 ```{r}
-DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/2019_11_05_13_18/'
+DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/'
 ```
 
 ```{r}
 #t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
-t2 <- get_full_data(paste0(DATA_FOLDER, 'completed4AFCtrials_task100_date_2019_11_05_13_18.csv'))
+t2 <- get_full_data(paste0(DATA_FOLDER, 'full_2019_11_05.csv'))
 ```
 
-
-```{r}
-t2
-```
-
-
-
-```{r}
-str(t2)
-```
-
-```{r}
+```{r, fig.width=10}
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-acc <- t2[coh_cat=="th",dirAcc:=sum(dirCorrect)/.N, by=.(coh_cat, presenceCP, duration)]
-ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration)]), 
-       aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point() + geom_line() +
-  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP"))
+acc <- t2[coh_cat=="th",dirAcc:=sum(dirCorrect)/.N, by=.(coh_cat, presenceCP, duration, probCP)]
+ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point(size=2) + geom_line(size=1.5) + facet_grid(~probCP) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  theme(text=element_text(size=17))
 ```
 
-```{r}
-cpd <- t2[coh_cat=="th",cpAcc:=sum(cpCorrect)/.N, by=.(coh_cat, presenceCP, duration)]
-ggplot(unique(cpd[coh_cat=="th",.(cpAcc, presenceCP, duration)]), 
-       aes(x=duration, y=cpAcc, col=presenceCP)) + geom_point() + geom_line() +
-  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP"))
+```{r, fig.width=10}
+cpd <- t2[,cpAcc:=sum(cpCorrect)/.N, by=.(coh_cat, duration, probCP)]
+ggplot(unique(cpd[,.(cpAcc, coh_cat, duration, probCP)]), 
+       aes(x=probCP, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=2) + geom_line(size=2) + facet_grid(~duration) +
+  scale_color_manual(values=cbbPalette) + 
+  theme(text=element_text(size=17)) + ggtitle("Acc. at CP-detection")
 ```
 
-```{r}
-d_modified <- t2[coh_cat != "100"]
+```{r, fig.width=10}
+d_modified <- t2[coh_cat!="100"]
 d_modified[, `:=`(respondedCP=0, isCP=0)]
 d_modified[cpChoice == "CP", respondedCP:=1]
 d_modified[presenceCP == "CP", isCP:=1]
@@ -57,16 +48,18 @@ roc_cpd_avg_subj[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciT
 
 ## Average across 5 subjects
 
-ggplot(roc_cpd_avg_subj, aes(x=duration, y=propCP, group=coh_cat, col=coh_cat)) +
+ggplot(roc_cpd_avg_subj, aes(x=probCP, y=propCP, group=coh_cat, col=coh_cat)) +
  geom_point(size=4) +
  geom_line(size=1.5) +
- geom_line(aes(x=duration, y=trueProp)) +
+ geom_line(aes(x=probCP, y=trueProp)) +
  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
  geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
  scale_color_manual(values=cbbPalette) +
+  facet_wrap(~duration, ncol=6) +
  # scale_color_brewer(palette = "Dark2") +
  theme_bw() +
- theme(text=element_text(size=17))
+ theme(text=element_text(size=17)) + 
+  ggtitle("Proportion Report CP")
 ```
 
 
