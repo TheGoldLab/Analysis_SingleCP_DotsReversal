@@ -17,26 +17,26 @@ nonQuestData <- data
 #############
 
 ##============ Accuracy for fixed coh across all ProbCP conditions AVG SUBJ ===============#
-to_plot41 <- data[
-  coh_cat == "th",
-  .(accuracy=mean(dirCorrect), numTrials=.N),
-  by=.(viewingDuration, probCP, presenceCP)
-]
-to_plot41[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plot41[,ci:=1.96*se]
-
-png(filename="acc_dd_pcp_byvd_bypresencecp.png", width=1000, height=500)
-
-ggplot(aes(x=probCP, y=accuracy, col=presenceCP, group=presenceCP), data=to_plot41) +
-  geom_point(size=3) +
-  geom_line(size=2) +
-  geom_hline(yintercept=c(.5,1), color="black") +
-  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=1) +
-  facet_grid(~viewingDuration) +
-  theme(text = element_text(size=25)) +
-  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP"))
-dev.off()
-##============================================#
+#to_plot41 <- data[
+#  coh_cat == "th",
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(viewingDuration, probCP, presenceCP)
+#]
+#to_plot41[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+#to_plot41[,ci:=1.96*se]
+#
+#png(filename="acc_dd_pcp_byvd_bypresencecp.png", width=1000, height=500)
+#
+#ggplot(aes(x=probCP, y=accuracy, col=presenceCP, group=presenceCP), data=to_plot41) +
+#  geom_point(size=3) +
+#  geom_line(size=2) +
+#  geom_hline(yintercept=c(.5,1), color="black") +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=1) +
+#  facet_grid(~viewingDuration) +
+#  theme(text = element_text(size=25)) +
+#  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP"))
+#dev.off()
+###============================================#
 
 
 ##============ Acc(400)-Acc(300) vs. Acc(200)-Acc(100) AVG SUBJ ===============#
@@ -368,34 +368,33 @@ dev.off()
 
 
 ########## Main result plot AVG SUBJ ##########
-## sfn1.png
-#to_plot6 <- factored_threshold[
-#  coh_cat=="th",
-#  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, viewingDuration, probCP)
-#]
-#to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-#to_plot6[,ci:=1.96*se]
-#
-#pd <- position_dodge(.2) # move them .05 to the left and right
-#
-#png(filename="sfn1.png", width=1500, height=385)
-#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
-#  geom_point(size=4, position=pd) +
-#  geom_line(size=2.2) +
-#  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
-#  facet_grid(~probCP) +
-#  scale_color_brewer(palette="Dark2") +
-#  theme(text = element_text(size=35)) + 
-#  ggtitle("Accuracy across 5 subjects") + 
-#  xlab("Viewing Duration (ms)") +
-#  ylab("P(Correct)") +
-#  theme(plot.title = element_text(hjust = 0.5)) +
-#  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
-##  labs(color="")
-#dev.off()
-######################################
+# sfn1.png
+to_plot6 <- data[
+  coh_cat=="th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(presenceCP, viewingDuration, probCP, cpChoice)
+]
+to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot6[,ci:=1.96*se]
+
+pd <- position_dodge(.2) # move them .05 to the left and right
+
+png(filename="main_choice_split.png", width=1500, height=485)
+ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) +
+  geom_point(size=6, aes(shape=cpChoice)) +
+  geom_line(size=1.5, aes(linetype=cpChoice, group=interaction(cpChoice, presenceCP))) +
+  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+  facet_grid(~probCP) +
+  scale_color_brewer(palette="Dark2") +
+  theme(text = element_text(size=35)) + 
+  ggtitle("Accuracy across 5 subjects") + 
+  xlab("Viewing Duration (ms)") +
+  ylab("P(Correct)") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
+#  labs(color="")
+dev.off()
+#####################################
 ########### accuracy AVG SUBJ ##########
 #
 #to_plot6 <- factored_threshold[
