@@ -367,33 +367,33 @@ nonQuestData <- data
 #####################################
 
 
-########## Main result plot AVG SUBJ ##########
-# sfn1.png
-to_plot6 <- data[
-  coh_cat=="th",
-  .(accuracy=mean(dirCorrect), numTrials=.N),
-  by=.(presenceCP, viewingDuration, probCP, cpChoice)
-]
-to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-to_plot6[,ci:=1.96*se]
-
-pd <- position_dodge(.2) # move them .05 to the left and right
-
-png(filename="main_choice_split.png", width=1500, height=485)
-ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) +
-  geom_point(size=6, aes(shape=cpChoice)) +
-  geom_line(size=1.5, aes(linetype=cpChoice, group=interaction(cpChoice, presenceCP))) +
-  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
-  facet_grid(~probCP) +
-  scale_color_brewer(palette="Dark2") +
-  theme(text = element_text(size=35)) + 
-  ggtitle("Accuracy across 5 subjects") + 
-  xlab("Viewing Duration (ms)") +
-  ylab("P(Correct)") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
-#  labs(color="")
-dev.off()
+########### Main result plot AVG SUBJ ##########
+## sfn1.png
+#to_plot6 <- data[
+#  coh_cat=="th",
+#  .(accuracy=mean(dirCorrect), numTrials=.N),
+#  by=.(presenceCP, viewingDuration, probCP, cpChoice)
+#]
+#to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+#to_plot6[,ci:=1.96*se]
+#
+#pd <- position_dodge(.2) # move them .05 to the left and right
+#
+#png(filename="main_choice_split.png", width=1500, height=485)
+#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) +
+#  geom_point(size=6, aes(shape=cpChoice)) +
+#  geom_line(size=1.5, aes(linetype=cpChoice, group=interaction(cpChoice, presenceCP))) +
+#  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+#  facet_grid(~probCP) +
+#  scale_color_brewer(palette="Dark2") +
+#  theme(text = element_text(size=35)) + 
+#  ggtitle("Accuracy across 5 subjects") + 
+#  xlab("Viewing Duration (ms)") +
+#  ylab("P(Correct)") +
+#  theme(plot.title = element_text(hjust = 0.5)) +
+#  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
+##  labs(color="")
+#dev.off()
 #####################################
 ########### accuracy AVG SUBJ ##########
 #
@@ -1243,31 +1243,45 @@ d <- data
 
 #--------------Hist CPD AVG-subj
 # Hit/FA/Miss/CR
-#roc2 <- d[viewingDuration > 200,.(presenceCP, cpChoice, viewingDuration, probCP)]
-#roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
-#roc2[presenceCP == "CP" & cpChoice == "CP", cpd:="Hit"]
-#roc2[presenceCP == "noCP" & cpChoice == "CP", cpd:="FA"]
-#roc2[presenceCP == "noCP" & cpChoice == "noCP", cpd:="CR"]
-#roc2[,cpd:=factor(cpd, levels = c("Hit", "FA", "CR", "Miss"))]
-#
-#roc2[cpd=="Miss", `:=`(len=.N), by=.(viewingDuration, probCP)]
-#roc2[cpd=="CR", len:=.N, by=.(viewingDuration, probCP)]
-#roc2[cpd=="Hit", len:=.N, by=.(viewingDuration, probCP)]
-#roc2[cpd=="FA", len:=.N, by=.(viewingDuration, probCP)]
-#roc2 <- unique(roc2[,`:=`(presenceCP=NULL, cpChoice=NULL)])
-#rocflat <- dcast(roc2, viewingDuration + probCP ~ cpd, value.var="len")
-#rocflat[,`:=`(total=0)]
-#rocflat[!is.na(Miss),`:=`(total=total + Miss)]
-#rocflat[!is.na(Hit),`:=`(total=total + Hit)]
-#rocflat[!is.na(FA),`:=`(total=total + FA)]
-#rocflat[!is.na(CR),`:=`(total=total + CR)]
-#rocflat[,Hit:=Hit/total]
-#rocflat[,Miss:=Miss / total]
-#rocflat[,CR:=CR / total]
-#rocflat[,FA:=FA / total]
-#rocflat[,total:=NULL]
-#roc3 <- melt(rocflat, measure.vars = c("Hit", "FA", "Miss", "CR", "NA"), variable.name = "cpd", value.name = "len")
-#head(roc3)
+get_dprime <- function(hits, fas) {
+  return(qnorm(hits) - qnorm(fas))
+}
+
+roc2 <- data[coh_cat=="th" & viewingDuration > 200,.(presenceCP, cpChoice, viewingDuration, probCP, coh_cat)]
+roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
+roc2[presenceCP == "CP" & cpChoice == "CP", cpd:="Hit"]
+roc2[presenceCP == "noCP" & cpChoice == "CP", cpd:="FA"]
+roc2[presenceCP == "noCP" & cpChoice == "noCP", cpd:="CR"]
+roc2[,cpd:=factor(cpd, levels = c("Hit", "FA", "CR", "Miss"))]
+
+roc2[cpd=="Miss" & presenceCP == "CP", `:=`(len=.N), by=.(viewingDuration, probCP)]
+roc2[cpd=="CR" & presenceCP == "noCP", len:=.N, by=.(viewingDuration, probCP)]
+roc2[cpd=="Hit" & presenceCP == "CP", len:=.N, by=.(viewingDuration, probCP)]
+roc2[cpd=="FA" & presenceCP == "noCP", len:=.N, by=.(viewingDuration, probCP)]
+roc2 <- unique(roc2[,`:=`(presenceCP=NULL, cpChoice=NULL)])
+rocflat <- dcast(roc2, viewingDuration + probCP ~ cpd, value.var="len")
+rocflat[,`:=`(totalCP=0L, totalNoCP=0L)]
+rocflat[!is.na(Miss) & !is.na(Hit),`:=`(totalCP=Hit + Miss)]
+rocflat[!is.na(FA) & !is.na(CR),`:=`(totalNoCP=CR + FA)]
+rocflat[,Hit:=Hit/totalCP]
+rocflat[,Miss:=Miss / totalCP]
+rocflat[,CR:=CR / totalNoCP]
+rocflat[,FA:=FA / totalNoCP]
+rocflat[,total:=NULL]
+rocflat[,dprime := get_dprime(Hit, FA)]
+
+# histograms
+roc3 <- melt(rocflat, measure.vars = c("Hit", "FA", "Miss", "CR"), variable.name = "cpd", value.name = "len")
+# head(roc3)
+
+#png(filename="newhist_cpd_avg_subj.png", width=600, height=360)
+#ggplot(data=roc3, aes(x=probCP, y=len, fill=cpd)) +
+#  geom_bar(stat="identity", position=position_dodge()) +
+#  facet_grid(~viewingDuration) +
+#  theme_bw() +
+#  ylab("%") +
+#  ggtitle("CPD performance") +
+#  theme(text=element_text(size=18))
 #
 #png(filename="hist_cpd_avg_subj.png", width=600, height=360)
 #ggplot(data=roc3, aes(x=probCP, y=len, fill=cpd)) +
@@ -1278,3 +1292,8 @@ d <- data
 #  ggtitle("CPD performance") +
 #  theme(text=element_text(size=18))
 #dev.off()
+png(filename="dprime_avg_subj.png", width=600, height=360)
+ggplot(rocflat, aes(x=probCP, y=dprime)) + geom_point(size=4) + facet_grid(~viewingDuration) +
+  geom_hline(yintercept=0, linetype="dashed") +
+  theme(text=element_text(size=18))
+dev.off()
