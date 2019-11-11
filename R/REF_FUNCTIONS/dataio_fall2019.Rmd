@@ -1,0 +1,146 @@
+---
+title: "Data IO Fall 2019 Single CP task"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+
+```{r}
+library(data.table)
+library(ggplot2)
+source("process.r")
+```
+
+```{r}
+DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/'
+```
+
+```{r}
+#t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
+t2 <- get_full_data(paste0(DATA_FOLDER, 'full_2019_11_06.csv'))
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+```{r}
+crossover <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
+crossover[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(5)
+ggplot(unique(crossover[coh_cat=="th",.(dirAcc, duration, probCP, ci)]), 
+       aes(x=duration, y=dirAcc, col=probCP)) + geom_point(size=2.3, position=pd) + geom_line(size=1.4) + 
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=10, position=pd) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  scale_color_manual(values=c(cbbPalette[8], cbbPalette[6])) +
+  theme(text=element_text(size=17))
+```
+
+```{r, fig.width=10}
+acc0 <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, presenceCP, duration, probCP)]
+acc0[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(5)
+ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point(size=3.5, position=pd) + 
+  geom_line(size=1.3) + 
+  facet_grid(~probCP) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  theme(text=element_text(size=17))
+```
+
+```{r, fig.width=10}
+acc <- t2[coh_cat=="th",dirAcc:=sum(dirCorrect)/.N, by=.(coh_cat, presenceCP, duration, probCP, cpChoice)]
+ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, cpChoice)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point(size=2) + geom_line(size=1.5, aes(linetype=cpChoice)) + facet_grid(~probCP) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  theme(text=element_text(size=17))
+```
+
+```{r, fig.width=10}
+cpd <- t2[,`:=`(cpAcc=sum(cpCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
+cpd[,`:=`(ci=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
+pd <- position_dodge(.2)
+ggplot(unique(cpd[,.(cpAcc, coh_cat, duration, probCP, ci)]), 
+       aes(x=probCP, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=5, position=pd) + geom_line(size=1) + facet_grid(~duration) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  scale_color_manual(values=cbbPalette) + 
+  geom_errorbar(aes(ymin=cpAcc - ci, ymax=cpAcc+ci), width=1, position=pd) +
+  theme(text=element_text(size=17)) + ggtitle("Acc. at CP-detection")
+```
+
+```{r, fig.width=10}
+d_modified <- t2[coh_cat!="100"]
+d_modified[, `:=`(respondedCP=0, isCP=0)]
+d_modified[cpChoice == "CP", respondedCP:=1]
+d_modified[presenceCP == "CP", isCP:=1]
+dd <- d_modified[,.(isCP, respondedCP, subject, probCP, dirChoice, dirCorrect, cpCorrect, duration, coh_cat)]
+roc_cpd_avg_subj <- unique(dd[,
+                             .(propCP=sum(respondedCP)/.N, trueProp=sum(isCP)/.N, numTrials=.N),
+                             by=.(probCP, duration, coh_cat)])
+roc_cpd_avg_subj[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciTrueProp=1.96*sqrt(trueProp * (1-trueProp) / numTrials))]
+
+## Average across 5 subjects
+
+ggplot(roc_cpd_avg_subj, aes(x=probCP, y=propCP, group=coh_cat, col=coh_cat)) +
+ geom_point(size=4) +
+ geom_line(size=1.5) +
+ geom_line(aes(x=probCP, y=trueProp)) +
+ geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+ geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
+ scale_color_manual(values=cbbPalette) +
+  facet_wrap(~duration, ncol=6) +
+ # scale_color_brewer(palette = "Dark2") +
+ theme_bw() +
+ theme(text=element_text(size=17)) + 
+  ggtitle("Proportion Report CP")
+```
+```{r}
+get_dprime <- function(hits, fas) {
+  return(qnorm(hits) - qnorm(fas))
+}
+```
+```{r}
+roc2 <- t2[coh_cat=="th" & duration > 200,.(presenceCP, cpChoice, duration, probCP, coh_cat)]
+roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
+roc2[presenceCP == "CP" & cpChoice == "CP", cpd:="Hit"]
+roc2[presenceCP == "noCP" & cpChoice == "CP", cpd:="FA"]
+roc2[presenceCP == "noCP" & cpChoice == "noCP", cpd:="CR"]
+roc2[,cpd:=factor(cpd, levels = c("Hit", "FA", "CR", "Miss"))]
+
+roc2[cpd=="Miss" & presenceCP == "CP", `:=`(len=.N), by=.(duration, probCP)]
+roc2[cpd=="CR" & presenceCP == "noCP", len:=.N, by=.(duration, probCP)]
+roc2[cpd=="Hit" & presenceCP == "CP", len:=.N, by=.(duration, probCP)]
+roc2[cpd=="FA" & presenceCP == "noCP", len:=.N, by=.(duration, probCP)]
+roc2 <- unique(roc2[,`:=`(presenceCP=NULL, cpChoice=NULL)])
+rocflat <- dcast(roc2, duration + probCP ~ cpd, value.var="len")
+rocflat[,`:=`(totalCP=0L, totalNoCP=0L)]
+rocflat[!is.na(Miss) & !is.na(Hit),`:=`(totalCP=Hit + Miss)]
+rocflat[!is.na(FA) & !is.na(CR),`:=`(totalNoCP=CR + FA)]
+rocflat[,Hit:=Hit/totalCP]
+rocflat[,Miss:=Miss / totalCP]
+rocflat[,CR:=CR / totalNoCP]
+rocflat[,FA:=FA / totalNoCP]
+rocflat[,total:=NULL]
+rocflat[,dprime := get_dprime(Hit, FA)]
+
+# histograms
+roc3 <- melt(rocflat, measure.vars = c("Hit", "FA", "Miss", "CR"), variable.name = "cpd", value.name = "len")
+# head(roc3)
+
+ggplot(data=roc3, aes(x=probCP, y=len, fill=cpd)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  facet_grid(~duration) +
+  theme_bw() +
+  ylab("%") +
+  ggtitle("CPD performance") +
+  theme(text=element_text(size=18))
+```
+
+```{r}
+ggplot(rocflat, aes(x=probCP, y=dprime)) + geom_point(size=4) + facet_grid(~duration) + 
+  geom_hline(yintercept=0, linetype="dashed") +
+  theme(text=element_text(size=18))
+```
+
+

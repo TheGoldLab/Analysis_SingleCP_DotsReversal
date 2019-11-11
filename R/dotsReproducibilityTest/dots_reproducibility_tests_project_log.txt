@@ -1,0 +1,32 @@
+On 09/25/2019 I ran two sessions in the booth (and one session 
+was run on 09/23/2019).
+
+The three sessions outputted a *dotsPositions.csv file. 
+Just using the "head" Shell function, it looks like the
+start of the file in the three sessions is identical.
+
+This is indication that seeding might work across sessions.
+
+I have only analyzed deeply the session from 09/23 and it
+is apparent that seeding fails within session (see report
+page on altervista.org).
+
+
+However, following Josh's suggestions, I introduced fprintf
+statements every time thisRandStream was called in the
+dotsDrawableDotKinetogramDebug class. In the first session
+from 09/25, 20 trials were run, but the text output was
+too big for the MATLAB console, and only the last 10
+trials or so were dumped into the console (I copy-pasted
+the content to a log file). In the second session from
+09/25, I only ran 5 trials, so that the totallity of the 
+MATLAB console could be pasted into the log file.
+
+A quick inspection of the two log files shows similarities
+and differences. This is worrying. It looks like from
+trial to trial, thisRandStream is not called the exact
+same number of times... which disrupts reproducibility.
+
+Are there conditionals that we missed in the code?
+i.e. a conditional that depends on the output of rand????
+e.g. coinToss ... and the number of coherent dots?

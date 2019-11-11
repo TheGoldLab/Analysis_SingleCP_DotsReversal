@@ -8,22 +8,22 @@
 % dump in the current execution, and if everything succeeds, the
 % metaDump.csv file is updated (a new row is appended).
 
-clear all
-tbUseProject('Analysis_SingleCP_DotsReversal');
-dump_path = '/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/MATLAB/metaDump.csv';
-%% Load metadata
-metadata = loadjson('subj_metadata.json');
-subjects = fieldnames(metadata); % 5x1 cell of strings
-disp(subjects)
-metadump = readtable(dump_path);  % required to know which subject and session to load
-subjNumber = metadump.subject(end);
-curr_session = metadump.session(end);
-
-subjStruct = metadata.(subjects{subjNumber});
-sessions = fieldnames(subjStruct);  % session names for 
-disp(sessions)
-timestamp='2019_07_10_17_40';
-datapath = ['/Users/adrian/SingleCP_DotsReversal/raw/',timestamp,'/'];
+% clear all
+% tbUseProject('Analysis_SingleCP_DotsReversal');
+% dump_path = '/Users/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/MATLAB/metaDumpDotsReproducibility.csv';
+% %% Load metadata
+% metadata = loadjson('subj_metadata.json');
+% subjects = fieldnames(metadata); % 5x1 cell of strings
+% disp(subjects)
+% metadump = readtable(dump_path);  % required to know which subject and session to load
+% subjNumber = metadump.subject(end);
+% curr_session = metadump.session(end);
+% 
+% subjStruct = metadata.(subjects{subjNumber});
+% sessions = fieldnames(subjStruct);  % session names for 
+% disp(sessions)
+timestamp='2019_09_27_11_29';
+datapath = ['/Users/joshuagold/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/data/DotsReproducibilityTest/raw/',timestamp,'/'];
 filename = [timestamp, '_topsDataLog.mat'];
 disp(datapath)
 
@@ -36,6 +36,7 @@ writetable(FIRA,[csvPath,fileNameWithoutExt,'_FIRA.csv'],'WriteRowNames',true)
 disp('FIRA written')
 %% Dots data
 % columns of following matrix represent the following variables
+subjNumber=99;
 dotsColNames = {...
     'xpos', ...
     'ypos', ...
@@ -77,15 +78,15 @@ U=array2table(fullMatrix, 'VariableNames', dotsColNames);
 writetable(U,[csvPath,fileNameWithoutExt,'_dotsPositions.csv'],...
     'WriteRowNames',true)
 disp('dots written')
-%% Update 
-if curr_session < length(sessions)
-    metadump(end+1,:) = {subjNumber, curr_session+1};
-    writetable(metadump, dump_path, 'WriteRowNames',false);
-    disp('updated session number in metaDump.csv')
-elseif subjNumber < length(subjects)
-    metadump(end+1, :) = {subjNumber + 1, 1};
-    writetable(metadump, dump_path, 'WriteRowNames',false);
-    disp('updated subject number in metaDump.csv')
-else
-    disp('all dumped, for all subjects and all sessions')
-end
+% %% Update 
+% if curr_session < length(sessions)
+%     metadump(end+1,:) = {subjNumber, curr_session+1};
+%     writetable(metadump, dump_path, 'WriteRowNames',false);
+%     disp('updated session number in metaDump.csv')
+% elseif subjNumber < length(subjects)
+%     metadump(end+1, :) = {subjNumber + 1, 1};
+%     writetable(metadump, dump_path, 'WriteRowNames',false);
+%     disp('updated subject number in metaDump.csv')
+% else
+%     disp('all dumped, for all subjects and all sessions')
+% end
