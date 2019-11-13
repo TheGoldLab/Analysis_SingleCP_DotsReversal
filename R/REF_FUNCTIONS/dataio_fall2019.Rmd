@@ -21,7 +21,32 @@ DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/'
 t2 <- get_full_data(paste0(DATA_FOLDER, 'full_2019_11_06.csv'))
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
+# Investigation of time variability
+```{r}
+# str(t2)
+```
 
+
+```{r}
+t2[,trueVD:=1000*(dotsOff-dotsOn)]
+```
+
+```{r, fig.width=10, fig.height=5}
+# ref: https://stackoverflow.com/a/34045068
+# I have established that presenceCP is not the reason for bimodality of the histograms
+# nor is the date of the experiment
+ggplot(t2, aes(x=trueVD, fill=cbbPalette[3])) + geom_histogram() + 
+  facet_wrap(~factor(duration), scales="free") + theme_classic() +
+  theme(text=element_text(size=17), legend.position="none") 
+```
+
+```{r}
+ggplot(t2, aes(x=finalCPTime)) + geom_histogram() + theme_bw() + theme(text=element_text(size=17)) 
+```
+
+<!--
+
+# Main Plots
 ```{r}
 crossover <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
 crossover[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
@@ -143,4 +168,4 @@ ggplot(rocflat, aes(x=probCP, y=dprime)) + geom_point(size=4) + facet_grid(~dura
   theme(text=element_text(size=18))
 ```
 
-
+-->
