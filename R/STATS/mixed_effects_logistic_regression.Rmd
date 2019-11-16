@@ -9,9 +9,61 @@ output:
 library(ggplot2)
 library(lme4)
 library(data.table)
-source("explore_functions.r")
+source("../REF_FUNCTIONS/explore_functions.r")
 ```
 
+
+The first goal is to fit logistic curves to P(choose Right) as a function of signed coherence, by subject (row1), by VD (col1), by presenceCP (row2), by session (col2). I should estimate the true block's proportion.
+```{r}
+data <- get_full_data()
+head(data)
+```
+
+But to make things simpler at the beginning, let's fix V=400 and presenceCP="noCP".
+```{r}
+s = data[viewingDuration == 400 & presenceCP=="noCP"]
+s[initDirection == "left", scoh:=-coherence]
+s[initDirection == "right", scoh:=coherence]
+s[,date:=as.factor(date)]
+# s <- s[!is.na(scoh)]
+head(s)
+```
+
+
+```{r}
+fit <- s[, list(
+  scoh, day,
+  fitted = glm(data = .SD, formula = dirChoice ~ scoh ,family = binomial(link = logit))$fitted
+  ),
+  by=.(subject, date)]
+head(fit)
+```
+
+```{r, fig.width=10, fig.height=10}
+ggplot(fit, aes(x=scoh, y=fitted, col=date, group=date)) + 
+  geom_line() + geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed")+
+  # geom_point(aes(x=scoh, y=propRight), 
+  #              inherit.aes=FALSE, 
+  #              data=s[,.(propRight=sum(dirChoice=='right')/.N),by=.(scoh, subject, date)])
+  facet_grid(subject ~ day)
+```
+
+
+```{r}
+# ggplot(s, aes(x=scoh)) + geom_smooth(method="glm", )
+```
+
+
+
+
+
+
+
+
+
+
+
+<!--
 
 # Effect of probCP (random subject) on dirCorrect at 200 (and 100) msec
 ```{r}
@@ -67,3 +119,5 @@ isSingular(m2)
 
 # Interpretation / Conclusion
 ??
+
+-->
