@@ -9,9 +9,113 @@ output:
 library(ggplot2)
 library(lme4)
 library(data.table)
-source("explore_functions.r")
+source("../REF_FUNCTIONS/explore_functions.r")
 ```
 
+
+The first goal is to fit logistic curves to P(choose Right) as a function of signed coherence, by subject (row1), by VD (col1), by presenceCP (row2), by session (col2). I should estimate the true block's proportion.
+```{r}
+data <- get_full_data()
+head(data)
+```
+
+```{r}
+# ARGS:
+#  subj         string for level of subject column
+#  base_data    data.table with data from all subjects
+logistic_plot <- function(subj, vd, base_data) {
+  # fit logistic regression
+  subj_base_data <- base_data[subject==subj]
+  fitted <- glm(data = subj_base_data, formula = dirChoice ~ scoh, family = binomial(link = logit))
+  pred_base <- data.table(scoh=seq(-100,100,10))
+  pred_base[, `:=`(propRight=predict(fitted, newdata=pred_base, type="response"), 
+                   subject=subj,
+                   viewingDuration=vd)]
+  
+  # this is a data.table with only the proportion choose right data
+  new_data <- subj_base_data[,.(propRight=sum(dirChoice=='right')/.N, numTrials=.N), by=.(scoh)]
+  new_data[,`:=`(ci=1.96*sqrt(propRight*(1-propRight)/numTrials), 
+                 subject=subj,
+                 viewingDuration=vd)]
+  
+  tot_zeros = subj_base_data[scoh==0, .N]
+  num_zero_right = subj_base_data[scoh==0 & initDirection=="right", .N]
+  
+  return(list(new_data, pred_base, round(num_zero_right/tot_zeros, 2)))
+}
+
+# 5*4 below is numSubjects * numVD
+dt1 <- vector(mode = "list", length = 5*4)  # for choice proportion data
+dt2 <- vector(mode = "list", length = 5*4)  # for fitted curves
+
+counter <- 1
+for (ss in c("S1", "S2", "S3", "S4", "S5")) {
+  for (vdur in c(100,200,300,400)) {
+    s <- data[viewingDuration == vdur & presenceCP=="noCP"]
+    s[initDirection == "left", scoh:=-coherence]
+    s[initDirection == "right", scoh:=coherence]
+    returned <- logistic_plot(ss, vdur, s)  
+    dt1[counter] <- returned[1]
+    dt2[counter] <- returned[2]
+    counter <- counter + 1
+  }
+}
+
+new_data <- rbindlist(dt1)
+pred_base <- rbindlist(dt2)
+
+new_data[, `:=`(viewingDuration=as.factor(viewingDuration), subject=as.factor(subject))]
+pred_base[, `:=`(viewingDuration=as.factor(viewingDuration), subject=as.factor(subject))]
+
+# plot
+gp <- ggplot(new_data, aes(x=scoh, y=propRight)) + 
+  theme_bw() + 
+  geom_line(data=pred_base, size=1.3) + 
+  geom_point(colour="brown1") + geom_errorbar(aes(ymin=propRight-ci, ymax=propRight+ci), colour="brown1", width=3) +
+  geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed") + 
+  labs(title="Psychometric functions on noCP trials", subtitle = "pilot data from summer 2019") +
+  theme(text=element_text(size=20), plot.title = element_text(hjust=0.5)) +
+  facet_grid(subject~viewingDuration)
+```
+
+```{r,fig.height=14, fig.width=12}
+plot(gp)
+```
+
+
+
+```{r, fig.width=10, fig.height=10}
+# this cell subdivides fits by date.
+# fit <- s[, list(
+#   scoh, day,
+#   fitted = glm(data = .SD, formula = dirChoice ~ scoh ,family = binomial(link = logit))$fitted
+#   ),
+#   by=.(subject, date)]
+# head(fit)
+# ggplot(fit, aes(x=scoh, y=fitted, col=date, group=date)) + 
+#   geom_line() + geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed")+
+#   # geom_point(aes(x=scoh, y=propRight), 
+#   #              inherit.aes=FALSE, 
+#   #              data=s[,.(propRight=sum(dirChoice=='right')/.N),by=.(scoh, subject, date)])
+#   facet_grid(subject ~ day)
+```
+
+
+```{r}
+# ggplot(s, aes(x=scoh)) + geom_smooth(method="glm", )
+```
+
+
+
+
+
+
+
+
+
+
+
+<!--
 
 # Effect of probCP (random subject) on dirCorrect at 200 (and 100) msec
 ```{r}
@@ -67,3 +171,5 @@ isSingular(m2)
 
 # Interpretation / Conclusion
 ??
+
+-->
