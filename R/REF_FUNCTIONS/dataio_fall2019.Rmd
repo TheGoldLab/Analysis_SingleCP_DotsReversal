@@ -18,9 +18,12 @@ DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/'
 
 ```{r}
 #t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
-t2 <- get_full_data(paste0(DATA_FOLDER, 'full_2019_11_06.csv'))
+t2 <- get_full_data(paste0(DATA_FOLDER, 'full_2019_11_22.csv'))
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
+
+
+<!--
 # Investigation of time variability
 ```{r}
 # str(t2)
@@ -43,10 +46,13 @@ ggplot(t2, aes(x=trueVD, fill=cbbPalette[3])) + geom_histogram() +
 ```{r}
 ggplot(t2, aes(x=finalCPTime)) + geom_histogram() + theme_bw() + theme(text=element_text(size=17)) 
 ```
+-->
 
-<!--
+
 
 # Main Plots
+## Direction Accuracy as function of VD
+### All subjects 
 ```{r}
 crossover <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
 crossover[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
@@ -59,7 +65,21 @@ ggplot(unique(crossover[coh_cat=="th",.(dirAcc, duration, probCP, ci)]),
   theme(text=element_text(size=17))
 ```
 
-```{r, fig.width=10}
+### Subject-by-subject
+```{r}
+crossover <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP, subject)]
+crossover[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(5)
+ggplot(unique(crossover[coh_cat=="th",.(dirAcc, duration, probCP, ci, subject)]), 
+       aes(x=duration, y=dirAcc, col=probCP)) + geom_point(size=2.3, position=pd) + geom_line(size=1.4) + facet_wrap(~subject, ncol=2) +
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=10, position=pd) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  scale_color_manual(values=c(cbbPalette[8], cbbPalette[6])) +
+  theme(text=element_text(size=17))
+```
+## Direction Accuracy as function of VD -- by presenceCP
+### All subjects together
+```{r, fig.width=7}
 acc0 <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, presenceCP, duration, probCP)]
 acc0[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
 pd <- position_dodge(5)
@@ -70,9 +90,22 @@ ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci)]),
    geom_hline(yintercept = c(0.5,1), linetype='dashed') +
   geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
   scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  theme(text=element_text(size=16))
+```
+### Subject-by-subject
+```{r, fig.width=7, fig.height=8}
+acc0 <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, presenceCP, duration, probCP, subject)]
+acc0[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(5)
+ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci, subject)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point(size=3.5, position=pd) + 
+  geom_line(size=1.3) + 
+  facet_grid(subject~probCP) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
   theme(text=element_text(size=17))
 ```
-
 ```{r, fig.width=10}
 acc <- t2[coh_cat=="th",dirAcc:=sum(dirCorrect)/.N, by=.(coh_cat, presenceCP, duration, probCP, cpChoice)]
 ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, cpChoice)]), 
@@ -167,5 +200,3 @@ ggplot(rocflat, aes(x=probCP, y=dprime)) + geom_point(size=4) + facet_grid(~dura
   geom_hline(yintercept=0, linetype="dashed") +
   theme(text=element_text(size=18))
 ```
-
--->
