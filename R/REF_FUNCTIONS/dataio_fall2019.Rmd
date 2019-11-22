@@ -18,43 +18,80 @@ DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/'
 
 ```{r}
 #t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
-t2 <- get_full_data(paste0(DATA_FOLDER, 'full_2019_11_22.csv'))
+full_data <- get_full_data(paste0(DATA_FOLDER, 'full_2019_11_22.csv'))
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
 
-
-<!--
-# Investigation of time variability
+# Logistic Fits
 ```{r}
-# str(t2)
+# ARGS:
+#  subj         string for level of subject column
+#  base_data    data.table with data from all subjects
+logistic_plot <- function(subj, vd, base_data) {
+  # fit logistic regression
+  subj_base_data <- base_data[subject==subj]
+  fitted <- glm(data = subj_base_data, formula = dirChoice ~ scoh, family = binomial(link = logit))
+  pred_base <- data.table(scoh=seq(-100,100,10))
+  pred_base[, `:=`(propRight=predict(fitted, newdata=pred_base, type="response"), 
+                   subject=subj,
+                   duration=vd)]
+  
+  # this is a data.table with only the proportion choose right data
+  new_data <- subj_base_data[,.(propRight=sum(dirChoice=='right')/.N, numTrials=.N), by=.(scoh)]
+  new_data[,`:=`(ci=1.96*sqrt(propRight*(1-propRight)/numTrials), 
+                 subject=subj,
+                 duration=vd)]
+  
+  tot_zeros = subj_base_data[scoh==0, .N]
+  num_zero_right = subj_base_data[scoh==0 & direction=="right", .N]
+  
+  return(list(new_data, pred_base, round(num_zero_right/tot_zeros, 2)))
+}
+
+# 5*4 below is numSubjects * numVD
+dt1 <- vector(mode = "list", length = 5*4)  # for choice proportion data
+dt2 <- vector(mode = "list", length = 5*4)  # for fitted curves
+
+counter <- 1
+for (ss in c(10,11,12)) {
+  for (vdur in c(100,200,250,300,400,600)) {
+    s <- full_data[duration == vdur & presenceCP=="noCP"]
+    s[direction == "left", scoh:=-coherence]
+    s[direction == "right", scoh:=coherence]
+    returned <- logistic_plot(ss, vdur, s)  
+    dt1[counter] <- returned[1]
+    dt2[counter] <- returned[2]
+    counter <- counter + 1
+  }
+}
+
+new_data <- rbindlist(dt1)
+pred_base <- rbindlist(dt2)
+
+new_data[, `:=`(duration=as.factor(duration), subject=as.factor(subject))]
+pred_base[, `:=`(duration=as.factor(duration), subject=as.factor(subject))]
+
+# plot
+gp <- ggplot(new_data, aes(x=scoh, y=propRight)) + 
+  theme_bw() + 
+  geom_line(data=pred_base, size=1.3) + 
+  geom_point(colour="brown1") + geom_errorbar(aes(ymin=propRight-ci, ymax=propRight+ci), colour="brown1", width=3) +
+  geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed") + 
+  labs(title="Psychometric functions on noCP trials", subtitle = "pilot data from summer 2019") +
+  theme(text=element_text(size=20), plot.title = element_text(hjust=0.5)) +
+  facet_grid(subject~duration)
 ```
 
-
-```{r}
-t2[,trueVD:=1000*(dotsOff-dotsOn)]
+```{r, fig.width=12, fig.height=9}
+plot(gp)
 ```
-
-```{r, fig.width=10, fig.height=5}
-# ref: https://stackoverflow.com/a/34045068
-# I have established that presenceCP is not the reason for bimodality of the histograms
-# nor is the date of the experiment
-ggplot(t2, aes(x=trueVD, fill=cbbPalette[3])) + geom_histogram() + 
-  facet_wrap(~factor(duration), scales="free") + theme_classic() +
-  theme(text=element_text(size=17), legend.position="none") 
-```
-
-```{r}
-ggplot(t2, aes(x=finalCPTime)) + geom_histogram() + theme_bw() + theme(text=element_text(size=17)) 
-```
--->
-
 
 
 # Main Plots
 ## Direction Accuracy as function of VD
 ### All subjects 
 ```{r}
-crossover <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
+crossover <- full_data[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
 crossover[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
 pd <- position_dodge(5)
 ggplot(unique(crossover[coh_cat=="th",.(dirAcc, duration, probCP, ci)]), 
@@ -67,7 +104,7 @@ ggplot(unique(crossover[coh_cat=="th",.(dirAcc, duration, probCP, ci)]),
 
 ### Subject-by-subject
 ```{r}
-crossover <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP, subject)]
+crossover <- full_data[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP, subject)]
 crossover[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
 pd <- position_dodge(5)
 ggplot(unique(crossover[coh_cat=="th",.(dirAcc, duration, probCP, ci, subject)]), 
@@ -80,7 +117,7 @@ ggplot(unique(crossover[coh_cat=="th",.(dirAcc, duration, probCP, ci, subject)])
 ## Direction Accuracy as function of VD -- by presenceCP
 ### All subjects together
 ```{r, fig.width=7}
-acc0 <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, presenceCP, duration, probCP)]
+acc0 <- full_data[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, presenceCP, duration, probCP)]
 acc0[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
 pd <- position_dodge(5)
 ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci)]), 
@@ -94,7 +131,7 @@ ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci)]),
 ```
 ### Subject-by-subject
 ```{r, fig.width=7, fig.height=8}
-acc0 <- t2[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, presenceCP, duration, probCP, subject)]
+acc0 <- full_data[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, presenceCP, duration, probCP, subject)]
 acc0[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
 pd <- position_dodge(5)
 ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci, subject)]), 
@@ -107,7 +144,7 @@ ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci, sub
   theme(text=element_text(size=17))
 ```
 ```{r, fig.width=10}
-acc <- t2[coh_cat=="th",dirAcc:=sum(dirCorrect)/.N, by=.(coh_cat, presenceCP, duration, probCP, cpChoice)]
+acc <- full_data[coh_cat=="th",dirAcc:=sum(dirCorrect)/.N, by=.(coh_cat, presenceCP, duration, probCP, cpChoice)]
 ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, cpChoice)]), 
        aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point(size=2) + geom_line(size=1.5, aes(linetype=cpChoice)) + facet_grid(~probCP) +
    geom_hline(yintercept = c(0.5,1), linetype='dashed') +
@@ -116,7 +153,7 @@ ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, cpChoice
 ```
 
 ```{r, fig.width=10}
-cpd <- t2[,`:=`(cpAcc=sum(cpCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
+cpd <- full_data[,`:=`(cpAcc=sum(cpCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
 cpd[,`:=`(ci=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
 pd <- position_dodge(.2)
 ggplot(unique(cpd[,.(cpAcc, coh_cat, duration, probCP, ci)]), 
@@ -128,7 +165,7 @@ ggplot(unique(cpd[,.(cpAcc, coh_cat, duration, probCP, ci)]),
 ```
 
 ```{r, fig.width=10}
-d_modified <- t2[coh_cat!="100"]
+d_modified <- full_data[coh_cat!="100"]
 d_modified[, `:=`(respondedCP=0, isCP=0)]
 d_modified[cpChoice == "CP", respondedCP:=1]
 d_modified[presenceCP == "CP", isCP:=1]
@@ -159,7 +196,7 @@ get_dprime <- function(hits, fas) {
 }
 ```
 ```{r}
-roc2 <- t2[coh_cat=="th" & duration > 200,.(presenceCP, cpChoice, duration, probCP, coh_cat)]
+roc2 <- full_data[coh_cat=="th" & duration > 200,.(presenceCP, cpChoice, duration, probCP, coh_cat)]
 roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
 roc2[presenceCP == "CP" & cpChoice == "CP", cpd:="Hit"]
 roc2[presenceCP == "noCP" & cpChoice == "CP", cpd:="FA"]
@@ -200,3 +237,29 @@ ggplot(rocflat, aes(x=probCP, y=dprime)) + geom_point(size=4) + facet_grid(~dura
   geom_hline(yintercept=0, linetype="dashed") +
   theme(text=element_text(size=18))
 ```
+
+
+<!--
+# Investigation of time variability
+```{r}
+# str(full_data)
+```
+
+
+```{r}
+full_data[,trueVD:=1000*(dotsOff-dotsOn)]
+```
+
+```{r, fig.width=10, fig.height=5}
+# ref: https://stackoverflow.com/a/34045068
+# I have established that presenceCP is not the reason for bimodality of the histograms
+# nor is the date of the experiment
+ggplot(full_data, aes(x=trueVD, fill=cbbPalette[3])) + geom_histogram() + 
+  facet_wrap(~factor(duration), scales="free") + theme_classic() +
+  theme(text=element_text(size=17), legend.position="none") 
+```
+
+```{r}
+ggplot(full_data, aes(x=finalCPTime)) + geom_histogram() + theme_bw() + theme(text=element_text(size=17)) 
+```
+-->
