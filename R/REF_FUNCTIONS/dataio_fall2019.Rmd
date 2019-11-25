@@ -116,7 +116,6 @@ gp <- ggplot(new_data, aes(x=scoh, y=propRight)) +
 plot(gp)
 ```
 
-<!--
 # Main Plots
 ## Direction Accuracy as function of VD
 ### All subjects 
@@ -267,7 +266,7 @@ ggplot(rocflat, aes(x=probCP, y=dprime)) + geom_point(size=4) + facet_grid(~dura
   geom_hline(yintercept=0, linetype="dashed") +
   theme(text=element_text(size=18))
 ```
--->
+
 
 <!--
 # Investigation of time variability
