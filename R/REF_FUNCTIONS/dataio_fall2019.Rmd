@@ -18,7 +18,7 @@ DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/'
 
 ```{r}
 #t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
-full_data <- get_full_data(paste0(DATA_FOLDER, 'full_2019_11_22.csv'))
+full_data <- get_full_data(paste0(DATA_FOLDER, 'full_2019_12_02.csv'))
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
 
@@ -40,7 +40,7 @@ noCP_data[dirChoice == "left", choice := -1]
 ```{r}
 # With bootstrap="nonparametric" and 3 subjects, the following line takes 1:30 min to execute
 fit <- quickpsy(noCP_data, scoh, choice, 
-                lapses = TRUE, 
+                lapses = FALSE, 
                 fun = logistic_fun, 
                 grouping = .(subject, duration), 
                 bootstrap = "none")
@@ -83,7 +83,8 @@ dt1 <- vector(mode = "list", length = 5*4)  # for choice proportion data
 dt2 <- vector(mode = "list", length = 5*4)  # for fitted curves
 
 counter <- 1
-for (ss in c(10,11,12)) {
+subjects_list <- unique(full_data[,subject])
+for (ss in subjects_list) {
   for (vdur in c(100,200,250,300,400,600)) {
     s <- full_data[duration == vdur & presenceCP=="noCP"]
     s[direction == "left", scoh:=-coherence]
@@ -190,11 +191,23 @@ ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, cpChoice
 cpd <- full_data[,`:=`(cpAcc=sum(cpCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
 cpd[,`:=`(ci=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
 pd <- position_dodge(.2)
-ggplot(unique(cpd[,.(cpAcc, coh_cat, duration, probCP, ci)]), 
+ggplot(unique(cpd[coh_cat != "0",.(cpAcc, coh_cat, duration, probCP, ci)]), 
        aes(x=probCP, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=5, position=pd) + geom_line(size=1) + facet_grid(~duration) +
    geom_hline(yintercept = c(0.5,1), linetype='dashed') +
-  scale_color_manual(values=cbbPalette) + 
+  scale_color_manual(values=cbbPalette[c(2,3)]) + 
   geom_errorbar(aes(ymin=cpAcc - ci, ymax=cpAcc+ci), width=1, position=pd) +
+  theme(text=element_text(size=17)) + ggtitle("Acc. at CP-detection")
+```
+
+```{r, fig.width=13.5, fig.height=14}
+cpd <- full_data[,`:=`(cpAcc=sum(cpCorrect)/.N, numTrials=.N), by=.(coh_cat, subject, duration, probCP)]
+cpd[,`:=`(ci=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
+pd <- position_dodge(.2)
+ggplot(unique(cpd[coh_cat != "0",.(cpAcc, coh_cat, duration, probCP, ci, subject)]), 
+       aes(x=probCP, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=5, position=pd) + geom_line(size=1) + facet_grid(subject~duration) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  scale_color_manual(values=cbbPalette[c(2,3)]) + 
+  geom_errorbar(aes(ymin=cpAcc - ci, ymax=cpAcc+ci), width=.5, position=pd) +
   theme(text=element_text(size=17)) + ggtitle("Acc. at CP-detection")
 ```
 
@@ -224,11 +237,39 @@ ggplot(roc_cpd_avg_subj, aes(x=probCP, y=propCP, group=coh_cat, col=coh_cat)) +
  theme(text=element_text(size=17)) + 
   ggtitle("Proportion Report CP")
 ```
+
+```{r, fig.width=10, fig.height=15}
+d_modified <- full_data[coh_cat!="100"]
+d_modified[, `:=`(respondedCP=0, isCP=0)]
+d_modified[cpChoice == "CP", respondedCP:=1]
+d_modified[presenceCP == "CP", isCP:=1]
+dd <- d_modified[,.(isCP, respondedCP, subject, probCP, dirChoice, dirCorrect, cpCorrect, duration, coh_cat, subject)]
+roc_cpd_avg_subj <- unique(dd[,
+                             .(propCP=sum(respondedCP)/.N, trueProp=sum(isCP)/.N, numTrials=.N),
+                             by=.(probCP, duration, coh_cat, subject)])
+roc_cpd_avg_subj[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciTrueProp=1.96*sqrt(trueProp * (1-trueProp) / numTrials))]
+
+ggplot(roc_cpd_avg_subj, aes(x=probCP, y=propCP, group=coh_cat, col=coh_cat)) +
+ geom_point(size=4) +
+ geom_line(size=1.5) +
+ geom_line(aes(x=probCP, y=trueProp)) +
+ geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+ geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
+ scale_color_manual(values=cbbPalette) +
+  facet_grid(subject~duration) +
+ # scale_color_brewer(palette = "Dark2") +
+ theme_bw() +
+ theme(text=element_text(size=17)) + 
+  ggtitle("Proportion Report CP")
+```
+
+
 ```{r}
 get_dprime <- function(hits, fas) {
   return(qnorm(hits) - qnorm(fas))
 }
 ```
+
 ```{r}
 roc2 <- full_data[coh_cat=="th" & duration > 200,.(presenceCP, cpChoice, duration, probCP, coh_cat)]
 roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
