@@ -91,125 +91,136 @@ Now, I want to fit the logistics to the non-100%-coh choice data, using the esti
 
 Let's start with a single session for now. Say, subject 10, probCP = 0.7.
 ```{r}
-# example logistic fit for single session, after lapse has been estimated 
-
-# 1/ get raw data for session (fix VD, probCP and subject)
-subj <- "12"
-pcp <- "0.3"
-dur <- 200
-
-# fetch lapse value
-lapse <- lapse_data[duration == dur & probCP == pcp & subject == subj, lapse][1]
-
-raw_data <- full_data[duration == dur & probCP == pcp & subject == subj]
-raw_data[, scoh := coherence]
-raw_data[direction == "left", scoh := -coherence]
-
-# 3/ compute proportions and number of trials
-raw_data[, `:=`(propChoseR=sum(dirChoice=="right")/.N, trialCount=.N), by=scoh]
-
-# 2/ exclude 100%-coh trials from data
-raw_data_no100 <- raw_data[coh_cat != "100"]
-
-# 4/ transform proportions according to lapse
-
-# args:
-#     prop   = true proportion of choosing Right side
-#     l      = estimated lapse rate
-# returns:
-#     transformed proportion which can be used to fit a logistic
-fwd_lapse_transform <- function(prop, l) {
-  return((prop - l)/(1-2*l))
+# logistic fit for single session, after lapse has been estimated 
+logistic_fit_separate_lapse <- function(subj, pcp, dur, lapse_data_table, full_data_table) {
+  # 1/ get raw data for session (fix VD, probCP and subject)
+  # subj <- "12"
+  # pcp <- "0.3"
+  # dur <- 200
+  
+  # fetch lapse value
+  lapse <- lapse_data_table[duration == dur & probCP == pcp & subject == subj, lapse][1]
+  
+  raw_data <- full_data_table[duration == dur & probCP == pcp & subject == subj]
+  raw_data[, scoh := coherence]
+  raw_data[direction == "left", scoh := -coherence]
+  
+  # 3/ compute proportions and number of trials
+  raw_data[, `:=`(propChoseR=sum(dirChoice=="right")/.N, trialCount=.N), by=scoh]
+  
+  # 2/ exclude 100%-coh trials from data
+  raw_data_no100 <- raw_data[coh_cat != "100"]
+  
+  # 4/ transform proportions according to lapse
+  
+  # args:
+  #     prop   = true proportion of choosing Right side
+  #     l      = estimated lapse rate
+  # returns:
+  #     transformed proportion which can be used to fit a logistic
+  fwd_lapse_transform <- function(prop, l) {
+    return((prop - l)/(1-2*l))
+  }
+  
+  # args:
+  #     tprop  = transformed proportion of choosing Right side
+  #     l      = estimated lapse rate
+  # returns:
+  #     true proportion of choosing Right side
+  bwd_lapse_transform <- function(tprop, l) {
+    return(tprop*(1-2*l) + l)
+  }
+  
+  raw_data_no100[, tprop:=fwd_lapse_transform(propChoseR, lapse)]
+  tofit <- unique(raw_data_no100[,.(scoh, right=round(tprop*trialCount), left=trialCount-round(tprop*trialCount))])
+  
+  # 5/ fit glm using propotions!
+  fit <- glm(cbind(right, left) ~ scoh, data = tofit, family = binomial(logit))
+  
+  # 6/ get glm prediction     &     7/ transform back to real proportions
+  pred_base <- data.table(scoh=seq(-100,100))
+  pred_base[, `:=`(propChoseR=bwd_lapse_transform(predict(fit, newdata=pred_base, type="response"), lapse),
+                   subject=subj, probCP=pcp)]
+  
+  return(list(raw_data, pred_base))
 }
 
-# args:
-#     tprop  = transformed proportion of choosing Right side
-#     l      = estimated lapse rate
-# returns:
-#     true proportion of choosing Right side
-bwd_lapse_transform <- function(tprop, l) {
-  return(tprop*(1-2*l) + l)
-}
-
-raw_data_no100[, tprop:=fwd_lapse_transform(propChoseR, lapse)]
-tofit <- unique(raw_data_no100[,.(scoh, right=round(tprop*trialCount), left=trialCount-round(tprop*trialCount))])
-
-# 5/ fit glm using propotions!
-fit <- glm(cbind(right, left) ~ scoh, data = tofit, family = binomial(logit))
-
-# 6/ get glm prediction     &     7/ transform back to real proportions
-pred_base <- data.table(scoh=seq(-100,100))
-pred_base[, `:=`(propChoseR=bwd_lapse_transform(predict(fit, newdata=pred_base, type="response"), lapse))]
 
 # 8/ plot full raw dataset for session (including 100%-coh trials) and psychometric fit
-ggplot(raw_data, aes(x=scoh, y=propChoseR)) + 
-  theme_bw() + 
-  geom_line(data=pred_base, size=1.3) + 
-  geom_point(colour="brown1", size=4) + # geom_errorbar(aes(ymin=propRight-ci, ymax=propRight+ci), colour="brown1", width=3) +
-  geom_hline(yintercept = c(0,0.5,1), linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed") + 
-  scale_y_continuous(name = "P(choose R)", breaks = c(0,0.5,1), limits = c(0,1)) +
-  labs(title="Psychometric function on noCP trials", subtitle = "Fall 2019", caption=paste('subj:', subj, ' VD:', dur, 'ms', ' prob(CP):', pcp)) +
-  theme(text=element_text(size=20), plot.title = element_text(hjust=0.5)) 
+# ggplot(raw_data, aes(x=scoh, y=propChoseR)) + 
+#   theme_bw() + 
+#   geom_line(data=pred_base, size=1.3) + 
+#   geom_point(colour="brown1", size=4) + # geom_errorbar(aes(ymin=propRight-ci, ymax=propRight+ci), colour="brown1", width=3) +
+#   geom_hline(yintercept = c(0,0.5,1), linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed") + 
+#   scale_y_continuous(name = "P(choose R)", breaks = c(0,0.5,1), limits = c(0,1)) +
+#   labs(title="Psychometric function on noCP trials", subtitle = "Fall 2019", caption=paste('subj:', subj, ' VD:', dur, 'ms', ' prob(CP):', pcp)) +
+#   theme(text=element_text(size=20), plot.title = element_text(hjust=0.5)) 
 ```
 
 And all subjects:
 ```{r}
-# ARGS:
-#  subj         string for level of subject column
-#  base_data    data.table with data from all subjects
-logistic_plot <- function(subj, vd, base_data) {
-  # fit logistic regression
-  subj_base_data <- base_data[subject==subj]
-  fitted <- glm(data = subj_base_data, formula = dirChoice ~ scoh, family = binomial(link = logit))
-  pred_base <- data.table(scoh=seq(-100,100,10))
-  pred_base[, `:=`(propRight=predict(fitted, newdata=pred_base, type="response"), 
-                   subject=subj,
-                   duration=vd)]
-  
-  # this is a data.table with only the proportion choose right data
-  new_data <- subj_base_data[,.(propRight=sum(dirChoice=='right')/.N, numTrials=.N), by=.(scoh)]
-  new_data[,`:=`(ci=1.96*sqrt(propRight*(1-propRight)/numTrials), 
-                 subject=subj,
-                 duration=vd)]
-  
-  tot_zeros = subj_base_data[scoh==0, .N]
-  num_zero_right = subj_base_data[scoh==0 & direction=="right", .N]
-  
-  return(list(new_data, pred_base, round(num_zero_right/tot_zeros, 2)))
-}
+# # ARGS:
+# #  subj         string for level of subject column
+# #  base_data    data.table with data from all subjects
+# logistic_plot <- function(subj, vd, base_data) {
+#   # fit logistic regression
+#   subj_base_data <- base_data[subject==subj]
+#   fitted <- glm(data = subj_base_data, formula = dirChoice ~ scoh, family = binomial(link = logit))
+#   pred_base <- data.table(scoh=seq(-100,100,10))
+#   pred_base[, `:=`(propRight=predict(fitted, newdata=pred_base, type="response"), 
+#                    subject=subj,
+#                    duration=vd)]
+#   
+#   # this is a data.table with only the proportion choose right data
+#   new_data <- subj_base_data[,.(propRight=sum(dirChoice=='right')/.N, numTrials=.N), by=.(scoh)]
+#   new_data[,`:=`(ci=1.96*sqrt(propRight*(1-propRight)/numTrials), 
+#                  subject=subj,
+#                  duration=vd)]
+#   
+#   tot_zeros = subj_base_data[scoh==0, .N]
+#   num_zero_right = subj_base_data[scoh==0 & direction=="right", .N]
+#   
+#   return(list(new_data, pred_base, round(num_zero_right/tot_zeros, 2)))
+# }
 
 subjects_list <- unique(full_data[,subject])
 numSubjects <- length(subjects_list)
+numPcp <- 2  # 0.3 and 0.7
 #numVD <- length(unique(full_data[, duration]))
-dt1 <- vector(mode = "list", length = numSubjects)  # for choice proportion data
-dt2 <- vector(mode = "list", length = numSubjects)  # for fitted curves
+dt1 <- vector(mode = "list", length = numSubjects*numPcp - 1)  # for choice proportion data
+dt2 <- vector(mode = "list", length = numSubjects*numPcp - 1)  # for fitted curves
 
 counter <- 1
+vdur <- 200
 for (ss in subjects_list) {
-  s <- full_data[duration == vdur & presenceCP=="noCP"]
-  s[direction == "left", scoh:=-coherence]
-  s[direction == "right", scoh:=coherence]
-  returned <- logistic_plot(ss, vdur, s)  
-  dt1[counter] <- returned[1]
-  dt2[counter] <- returned[2]
-  counter <- counter + 1
+  for (prob_cp in c("0.3", "0.7")) {
+    if ((ss == "10") & (prob_cp == "0.3")) {
+      next
+    }
+    returned <- logistic_fit_separate_lapse(ss, prob_cp, vdur, lapse_data, full_data)  
+    dt1[counter] <- returned[1]
+    dt2[counter] <- returned[2]
+    counter <- counter + 1
+  }
 }
 
 new_data <- rbindlist(dt1)
 pred_base <- rbindlist(dt2)
 
-new_data[, `:=`(duration=as.factor(duration), subject=as.factor(subject))]
-pred_base[, `:=`(duration=as.factor(duration), subject=as.factor(subject))]
+new_data[, `:=`(probCP=as.factor(probCP), subject=as.factor(subject))]
+pred_base[, `:=`(probCP=as.factor(probCP), subject=as.factor(subject))]
+```
 
+```{r, fig.width=9, fig.height=10}
 # plot
-gp <- ggplot(new_data, aes(x=scoh, y=propRight)) + 
-  theme_bw() + 
+gp <- ggplot(new_data, aes(x=scoh, y=propChoseR)) + 
   geom_line(data=pred_base, size=1.3) + 
-  geom_point(colour="brown1") + geom_errorbar(aes(ymin=propRight-ci, ymax=propRight+ci), colour="brown1", width=3) +
-  geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed") + 
+  geom_point(colour="brown1", size=3) + # geom_errorbar(aes(ymin=propRight-ci, ymax=propRight+ci), colour="brown1", width=3) +
+  geom_hline(yintercept = c(0,0.5,1), linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed") + 
   scale_y_continuous(name = "P(choose R)", breaks = c(0,0.5,1), limits = c(0,1)) +
-  labs(title="Psychometric functions on noCP trials", subtitle = "pilot data from summer 2019") +
+  labs(title="Psychometric functions on noCP 200-msec trials", subtitle = "data from Fall 2019") +
   theme(text=element_text(size=20), plot.title = element_text(hjust=0.5)) +
-  facet_grid(subject~duration)
+  facet_grid(subject~probCP)
+plot(gp)
 ```
 
