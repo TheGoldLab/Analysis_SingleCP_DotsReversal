@@ -6,170 +6,55 @@ output:
     code_folding: hide
 ---
 ```{r}
-library(ggplot2)
-library(lme4)
 library(data.table)
-source("../REF_FUNCTIONS/explore_functions.r")
-```
-
-
-The first goal is to fit logistic curves to P(choose Right) as a function of signed coherence, by subject (row1), by VD (col1), by presenceCP (row2), by session (col2). I should estimate the true block's proportion.
-```{r}
-data <- get_full_data()
-head(data)
+library(ggplot2)
+source("../REF_FUNCTIONS/process.r")
 ```
 
 ```{r}
-# ARGS:
-#  subj         string for level of subject column
-#  base_data    data.table with data from all subjects
-logistic_plot <- function(subj, vd, base_data) {
-  # fit logistic regression
-  subj_base_data <- base_data[subject==subj]
-  fitted <- glm(data = subj_base_data, formula = dirChoice ~ scoh, family = binomial(link = logit))
-  pred_base <- data.table(scoh=seq(-100,100,10))
-  pred_base[, `:=`(propRight=predict(fitted, newdata=pred_base, type="response"), 
-                   subject=subj,
-                   viewingDuration=vd)]
-  
-  # this is a data.table with only the proportion choose right data
-  new_data <- subj_base_data[,.(propRight=sum(dirChoice=='right')/.N, numTrials=.N), by=.(scoh)]
-  new_data[,`:=`(ci=1.96*sqrt(propRight*(1-propRight)/numTrials), 
-                 subject=subj,
-                 viewingDuration=vd)]
-  
-  tot_zeros = subj_base_data[scoh==0, .N]
-  num_zero_right = subj_base_data[scoh==0 & initDirection=="right", .N]
-  
-  return(list(new_data, pred_base, round(num_zero_right/tot_zeros, 2)))
-}
-
-# 5*4 below is numSubjects * numVD
-dt1 <- vector(mode = "list", length = 5*4)  # for choice proportion data
-dt2 <- vector(mode = "list", length = 5*4)  # for fitted curves
-
-counter <- 1
-for (ss in c("S1", "S2", "S3", "S4", "S5")) {
-  for (vdur in c(100,200,300,400)) {
-    s <- data[viewingDuration == vdur & presenceCP=="noCP"]
-    s[initDirection == "left", scoh:=-coherence]
-    s[initDirection == "right", scoh:=coherence]
-    returned <- logistic_plot(ss, vdur, s)  
-    dt1[counter] <- returned[1]
-    dt2[counter] <- returned[2]
-    counter <- counter + 1
-  }
-}
-
-new_data <- rbindlist(dt1)
-pred_base <- rbindlist(dt2)
-
-new_data[, `:=`(viewingDuration=as.factor(viewingDuration), subject=as.factor(subject))]
-pred_base[, `:=`(viewingDuration=as.factor(viewingDuration), subject=as.factor(subject))]
-
-# plot
-gp <- ggplot(new_data, aes(x=scoh, y=propRight)) + 
-  theme_bw() + 
-  geom_line(data=pred_base, size=1.3) + 
-  geom_point(colour="brown1") + geom_errorbar(aes(ymin=propRight-ci, ymax=propRight+ci), colour="brown1", width=3) +
-  geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed") + 
-  labs(title="Psychometric functions on noCP trials", subtitle = "pilot data from summer 2019") +
-  theme(text=element_text(size=20), plot.title = element_text(hjust=0.5)) +
-  facet_grid(subject~viewingDuration)
-```
-
-```{r,fig.height=14, fig.width=12}
-plot(gp)
-```
-
-
-
-```{r, fig.width=10, fig.height=10}
-# this cell subdivides fits by date.
-# fit <- s[, list(
-#   scoh, day,
-#   fitted = glm(data = .SD, formula = dirChoice ~ scoh ,family = binomial(link = logit))$fitted
-#   ),
-#   by=.(subject, date)]
-# head(fit)
-# ggplot(fit, aes(x=scoh, y=fitted, col=date, group=date)) + 
-#   geom_line() + geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed")+
-#   # geom_point(aes(x=scoh, y=propRight), 
-#   #              inherit.aes=FALSE, 
-#   #              data=s[,.(propRight=sum(dirChoice=='right')/.N),by=.(scoh, subject, date)])
-#   facet_grid(subject ~ day)
-```
-
-
-```{r}
-# ggplot(s, aes(x=scoh)) + geom_smooth(method="glm", )
-```
-
-
-
-
-
-
-
-
-
-
-
-<!--
-
-# Effect of probCP (random subject) on dirCorrect at 200 (and 100) msec
-```{r}
-data <- get_full_data(probCPasFactor = F)
-subdata <- data[block!="Quest" & viewingDuration == 200 & coh_cat == "th", .(subject, dirCorrect, block, probCP)]
-str(subdata)
-```
-
-## Standard logistic regression
-```{r}
-m <- glm(dirCorrect ~ probCP, data = subdata, family = binomial)  # no need to specify "no-CP" for 200-msec trials
-summary(m)
+DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/'
 ```
 
 ```{r}
-coef(m)
-xvals <- seq(0,0.8,.1)
-fitted_line_dt <- data.table(x=xvals, y=coef(m)[["(Intercept)"]] + coef(m)[["probCP"]]*xvals)
-# print(fitted_line_dt)
+#t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
+full_data <- get_full_data(paste0(DATA_FOLDER, 'full_2019_12_02.csv'))
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
 
-Let's visualize the fits in log-odds space.
-```{r}
-logodds_data <- subdata[,logodds:=(sum(dirCorrect)/(.N - sum(dirCorrect))), by=probCP]
-ggplot(logodds_data, aes(x=probCP, y=logodds)) + geom_point() + 
-  geom_line(data=fitted_line_dt, aes(x=x,y=y))
-```
-This looks horrible... WHY?
+What viewing duration has the most data?
 
-## Adding random intercept for each subject
 ```{r}
-m1 <- glmer(dirCorrect ~ probCP + (1 | subject), data=subdata, family = binomial, control = glmerControl(optimizer = "bobyqa"), nAGQ = 10)
-summary(m1)
+ggplot(full_data[,.(numTrials=.N), by=.(subject, duration, probCP, presenceCP)], aes(x=duration, y=numTrials, col=presenceCP)) + 
+  geom_point() + 
+  facet_grid(subject~probCP) +
+  scale_color_manual(values=c(cbbPalette[8], cbbPalette[6]))
+```
+Let's stick to 200 msec for now.
+```{r}
+full_data <- full_data[duration == 200]
 ```
 
 ```{r}
-coef(m1)$subject
+full_data[, scoh := coherence]
+full_data[direction=="left", scoh := -coherence]
 ```
 
-## Adding random slope for each subject
-```{r}
-m2 <- glmer(dirCorrect ~ probCP + (1 | subject) + (1 + probCP | subject), data=subdata, family = binomial, control = glmerControl(optimizer = "bobyqa"))
-summary(m2)
-```
+Now, let's plot the raw data per subject, per probCP (i.e. session). 
 
 ```{r}
-coef(m2)$subject
+psychom <- full_data[, `:=`(propChoseR=sum(dirChoice=="right")/.N, trialCount=.N), by=.(subject, probCP, scoh)]
+psychom[,dataCount:="<5"]
+psychom[trialCount >= 5 & trialCount < 10, dataCount:="<10"]
+psychom[trialCount >= 10 & trialCount < 20, dataCount:="<20"]
+psychom[trialCount >= 20, dataCount:=">=20"]
+psychom[,dataCount := factor(dataCount, levels=c("<5", "<10", "<20", ">=20"))]
 ```
 
-```{r}
-isSingular(m2)
+```{r, fig.width=7, fig.height=7}
+ggplot(psychom, aes(x=scoh, y=propChoseR)) + 
+  geom_point(size=3, aes(shape=dataCount)) +
+  geom_hline(yintercept = c(0,.5,1), linetype='dashed') +
+  facet_grid(subject~probCP) +
+  theme(text=element_text(size=17))
 ```
 
-# Interpretation / Conclusion
-??
-
--->
