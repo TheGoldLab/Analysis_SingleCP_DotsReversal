@@ -22,105 +22,13 @@ full_data <- get_full_data(paste0(DATA_FOLDER, 'full_2019_12_02.csv'))
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
 
-# Logistic Fits
-## With `quickpsy`
-Quickpsy allows us to fit lapses.
+# Sandbox
 ```{r}
-# install.packages("quickpsy")
-library(quickpsy)
-```
-```{r}
-noCP_data <- full_data[presenceCP == "noCP"]
-noCP_data[, scoh := coherence]
-noCP_data[direction == "left", scoh := -coherence]
-noCP_data[dirChoice == "right", choice := 1]
-noCP_data[dirChoice == "left", choice := -1]
+str(full_data[,.(date, subject, probCP)])
 ```
 
 ```{r}
-# With bootstrap="nonparametric" and 3 subjects, the following line takes 1:30 min to execute
-fit <- quickpsy(noCP_data, scoh, choice, 
-                lapses = FALSE, 
-                fun = logistic_fun, 
-                grouping = .(subject, duration), 
-                bootstrap = "none")
-```
-
-```{r, fig.width=12, fig.height=9}
-plotcurves(fit, xpanel = duration, ypanel = subject) + 
-  scale_y_continuous(name = "P(choose R)", breaks = c(0,0.5,1), limits = c(0,1)) + 
-  theme(text=element_text(size=16))
-```
-
-## With `glm`
-```{r}
-# ARGS:
-#  subj         string for level of subject column
-#  base_data    data.table with data from all subjects
-logistic_plot <- function(subj, vd, base_data) {
-  # fit logistic regression
-  subj_base_data <- base_data[subject==subj]
-  fitted <- glm(data = subj_base_data, formula = dirChoice ~ scoh, family = binomial(link = logit))
-  pred_base <- data.table(scoh=seq(-100,100,10))
-  pred_base[, `:=`(propRight=predict(fitted, newdata=pred_base, type="response"), 
-                   subject=subj,
-                   duration=vd)]
-  
-  # this is a data.table with only the proportion choose right data
-  new_data <- subj_base_data[,.(propRight=sum(dirChoice=='right')/.N, numTrials=.N), by=.(scoh)]
-  new_data[,`:=`(ci=1.96*sqrt(propRight*(1-propRight)/numTrials), 
-                 subject=subj,
-                 duration=vd)]
-  
-  tot_zeros = subj_base_data[scoh==0, .N]
-  num_zero_right = subj_base_data[scoh==0 & direction=="right", .N]
-  
-  return(list(new_data, pred_base, round(num_zero_right/tot_zeros, 2)))
-}
-
-subjects_list <- unique(full_data[,subject])
-numSubjects <- length(subjects_list)
-numVD <- length(unique(full_data[, duration]))
-dt1 <- vector(mode = "list", length = numSubjects*numVD)  # for choice proportion data
-dt2 <- vector(mode = "list", length = numSubjects*numVD)  # for fitted curves
-
-counter <- 1
-for (ss in subjects_list) {
-  for (vdur in c(100,200,250,300,400,600)) {
-    s <- full_data[duration == vdur & presenceCP=="noCP"]
-    s[direction == "left", scoh:=-coherence]
-    s[direction == "right", scoh:=coherence]
-    returned <- logistic_plot(ss, vdur, s)  
-    dt1[counter] <- returned[1]
-    dt2[counter] <- returned[2]
-    counter <- counter + 1
-  }
-}
-
-new_data <- rbindlist(dt1)
-pred_base <- rbindlist(dt2)
-
-new_data[, `:=`(duration=as.factor(duration), subject=as.factor(subject))]
-pred_base[, `:=`(duration=as.factor(duration), subject=as.factor(subject))]
-
-# plot
-gp <- ggplot(new_data, aes(x=scoh, y=propRight)) + 
-  theme_bw() + 
-  geom_line(data=pred_base, size=1.3) + 
-  geom_point(colour="brown1") + geom_errorbar(aes(ymin=propRight-ci, ymax=propRight+ci), colour="brown1", width=3) +
-  geom_hline(yintercept = 0.5, linetype="dashed") + geom_vline(xintercept = 0, linetype="dashed") + 
-  scale_y_continuous(name = "P(choose R)", breaks = c(0,0.5,1), limits = c(0,1)) +
-  labs(title="Psychometric functions on noCP trials", subtitle = "pilot data from summer 2019") +
-  theme(text=element_text(size=20), plot.title = element_text(hjust=0.5)) +
-  facet_grid(subject~duration)
-```
-
-```{r, fig.width=12, fig.height=9}
-plot(gp)
-```
-
-```{r}
-new_data[subject == 12 & duration == "600", .(scoh, numTrials)]
+unique(full_data[,.(date, subject, probCP)])
 ```
 
 # Main Plots
@@ -179,39 +87,105 @@ ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci, sub
   scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
   theme(text=element_text(size=17))
 ```
-```{r, fig.width=10}
-acc <- full_data[coh_cat=="th",dirAcc:=sum(dirCorrect)/.N, by=.(coh_cat, presenceCP, duration, probCP, cpChoice)]
-ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, cpChoice)]), 
-       aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point(size=2) + geom_line(size=1.5, aes(linetype=cpChoice)) + facet_grid(~probCP) +
-   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+
+## Direction Accuracy as function of VD -- by presenceCP by cpChoice by coherence
+### All subjects together
+In the plot below, each row is a coherence level and each column is a probCP condition.
+
+Focusing on the threshold-coherence row, we note the following:
+
+1. Solid green and dashed red curves correspond to correct CP-detection trials. For the solid green curve, the CP was correctly rejected, for the dashed red curve, the CP was correctly detected (hit). 
+
+    a. In both probCP conditions, the 300-msec red datapoint (100-msec after CP) is higher than the 100-msec green datapoint (100-msec after dots onset). This suggests that on CP trials on which the CP was perceived (i.e. reported) information prior to CP-time is beneficial to the direction discrimination process. This effect seems robust within-subject as well (see subject-by-subject plots further down).
+    b. The dashed red curve (direction discrimination accuracy on CP-hit trials) is higher in the 0.3 probCP than in the 0.7 probCP condition, for viewing durations 250-300 msec. This is surprising as in the 0.3 probCP condition, CPs are relatively infrequent.
+    c. For 250-msec trials, direction discrimination accuracy on CP-correct-rejection trials is higher than on CP-hit trials. But this effect is modulated by probCP: it is more pronounced when CPs are frequent. 
+    
+2. Dashed green and solid red curves correspond to CP-FA and CP-Miss trials respectively.
+
+    a. The solid red curve (CP-miss) is roughly the same (monotonically increasing with diminishing returns) across probCP conditions (the dip at 600-msec cannot be trusted because of too few data). The fact that it starts below chance level (50% accuracy) is consistent with accrued evidence in favor of the the pre-CP correct direction of motion "carrying over" the CP-time. The fact that the 50%-accuracy threshold is crossed before the 400-msec viewing duration landmark indicates that accuracy is better than that of the simplest DDM model (the perfect accumulator).
+    b. The dashed green curve (CP-FA) starts roughly at the same level as the solid green one (CP-correct-rejection), but too few data forbids interpretation for the 100-msec viewing duration. In the 0.3-probCP condition, direction discrimination accuracy on CP-FA trials remains below 50% for 200-400 msec viewing durations. Can we interpret that on these trials, subjects "possess" enough information to make the correct decision more often than chance but use it wrongly systematically? Why is this attenuated in the 0.7-probCP condition? 
+        
+Hopefully, psychophysical kernels will soon give us more information about the dynamics of evidence integration in these various conditions.
+    
+```{r, fig.width=10, fig.height=12}
+acc <- full_data[,`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), 
+                 by=.(coh_cat, presenceCP, duration, probCP, cpChoice)]
+acc[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(10)
+ggplot(unique(acc[,.(dirAcc, presenceCP, duration, probCP, cpChoice, ci, coh_cat)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + 
+  geom_point(size=2, position=pd) + 
+  geom_line(size=1.5, aes(linetype=cpChoice)) + facet_grid(coh_cat~probCP) +
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  # geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
   scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  ylim(0,1)+
   theme(text=element_text(size=17))
 ```
 
+We now reproduce the above plot with 95%-confidence intervals.
+```{r, fig.width=13, fig.height=16}
+acc <- full_data[,`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), 
+                 by=.(coh_cat, presenceCP, duration, probCP, cpChoice)]
+acc[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(10)
+ggplot(unique(acc[,.(dirAcc, presenceCP, duration, probCP, cpChoice, ci, coh_cat)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + 
+  geom_point(size=2, position=pd) + 
+  geom_line(size=1.5, aes(linetype=cpChoice)) + facet_grid(coh_cat~probCP) +
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  ylim(0,1)+
+  theme(text=element_text(size=17))
+```
+
+### Subject-by-subject -- only threshold coherence
+
+```{r, fig.width=10, fig.height=16}
+acc <- full_data[,`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), 
+                 by=.(coh_cat, presenceCP, duration, probCP, cpChoice, subject)]
+acc[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(10)
+ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, cpChoice, ci, subject)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + 
+  geom_point(size=2, position=pd) + 
+  geom_line(size=1.5, aes(linetype=cpChoice)) + facet_grid(subject~probCP) +
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  # geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  ylim(0,1)+
+  theme(text=element_text(size=17))
+```
+
+## CP-detection accuracy as function of VD -- by probCP
+### All subjects together
 ```{r, fig.width=10}
 cpd <- full_data[,`:=`(cpAcc=sum(cpCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
 cpd[,`:=`(ci=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
 pd <- position_dodge(.2)
 ggplot(unique(cpd[coh_cat != "0",.(cpAcc, coh_cat, duration, probCP, ci)]), 
-       aes(x=probCP, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=5, position=pd) + geom_line(size=1) + facet_grid(~duration) +
+       aes(x=duration, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=5, position=pd) + geom_line(size=1) + facet_grid(~probCP) +
    geom_hline(yintercept = c(0.5,1), linetype='dashed') +
   scale_color_manual(values=cbbPalette[c(2,3)]) + 
   geom_errorbar(aes(ymin=cpAcc - ci, ymax=cpAcc+ci), width=1, position=pd) +
   theme(text=element_text(size=17)) + ggtitle("Acc. at CP-detection")
 ```
 
-```{r, fig.width=13.5, fig.height=14}
+### Subject-by-subject
+```{r, fig.width=10.5, fig.height=14}
 cpd <- full_data[,`:=`(cpAcc=sum(cpCorrect)/.N, numTrials=.N), by=.(coh_cat, subject, duration, probCP)]
 cpd[,`:=`(ci=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
 pd <- position_dodge(.2)
 ggplot(unique(cpd[coh_cat != "0",.(cpAcc, coh_cat, duration, probCP, ci, subject)]), 
-       aes(x=probCP, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=5, position=pd) + geom_line(size=1) + facet_grid(subject~duration) +
+       aes(x=duration, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=5, position=pd) + geom_line(size=1) + facet_grid(subject~probCP) +
    geom_hline(yintercept = c(0.5,1), linetype='dashed') +
   scale_color_manual(values=cbbPalette[c(2,3)]) + 
   geom_errorbar(aes(ymin=cpAcc - ci, ymax=cpAcc+ci), width=.5, position=pd) +
   theme(text=element_text(size=17)) + ggtitle("Acc. at CP-detection")
 ```
 
+# Additional plots
 ```{r, fig.width=10}
 d_modified <- full_data[coh_cat!="100"]
 d_modified[, `:=`(respondedCP=0, isCP=0)]
@@ -309,8 +283,9 @@ ggplot(data=roc3, aes(x=probCP, y=len, fill=cpd)) +
 ```
 
 ```{r}
-ggplot(rocflat, aes(x=probCP, y=dprime)) + geom_point(size=4) + facet_grid(~duration) + 
+ggplot(rocflat, aes(x=duration, y=dprime, group=probCP, col=probCP)) + geom_line(size=3) + 
   geom_hline(yintercept=0, linetype="dashed") +
+  scale_color_brewer(palette = "Set1") +
   theme(text=element_text(size=18))
 ```
 
