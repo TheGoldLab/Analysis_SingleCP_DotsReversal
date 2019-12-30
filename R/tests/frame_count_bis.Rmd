@@ -1,0 +1,61 @@
+---
+title: "Dots Reproducibility  2 on 30 Dec. 2019"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+
+```{r}
+library(data.table)
+library(ggplot2)
+```
+
+Timestamp used is `2019_12_30_13_47`.
+
+```{r}
+file_path <- '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/MATLAB/dotsPositionsComparisons/'
+timestamps <- c('2019_12_18_14_00', '2019_12_18_17_06', '2019_12_19_09_57', '2019_12_30_13_47')
+dots_data <- list()
+for (i in seq(4)) {
+  dots_data[[i]] <- fread(paste0(file_path, timestamps[i], '_dotsPositions.csv'))
+}
+```
+
+```{r}
+str(dots_data)
+```
+
+```{r}
+f1 <- dots_data[[1]]
+f2 <- dots_data[[2]]
+f3 <- dots_data[[3]]
+f4 <- dots_data[[4]]
+```
+
+```{r}
+check_equality <- function(num_rows, d1, d2) {
+  return(all.equal(d1[1:num_rows], d2[1:num_rows]))
+}
+```
+
+```{r}
+check_equalities <- function(dd1, dd2, dd3, dd4, numrows) {
+  pair <- c('f1-f2','f1-f3', 'f1-f4', 'f2-f3', 'f2-f4', 'f3-f4')
+  equality <- c(
+    check_equality(numrows, dd1, dd2),
+    check_equality(numrows, dd1, dd3),
+    check_equality(numrows, dd1, dd4),
+    check_equality(numrows, dd2, dd3),
+    check_equality(numrows, dd2, dd4),
+    check_equality(numrows, dd3, dd4)
+  )
+  return(data.table(pair, equality))
+}
+```
+
+```{r}
+# 4076 is the last row index at which all data.tables agree... WHY?
+check_equalities(f1, f2, f3, f4, 4076)
+```
+
