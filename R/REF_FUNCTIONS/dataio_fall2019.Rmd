@@ -18,7 +18,7 @@ DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/'
 
 ```{r}
 #t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
-full_data <- get_full_data(paste0(DATA_FOLDER, 'full_2019_12_02.csv'))
+full_data <- get_full_data(paste0(DATA_FOLDER, 'full_2019_12_18.csv'))
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
 
