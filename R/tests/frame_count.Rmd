@@ -1,0 +1,44 @@
+---
+title: "Dots Reproducibility Test 30 Dec. 2019"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+
+```{r}
+library(data.table)
+library(ggplot2)
+```
+
+Timestamp used is `2019_12_30_13_47`.
+
+```{r}
+file_path <- '/home/adrian/SingleCP_DotsReversal/DotsReproducibilityTest/raw/2019_12_30_13_47/'
+fira_file <- 'completed4AFCtrials_task100_date_2019_12_30_13_47.csv'
+dots_file <- '2019_12_30_13_47_dotsPositions.csv'
+fira_data <- fread(paste0(file_path, fira_file))
+dots_data <- fread(paste0(file_path, dots_file))
+dots_data <- dots_data[isActive == 1]
+```
+
+```{r}
+str(fira_data)
+```
+
+```{r}
+str(dots_data)
+```
+
+```{r}
+frame_count <- dots_data[, numFrames:=max(frameIdx), by=seqDumpTime]
+frame_count <- unique(frame_count[,.(numFrames, seqDumpTime)])
+frame_count
+```
+
+```{r}
+fira_frame_count <- fira_data[,numFrames:=numberDrawPreCP + numberDrawPostCP]
+fira_frame_count <- unique(fira_frame_count[,.(numFrames, trialIndex)])
+fira_frame_count
+```
+
