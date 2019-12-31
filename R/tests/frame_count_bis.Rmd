@@ -15,22 +15,16 @@ Timestamp used is `2019_12_30_13_47`.
 
 ```{r}
 file_path <- '/home/adrian/Documents/MATLAB/projects/Analysis_SingleCP_DotsReversal/MATLAB/dotsPositionsComparisons/'
-timestamps <- c('2019_12_18_14_00', '2019_12_18_17_06', '2019_12_19_09_57', '2019_12_30_13_47')
+timestamps <- c('2019_12_18_14_00', 
+                '2019_12_18_17_06', 
+                '2019_12_19_09_57', 
+                '2019_12_30_13_47')
+num_timestamps <- c(201912181400, 201912181706, 201912190957, 201912301347)
 dots_data <- list()
 for (i in seq(4)) {
   dots_data[[i]] <- fread(paste0(file_path, timestamps[i], '_dotsPositions.csv'))
+  dots_data[[i]][, date:=num_timestamps[i]]
 }
-```
-
-```{r}
-str(dots_data)
-```
-
-```{r}
-f1 <- dots_data[[1]]
-f2 <- dots_data[[2]]
-f3 <- dots_data[[3]]
-f4 <- dots_data[[4]]
 ```
 
 ```{r}
@@ -55,7 +49,69 @@ check_equalities <- function(dd1, dd2, dd3, dd4, numrows) {
 ```
 
 ```{r}
-# 4076 is the last row index at which all data.tables agree... WHY?
-check_equalities(f1, f2, f3, f4, 4076)
+all_dots <- rbindlist(dots_data)
+all_dots <- all_dots[isActive == 1]
+#str(all_dots)
 ```
+
+Let's check numberDrawPreCP and numberDrawPostCP for all files.
+```{r}
+fira_data <- list()
+for (i in seq(4)) {
+  fira_data[[i]] <- fread(paste0(file_path, 'completed4AFCtrials_task100_date_', timestamps[i], '.csv'))
+}
+all_fira <- rbindlist(fira_data)
+```
+
+```{r}
+all_fira <- all_fira[!is.na(cpChoice),
+                     .(trialIndex, direction, coherence, randSeedBase, date, probCP, numberDrawPreCP, numberDrawPostCP, reversal, duration)]
+```
+
+```{r}
+get_frame_number <- function(trial_index, fira_dt) {
+  return(min(fira_dt[trialIndex == trial_index, .(numberDrawPreCP)]))
+}
+```
+
+```{r}
+compare_first_frames <- function(dots_dt, fira_dt) {
+  list_of_comparisons <- list()
+  for (trial_index in seq(10)) {
+    num_frames <- get_frame_number(trial_index, fira_dt)
+    list_of_comparisons[[trial_index]] <- are_dots_equal(dots_dt[(frameIdx <= num_frames) & (trialIx == trial_index - 1)], trial_index)
+  }
+  return(rbindlist(list_of_comparisons))
+}
+
+are_dots_equal <- function(dt, trial_ix) {
+  dd1 <- dt[date == 201912181400, .(xpos, ypos)]
+  dd2 <- dt[date == 201912181706, .(xpos, ypos)]
+  dd3 <- dt[date == 201912190957, .(xpos, ypos)]
+  dd4 <- dt[date == 201912301347, .(xpos, ypos)]
+
+  pair <- c('1814-1817','1814-19', '1814-30', '1817-19', '1817-30', '19-30')
+  equality <- c(
+    all.equal(dd1, dd2),
+    all.equal(dd1, dd3),
+    all.equal(dd1, dd4),
+    all.equal(dd2, dd3),
+    all.equal(dd2, dd4),
+    all.equal(dd3, dd4)
+  )
+  trial <- array(trial_ix, length(pair))
+  return(data.table(pair, equality, trial))
+}
+```
+
+```{r}
+comparisons <- compare_first_frames(all_dots, all_fira)
+```
+
+```{r}
+comparisons[equality == TRUE]
+```
+
+
+
 
