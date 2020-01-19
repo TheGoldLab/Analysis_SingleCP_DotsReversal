@@ -1,7 +1,19 @@
 # R script to be run with r-environment R installation
+
+# purpose of script is to run a bunch of analysis/plotting functions on data that was processed with
+# process_raw() from process.r script
+
 library(data.table)
-library(ggforce)
-source("explore_functions.r")
+library(ggplot2)
+#library(ggforce)
+source("process.r")
+
+CSV_TASK_ALL_SUBJECTS <- paste0('/home/adrian/SingleCP_DotsReversal/Fall2019/raw/2019_11_05_10_27/',
+                                'completed4AFCtrials_task100_date_2019_11_05_10_27.csv')
+
+TODAY <- '20191105'
+
+PLOTS_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/plots/'
 
 # The palette with black:  ref = http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
                 # black      golden     blue       green      yellow   dark blue    orange     pink
@@ -9,43 +21,41 @@ cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 
 ############# SET UP DATA.TABLES NEEDED
 
-data <- get_full_data()
+data <- get_full_data(CSV_TASK_ALL_SUBJECTS)
 
-# following two are for legacy code
-nonQuestData <- data
-#factored_threshold <- data
 #############
 
-##============ Accuracy for fixed coh across all ProbCP conditions AVG SUBJ ===============#
-#to_plot41 <- data[
-#  coh_cat == "th",
-#  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(viewingDuration, probCP, presenceCP)
-#]
-#to_plot41[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
-#to_plot41[,ci:=1.96*se]
-#
-#png(filename="acc_dd_pcp_byvd_bypresencecp.png", width=1000, height=500)
-#
-#ggplot(aes(x=probCP, y=accuracy, col=presenceCP, group=presenceCP), data=to_plot41) +
-#  geom_point(size=3) +
-#  geom_line(size=2) +
-#  geom_hline(yintercept=c(.5,1), color="black") +
-#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=1) +
-#  facet_grid(~viewingDuration) +
-#  theme(text = element_text(size=25)) +
-#  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP"))
-#dev.off()
-###============================================#
+##============ Accuracy for fixed coh as fcn of ProbCP - AVG SUBJ ===============#
+to_plot41 <- data[
+  coh_cat == "th",
+  .(accuracy=mean(dirCorrect), numTrials=.N),
+  by=.(duration, probCP, presenceCP)
+]
+to_plot41[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
+to_plot41[,ci:=1.96*se]
+
+png(filename=paste0(TODAY,
+                    "acc_dd_pcp_byvd_bypresencecp.png"), width=1000, height=500)
+
+ggplot(aes(x=probCP, y=accuracy, col=presenceCP, group=presenceCP), data=to_plot41) +
+  geom_point(size=3) +
+  geom_line(size=2) +
+  geom_hline(yintercept=c(.5,1), color="black") +
+  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=1) +
+  facet_grid(~duration) +
+  theme(text = element_text(size=25)) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP"))
+dev.off()
+##============================================#
 
 
 ##============ Acc(400)-Acc(300) vs. Acc(200)-Acc(100) AVG SUBJ ===============#
 ## sfn3.png
 #data[,`:=`(acc=mean(dirCorrect),
 #           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-#     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
-#tocast <- unique(data[coh_cat == "th", .(acc, probCP, presenceCP, viewingDuration, vv)])
-#wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
+#     by=.(duration, probCP, presenceCP, coh_cat)]
+#tocast <- unique(data[coh_cat == "th", .(acc, probCP, presenceCP, duration, vv)])
+#wide <- dcast(tocast, probCP + presenceCP ~ duration, value.var = c("acc", "vv"))
 #wide[,`:=`(
 #  accDiffPost=acc_400 - acc_300,
 #  ciPost=1.96*sqrt(vv_400+vv_300),
@@ -60,7 +70,7 @@ nonQuestData <- data
 #levels(long_again$TimeLoc) <- c("pre", "post")
 #pd <- position_dodge(.14) 
 #
-#png(filename="sfn3.png", width=900, height=400)
+#png(paste0(TODAY,sfn3.png"), width=900, height=400)
 #ggplot(long_again, aes(x=TimeLoc, y=AccChange, col=presenceCP)) + 
 #  geom_hline(yintercept = 0, linetype='dashed') + 
 #  geom_errorbar(aes(ymin=AccChange - CI, ymax=AccChange + CI), width=.2, position=pd, size=1.2) +
@@ -75,14 +85,14 @@ nonQuestData <- data
 ##============================================#
 
 ##============ Priming Effect ===============#
-#subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th",
-#                .(dirCorrect, subject, probCP, presenceCP, viewingDuration)]
+#subdata <- data[(duration == 100 | duration == 300) & coh_cat == "th",
+#                .(dirCorrect, subject, probCP, presenceCP, duration)]
 #subdata[, `:=`(accuracy=mean(dirCorrect), vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-#        by=.(viewingDuration, subject, probCP, presenceCP)]
+#        by=.(duration, subject, probCP, presenceCP)]
 #tocast <- unique(subdata[,dirCorrect:=NULL])
 #
 #wide <- dcast(tocast, 
-#              subject + probCP + presenceCP ~ viewingDuration, value.var = c("accuracy", "vv"))
+#              subject + probCP + presenceCP ~ duration, value.var = c("accuracy", "vv"))
 #
 #for (subj in c("S1", "S2", "S3", "S4", "S5")) {
 #  for (pcp in c("0", "0.2", "0.5", "0.8")) {
@@ -95,7 +105,7 @@ nonQuestData <- data
 #
 #wide[,`:=`(accDiff=accuracy_300 - accuracy_100,ci=1.96*sqrt(vv_100+vv_300))]
 #
-#png(filename="priming_effect.png", width=600, height=800)
+#png(paste0(TODAY,priming_effect.png"), width=600, height=800)
 #ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
 #  geom_point(size=3.7) + 
 #  geom_line(aes(group=interaction(probCP, subject)), size=1.5) +
@@ -107,14 +117,14 @@ nonQuestData <- data
 ##============================================#
 
 ##============ Priming Effect Subject Average ===============#
-#subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th",
-#                .(dirCorrect, probCP, presenceCP, viewingDuration)]
+#subdata <- data[(duration == 100 | duration == 300) & coh_cat == "th",
+#                .(dirCorrect, probCP, presenceCP, duration)]
 #subdata[, `:=`(accuracy=mean(dirCorrect), vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-#        by=.(viewingDuration, probCP, presenceCP)]
+#        by=.(duration, probCP, presenceCP)]
 #tocast <- unique(subdata[,dirCorrect:=NULL])
 #
 #wide <- dcast(tocast, 
-#              probCP + presenceCP ~ viewingDuration, value.var = c("accuracy", "vv"))
+#              probCP + presenceCP ~ duration, value.var = c("accuracy", "vv"))
 #
 #for (pcp in c("0", "0.2", "0.5", "0.8")) {
 #  wide[probCP == pcp & presenceCP == "CP",
@@ -125,7 +135,7 @@ nonQuestData <- data
 #
 #wide[,`:=`(accDiff=accuracy_300 - accuracy_100,ci=1.96*sqrt(vv_100+vv_300))]
 #
-#png(filename="priming_effect_avg_subj.png", width=600, height=300)
+#png(paste0(TODAY,priming_effect_avg_subj.png"), width=600, height=300)
 #ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
 #  geom_point(size=3.7) + 
 #  geom_line(aes(group=probCP), size=1.5) +
@@ -140,11 +150,11 @@ nonQuestData <- data
 ##============ Acc(300) - Acc(200) ==============#
 #data[,`:=`(acc=mean(dirCorrect),
 #           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-#     by=.(viewingDuration, subject, probCP, presenceCP, coh_cat)]
-#tocast <- unique(data[(viewingDuration == 200 | viewingDuration == 300) & coh_cat == "th", 
-#                      .(acc, subject, probCP, presenceCP, viewingDuration, vv)])
+#     by=.(duration, subject, probCP, presenceCP, coh_cat)]
+#tocast <- unique(data[(duration == 200 | duration == 300) & coh_cat == "th", 
+#                      .(acc, subject, probCP, presenceCP, duration, vv)])
 #wide <- dcast(tocast, 
-#              subject + probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
+#              subject + probCP + presenceCP ~ duration, value.var = c("acc", "vv"))
 #
 ## fill NA values for vd200 at CP trials to vd200 at noCP trials
 #for (subj in c("S1", "S2", "S3", "S4", "S5")) {
@@ -158,7 +168,7 @@ nonQuestData <- data
 #
 #wide[,`:=`(accDiff=acc_300 - acc_200,ci=1.96*sqrt(vv_200+vv_300))]
 #
-#png(filename="Acc300-Acc200.png", width=600, height=800)
+#png(paste0(TODAY,Acc300-Acc200.png"), width=600, height=800)
 #ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
 #  geom_point(size=3.7) + 
 #  geom_line(aes(group=interaction(probCP, subject)), size=1.5) +
@@ -173,10 +183,10 @@ nonQuestData <- data
 ## snf2.png
 #data[,`:=`(acc=mean(dirCorrect),
 #           vv=mean(dirCorrect)*(1-mean(dirCorrect))/.N),
-#     by=.(viewingDuration, probCP, presenceCP, coh_cat)]
-#tocast <- unique(data[(viewingDuration == 200 | viewingDuration == 300) & coh_cat == "th", 
-#                      .(acc, probCP, presenceCP, viewingDuration, vv)])
-#wide <- dcast(tocast, probCP + presenceCP ~ viewingDuration, value.var = c("acc", "vv"))
+#     by=.(duration, probCP, presenceCP, coh_cat)]
+#tocast <- unique(data[(duration == 200 | duration == 300) & coh_cat == "th", 
+#                      .(acc, probCP, presenceCP, duration, vv)])
+#wide <- dcast(tocast, probCP + presenceCP ~ duration, value.var = c("acc", "vv"))
 #
 ## fill NA values for vd200 at CP trials to vd200 at noCP trials
 #for (pcp in c("0", "0.2", "0.5", "0.8")) {
@@ -188,7 +198,7 @@ nonQuestData <- data
 #
 #wide[,`:=`(accDiff=acc_300 - acc_200,ci=1.96*sqrt(vv_200+vv_300))]
 #
-#png(filename="sfn2.png", width=800, height=400)
+#png(paste0(TODAY,sfn2.png"), width=800, height=400)
 #ggplot(wide, aes(x=presenceCP, y=accDiff)) + 
 #  geom_line(aes(group=probCP), size=2.2) +
 #  geom_hline(yintercept = 0, linetype='dashed') + 
@@ -207,16 +217,16 @@ nonQuestData <- data
 
 
 ##============ 100 msec window integration ==============#
-#subdata <- data[(viewingDuration == 100 | viewingDuration == 300) & coh_cat == "th", 
+#subdata <- data[(duration == 100 | duration == 300) & coh_cat == "th", 
 #                `:=`(accuracy=mean(dirCorrect), se=sqrt(mean(dirCorrect)*(1-mean(dirCorrect))/.N)),
-#                by=.(viewingDuration, subject, probCP, presenceCP, coh_cat)]
-#subdata <- unique(subdata[,.(accuracy, subject, probCP, presenceCP, viewingDuration, se)])
+#                by=.(duration, subject, probCP, presenceCP, coh_cat)]
+#subdata <- unique(subdata[,.(accuracy, subject, probCP, presenceCP, duration, se)])
 #subdata[, `:=`(priming='None', ci=1.96*se)]
-#subdata[viewingDuration == 300 & presenceCP == "CP", priming := "Neg"]
-#subdata[viewingDuration == 300 & presenceCP == "noCP", priming := "Pos"]
+#subdata[duration == 300 & presenceCP == "CP", priming := "Neg"]
+#subdata[duration == 300 & presenceCP == "noCP", priming := "Pos"]
 #subdata[,priming := as.factor(priming)]
 #
-#png(filename="100_msec_window.png", width=800, height=800)
+#png(paste0(TODAY,100_msec_window.png"), width=800, height=800)
 #ggplot(subdata, aes(x=priming, y=accuracy, col=priming, group=priming)) + geom_point(size=4) +
 #  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=0.17, size=1.4) + geom_hline(yintercept = 0.5, linetype='dashed') +
 #  facet_grid(subject~probCP) + theme_bw() + theme(text=element_text(size=20)) + 
@@ -233,14 +243,14 @@ nonQuestData <- data
 #    coherence < 100 &
 #    presenceCP == "no-CP",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(subject, viewingDuration, probCP)
+#  by=.(subject, duration, probCP)
 #]
 #to_plot2[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
 #to_plot2[,ci:=1.96*se]
 #
-#png(filename="acc_dd_vd_thcoh_nocp_bysubj_bypcp.png", width=1600, height=1600)
+#png(paste0(TODAY,acc_dd_vd_thcoh_nocp_bysubj_bypcp.png"), width=1600, height=1600)
 #
-#ggplot(aes(x=viewingDuration, y=accuracy, col=subject), data=to_plot2) +
+#ggplot(aes(x=duration, y=accuracy, col=subject), data=to_plot2) +
 #  geom_line(size=1.5) +
 #  geom_point(size=3) +
 #  geom_hline(yintercept=c(.5,.9), color="black") +
@@ -258,17 +268,17 @@ nonQuestData <- data
 #to_plot3 <- factored_threshold[
 #    presenceCP == "no-CP",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(subject, viewingDuration, coh_cat)
+#  by=.(subject, duration, coh_cat)
 #]
 #to_plot3[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
 #to_plot3[,ci:=1.96*se]
 #
-#png(filename="acc_dd_cohcat_nocp_bysubj_byvd.png", width=1600, height=1600)
+#png(paste0(TODAY,acc_dd_cohcat_nocp_bysubj_byvd.png"), width=1600, height=1600)
 #ggplot(aes(x=coh_cat, y=accuracy, col=subject), data=to_plot3) +
 #  geom_point(size=5) +
 #  geom_hline(yintercept=c(.5,1), color="black") +
 #  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=2) +
-#  facet_grid(subject~viewingDuration) +
+#  facet_grid(subject~duration) +
 #  ggtitle("Acc on non-CP trials, by subject by VD") +
 #  theme(text = element_text(size=40))
 #dev.off()
@@ -277,22 +287,22 @@ nonQuestData <- data
 
 ##Accuracy at 100 & 200 msec for fixed coh is invariant across all ProbCP conditions
 #to_plot4 <- factored_threshold[
-#  viewingDuration < 250 &
+#  duration < 250 &
 #    coh_cat == "th",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(subject, viewingDuration, probCP)
+#  by=.(subject, duration, probCP)
 #]
 #to_plot4[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
 #to_plot4[,ci:=1.96*se]
 #
-#png(filename="acc_dd_pcp_nocp_bysubj_byvd.png", width=1000, height=1600)
+#png(paste0(TODAY,acc_dd_pcp_nocp_bysubj_byvd.png"), width=1000, height=1600)
 #
 #ggplot(aes(x=probCP, y=accuracy, col=subject), data=to_plot4) +
 #  geom_point(size=3) +
 #  geom_line(group=1, size=2) +
 #  geom_hline(yintercept=c(.5,1), color="black") +
 #  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=1) +
-#  facet_grid(subject~viewingDuration) +
+#  facet_grid(subject~duration) +
 #  theme(text = element_text(size=35))
 #
 #dev.off()
@@ -300,16 +310,16 @@ nonQuestData <- data
 
 ## Per prob-CP condition, accuracy at 200 msec ishigher than at 300 msecon CP trials.
 #to_plot5 <- factored_threshold[
-#  ((viewingDuration == 200) | (viewingDuration == 300 & presenceCP == "CP")) &
+#  ((duration == 200) | (duration == 300 & presenceCP == "CP")) &
 #    coh_cat=="th",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, subject, viewingDuration, probCP)
+#  by=.(presenceCP, subject, duration, probCP)
 #]
 #to_plot5[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
 #to_plot5[,ci:=1.96*se]
 #
-#png(filename="acc_dd_cp_short_bysubj_bypcp.png", width=1000, height=1000)
-#ggplot(to_plot5, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) +
+#png(paste0(TODAY,acc_dd_cp_short_bysubj_bypcp.png"), width=1000, height=1000)
+#ggplot(to_plot5, aes(x=factor(duration), y=accuracy, col=presenceCP)) +
 #  geom_point(size=5) +
 #  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
 #  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.2, size=2) +
@@ -320,18 +330,18 @@ nonQuestData <- data
 
 ## as above, but with points for 300 msec no CP trials.
 #to_plot6 <- factored_threshold[
-#  ((viewingDuration == 200) | (viewingDuration == 300)) &
+#  ((duration == 200) | (duration == 300)) &
 #    coh_cat=="th",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, subject, viewingDuration, probCP)
+#  by=.(presenceCP, subject, duration, probCP)
 #]
 #to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
 #to_plot6[,ci:=1.96*se]
 #
 #pd <- position_dodge(.2) # move them .05 to the left and right
 #
-#png(filename="acc_dd_aroundCP_bysubj_bypcp.png", width=1050, height=1000)
-#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+#png(paste0(TODAY,acc_dd_aroundCP_bysubj_bypcp.png"), width=1050, height=1000)
+#ggplot(to_plot6, aes(x=factor(duration), y=accuracy, col=presenceCP, group=presenceCP)) +
 #  geom_point(size=4, position=pd) +
 #  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
 #  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
@@ -346,15 +356,15 @@ nonQuestData <- data
 #to_plot6 <- factored_threshold[
 #  coh_cat=="th",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, subject, viewingDuration, probCP)
+#  by=.(presenceCP, subject, duration, probCP)
 #]
 #to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
 #to_plot6[,ci:=1.96*se]
 #
 #pd <- position_dodge(.2) # move them .05 to the left and right
 #
-#png(filename="acc_dd_100-400_bysubj_bypcp_bycp.png", width=1600, height=1300)
-#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP, group=presenceCP)) +
+#png(paste0(TODAY,acc_dd_100-400_bysubj_bypcp_bycp.png"), width=1600, height=1300)
+#ggplot(to_plot6, aes(x=factor(duration), y=accuracy, col=presenceCP, group=presenceCP)) +
 #  geom_point(size=4, position=pd) +
 #  geom_line(size=2) +
 #  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
@@ -367,23 +377,24 @@ nonQuestData <- data
 #####################################
 
 
-########### Main result plot AVG SUBJ ##########
+########## Main result plot AVG SUBJ ##########
 ## sfn1.png
-#to_plot6 <- data[
+#to_plot6 <- factored_threshold[
 #  coh_cat=="th",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, viewingDuration, probCP, cpChoice)
+#  by=.(presenceCP, duration, probCP)
 #]
 #to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
 #to_plot6[,ci:=1.96*se]
 #
 #pd <- position_dodge(.2) # move them .05 to the left and right
 #
-#png(filename="main_choice_split.png", width=1500, height=485)
-#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy, col=presenceCP)) +
-#  geom_point(size=6, aes(shape=cpChoice)) +
-#  geom_line(size=1.5, aes(linetype=cpChoice, group=interaction(cpChoice, presenceCP))) +
+#png(paste0(TODAY,sfn1.png"), width=1500, height=385)
+#ggplot(to_plot6, aes(x=factor(duration), y=accuracy, col=presenceCP, group=presenceCP)) +
+#  geom_point(size=4, position=pd) +
+#  geom_line(size=2.2) +
 #  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
+#  geom_errorbar(aes(ymin=accuracy-ci, ymax=accuracy+ci), width=.1, size=1.7, position=pd) +
 #  facet_grid(~probCP) +
 #  scale_color_brewer(palette="Dark2") +
 #  theme(text = element_text(size=35)) + 
@@ -394,21 +405,21 @@ nonQuestData <- data
 #  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) 
 ##  labs(color="")
 #dev.off()
-#####################################
+######################################
 ########### accuracy AVG SUBJ ##########
 #
 #to_plot6 <- factored_threshold[
 #  coh_cat=="th",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(viewingDuration, probCP)
+#  by=.(duration, probCP)
 #]
 #to_plot6[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
 #to_plot6[,ci:=1.96*se]
 #
 #pd <- position_dodge(.2) # move them .05 to the left and right
 #
-#png(filename="bare_acc.png", width=1500, height=385)
-#ggplot(to_plot6, aes(x=factor(viewingDuration), y=accuracy)) +
+#png(paste0(TODAY,bare_acc.png"), width=1500, height=385)
+#ggplot(to_plot6, aes(x=factor(duration), y=accuracy)) +
 #  geom_point(size=4, position=pd) +
 #  geom_line(size=2.2) +
 #  geom_hline(yintercept=c(.5,1), color="black", linetype="dashed") +
@@ -430,22 +441,22 @@ nonQuestData <- data
 #  probCP > 0 & probCP < 0.8 &
 #  coh_cat=="th",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, subject, viewingDuration, probCP)
+#  by=.(presenceCP, subject, duration, probCP)
 #]
 #to_plot[,se:=sqrt(2*accuracy * (1-accuracy) / numTrials)]
 #to_plot[,numTrials:=NULL]
 #
 #levels(to_plot$presenceCP) <- c("noCP","CP")
-#to_plot2 <- dcast(to_plot, subject+viewingDuration+probCP~presenceCP, value.var=c("accuracy","se"))
+#to_plot2 <- dcast(to_plot, subject+duration+probCP~presenceCP, value.var=c("accuracy","se"))
 #to_plot2[,accdiff:=0]
-#to_plot2[viewingDuration > 200, accdiff:=accuracy_noCP - accuracy_CP]
+#to_plot2[duration > 200, accdiff:=accuracy_noCP - accuracy_CP]
 #to_plot2[,ci:=1.96*se_noCP]
-#to_plot2[viewingDuration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
+#to_plot2[duration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
 #
 #pd <- position_dodge(.2) # move them .05 to the left and right
 #
-#png(filename="acc_diff_dd_bysubj_bypcp_bycp.png", width=800, height=1300)
-#ggplot(to_plot2, aes(x=viewingDuration, y=accdiff)) +
+#png(paste0(TODAY,acc_diff_dd_bysubj_bypcp_bycp.png"), width=800, height=1300)
+#ggplot(to_plot2, aes(x=duration, y=accdiff)) +
 #  geom_point(size=4, position=pd) +
 #  geom_line(size=2) +
 #  geom_hline(yintercept=c(0,-.5,.5), color="black", linetype="dashed") +
@@ -463,26 +474,26 @@ nonQuestData <- data
 #to_plot <- factored_threshold[
 #  probCP > 0 & probCP < 0.8 &
 #  coh_cat=="th" & 
-#  viewingDuration > 250,
+#  duration > 250,
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, viewingDuration, probCP)
+#  by=.(presenceCP, duration, probCP)
 #]
 #to_plot[,se:=sqrt(2*accuracy * (1-accuracy) / numTrials)]
 #to_plot[,numTrials:=NULL]
 #
 #levels(to_plot$presenceCP) <- c("noCP","CP")
-#to_plot2 <- dcast(to_plot, viewingDuration+probCP~presenceCP, value.var=c("accuracy","se"))
+#to_plot2 <- dcast(to_plot, duration+probCP~presenceCP, value.var=c("accuracy","se"))
 #to_plot2[,accdiff:=0]
-#to_plot2[viewingDuration > 200, accdiff:=accuracy_noCP - accuracy_CP]
+#to_plot2[duration > 200, accdiff:=accuracy_noCP - accuracy_CP]
 #to_plot2[,ci:=1.96*se_noCP]
-#to_plot2[viewingDuration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
+#to_plot2[duration > 200, ci:=1.96*sqrt(se_CP^2+se_noCP^2)]
 #
 #pd <- position_dodge(.2) # move them .05 to the left and right
 #
-#to_plot2[,viewingDuration:=factor(viewingDuration, ordered=T)]
+#to_plot2[,duration:=factor(duration, ordered=T)]
 #
-#png(filename="acc_diff_dd_bysubj_bypcp_bycp_avg_subj.png", width=500, height=360)
-#ggplot(to_plot2, aes(x=viewingDuration, y=accdiff)) +
+#png(paste0(TODAY,acc_diff_dd_bysubj_bypcp_bycp_avg_subj.png"), width=500, height=360)
+#ggplot(to_plot2, aes(x=duration, y=accdiff)) +
 #  geom_point(size=4, position=pd) +
 #  geom_line(size=2, aes(group=1)) +
 #  geom_hline(yintercept=c(0,-.5,.5), color="black", linetype="dashed") +
@@ -496,19 +507,19 @@ nonQuestData <- data
 
 ## as above, but for perceived CP as opposed to real CPs
 #to_plotx <- factored_threshold[
-#  viewingDuration > 150 &
+#  duration > 150 &
 #    coh_cat=="th" &
 #    probCP > 0,
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(cpChoice, subject, viewingDuration, probCP)
+#  by=.(cpChoice, subject, duration, probCP)
 #]
 #to_plotx[,se:=sqrt(accuracy * (1-accuracy) / numTrials)]
 #to_plotx[,ci:=1.96*se]
 #
 #pd <- position_dodge(.2) # move them .05 to the left and right
 #
-#png(filename="acc_dd_200-400_bysubj_bypcp_byperceivedcp.png", width=1600, height=1400)
-#ggplot(to_plotx, aes(x=factor(viewingDuration), y=accuracy, col=cpChoice, group=cpChoice)) +
+#png(paste0(TODAY,acc_dd_200-400_bysubj_bypcp_byperceivedcp.png"), width=1600, height=1400)
+#ggplot(to_plotx, aes(x=factor(duration), y=accuracy, col=cpChoice, group=cpChoice)) +
 #  geom_point(size=4, position=pd) +
 #  geom_line(size=2) +
 #  geom_hline(yintercept=c(0,.5,1), color="black", linetype="dashed") +
@@ -526,19 +537,19 @@ nonQuestData <- data
 ##should be greater (but still below %50) than the probability of being
 ##wrong on 100-msec trials
 #to_plota <- factored_threshold[
-#  ((viewingDuration == 100) | (viewingDuration == 300 & presenceCP == "CP")) &
+#  ((duration == 100) | (duration == 300 & presenceCP == "CP")) &
 #    coh_cat=="th",
 #  .(accuracy=mean(dirCorrect), numTrials=.N),
-#  by=.(presenceCP, subject, viewingDuration, probCP)
+#  by=.(presenceCP, subject, duration, probCP)
 #]
 #to_plota[, y:=accuracy]
-#to_plota[viewingDuration==100, y:=1-y]  # P(wrong)for 100 msec
+#to_plota[duration==100, y:=1-y]  # P(wrong)for 100 msec
 #to_plota[,se:=sqrt(y * (1-y) / numTrials)]
 #to_plota[,ci:=1.96*se]
 #
 #
-#png(filename="pwrong_pcorr_100-300_bysubj_bypcp_bycp.png", width=1150, height=1300)
-#ggplot(to_plota, aes(x=factor(viewingDuration), y=y, col=presenceCP)) +
+#png(paste0(TODAY,pwrong_pcorr_100-300_bysubj_bypcp_bycp.png"), width=1150, height=1300)
+#ggplot(to_plota, aes(x=factor(duration), y=y, col=presenceCP)) +
 #  geom_point(size=5) +
 #  geom_hline(yintercept=c(0, .5), color="black", linetype="dashed") +
 #  geom_errorbar(aes(ymin=y-ci, ymax=y+ci), width=.1, size=2) +
@@ -610,7 +621,7 @@ nonQuestData <- data
 #
 ###### Heat maps
 #
-#png(filename="heatmaps_theoretical_acc.png", width=900, height=1000)
+#png(paste0(TODAY,heatmaps_theoretical_acc.png"), width=900, height=1000)
 #ggplot(data=long_data, aes(x=t, y=C, fill=value, group=variable)) + 
 #      theme_bw() +
 #      geom_tile() +
@@ -623,7 +634,7 @@ nonQuestData <- data
 #
 ###### Single curves
 #
-#png(filename="theoretical_acc_curves.png", width=1350, height=600)
+#png(paste0(TODAY,theoretical_acc_curves.png"), width=1350, height=600)
 #ggplot(aes(x=t, y=value, col=CP), data=long_data[C==0.8 | C==1.5 | abs(C-3)<0.0001,]) + 
 #  geom_line(aes(group=interaction(model, CP), linetype=model), size=1.5) +
 #  # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
@@ -742,7 +753,7 @@ nonQuestData <- data
 ##      theme(text=element_text(size=20)) +
 ##      theme_bw()
 #
-#png(filename="theo_acc_curves_singleSNR.png", width=1350, height=600)
+#png(paste0(TODAY,theo_acc_curves_singleSNR.png"), width=1350, height=600)
 #ggplot(aes(x=t, y=value, col=model), data=long_data[C==1.5,]) + 
 #  # geom_hline(yintercept=.5, color='black', inherit.aes=FALSE) +  # buggy because of facet_wrap. See https://github.com/tidyverse/ggplot2/issues/2091
 #  stat_identity(yintercept=0.5, geom='hline', color='black', inherit.aes=TRUE) +
@@ -761,7 +772,7 @@ nonQuestData <- data
 #names(filtered)<-c("C", "t", "model", "noCP", "CP")
 #
 ##Difference:
-#png(filename="theo_acc_diff_curves_singleSNR.png", width=1350, height=600)
+#png(paste0(TODAY,theo_acc_diff_curves_singleSNR.png"), width=1350, height=600)
 #ggplot(aes(x=t, y=noCP - CP, col=model), data=filtered) + 
 #  geom_line(aes(group=model),size=1.5) +
 #  # geom_hline(yintercept = long_data[model == "DDM" & (C==0.8 | C==1.5 | abs(C-3)<0.0001) & t ==.1, Pwrong],
@@ -1066,7 +1077,7 @@ nonQuestData <- data
 #
 #
 ## save as png
-##png(filename="sfn4.png", width=1100, height=1000)
+##png(paste0(TODAY,sfn4.png"), width=1100, height=1000)
 ##plot(gg)
 ##dev.off()
 #
@@ -1122,7 +1133,7 @@ nonQuestData <- data
 #  #transition_reveal(t)
 #
 #setwd(old_wd)
-#png(filename="sfn5.png", width=1100, height=900)
+#png(paste0(TODAY,sfn5.png"), width=1100, height=900)
 #plot(anim)
 #dev.off()
 ##anim_save('accuracies.gif',anim + transition_reveal(time))
@@ -1134,18 +1145,18 @@ nonQuestData <- data
 
 
 #------------------------------------------ CPD investigation"
-d <- data
+#d <- data
 #
 ## Accuracy at Change-Point Detection Task
-#acc_cpd <- unique(d[,.(acc=sum(cpCorrect)/.N, numTrials=.N), by=.(subject, probCP, viewingDuration, coh_cat)])
+#acc_cpd <- unique(d[,.(acc=sum(cpCorrect)/.N, numTrials=.N), by=.(subject, probCP, duration, coh_cat)])
 #acc_cpd[, `:=`(ci=1.96*sqrt(acc * (1-acc) / numTrials))]
-#acc_cpd_avg_subj <- unique(d[,.(acc=sum(cpCorrect)/.N, numTrials=.N), by=.(probCP, viewingDuration, coh_cat)])
+#acc_cpd_avg_subj <- unique(d[,.(acc=sum(cpCorrect)/.N, numTrials=.N), by=.(probCP, duration, coh_cat)])
 #acc_cpd_avg_subj[, `:=`(ci=1.96*sqrt(acc * (1-acc) / numTrials))]
 #
 #ggplot(acc_cpd, aes(x=probCP, y=acc, group=coh_cat, col=coh_cat)) + geom_point(size=4) + geom_line(size=1.5) + 
 #  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
 #  geom_errorbar(aes(ymin=acc-ci, ymax=acc+ci), width=.3, size=.7) +
-#  facet_grid(subject ~ viewingDuration) +
+#  facet_grid(subject ~ duration) +
 #  scale_color_manual(values=cbbPalette) +
 #  # scale_color_brewer(palette = "Dark2") +
 #  theme_bw() +
@@ -1155,7 +1166,7 @@ d <- data
 #ggplot(acc_cpd_avg_subj, aes(x=probCP, y=acc, group=coh_cat, col=coh_cat)) + geom_point(size=4) + geom_line(size=1.5) + 
 #  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
 #  geom_errorbar(aes(ymin=acc-ci, ymax=acc+ci), width=.3, size=.7) +
-#  facet_grid(~ viewingDuration) +
+#  facet_grid(~ duration) +
 #  scale_color_manual(values=cbbPalette) +
 #  # scale_color_brewer(palette = "Dark2") +
 #  theme_bw() +
@@ -1167,14 +1178,14 @@ d <- data
 #d_modified[, `:=`(respondedCP=0, isCP=0)]
 #d_modified[cpChoice == "CP", respondedCP:=1]
 #d_modified[presenceCP == "CP", isCP:=1]
-#dd <- d_modified[,.(isCP, respondedCP, subject, probCP, dirChoice, dirCorrect, cpCorrect, viewingDuration, coh_cat)]
+#dd <- d_modified[,.(isCP, respondedCP, subject, probCP, dirChoice, dirCorrect, cpCorrect, duration, coh_cat)]
 #roc_cpd <- unique(dd[,.(propCP=sum(respondedCP)/.N, trueProp=sum(isCP)/.N, numTrials=.N), 
-#                     by=.(subject, probCP, viewingDuration, coh_cat)])
+#                     by=.(subject, probCP, duration, coh_cat)])
 #roc_cpd[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciTrueProp=1.96*sqrt(trueProp * (1-trueProp) / numTrials))]
 #
 #roc_cpd_avg_subj <- unique(dd[,
 #                              .(propCP=sum(respondedCP)/.N, trueProp=sum(isCP)/.N, numTrials=.N), 
-#                              by=.(probCP, viewingDuration, coh_cat)])
+#                              by=.(probCP, duration, coh_cat)])
 #roc_cpd_avg_subj[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciTrueProp=1.96*sqrt(trueProp * (1-trueProp) / numTrials))]
 #
 #
@@ -1184,7 +1195,7 @@ d <- data
 #  geom_line(aes(x=probCP, y=trueProp)) + 
 #  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
 #  geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
-#  facet_grid(subject ~ viewingDuration) +
+#  facet_grid(subject ~ duration) +
 #  scale_color_manual(values=cbbPalette) +
 #  # scale_color_brewer(palette = "Dark2") +
 #  theme_bw() +
@@ -1198,7 +1209,7 @@ d <- data
 #  geom_line(aes(x=probCP, y=trueProp)) + 
 #  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
 #  geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
-#  facet_grid(~ viewingDuration) +
+#  facet_grid(~ duration) +
 #  scale_color_manual(values=cbbPalette) +
 #  # scale_color_brewer(palette = "Dark2") +
 #  theme_bw() +
@@ -1207,19 +1218,19 @@ d <- data
 
 #--------------Hist CPD subj -by -subj
 # Hit/FA/Miss/CR
-#roc2 <- d[,.(presenceCP, cpChoice, subject, viewingDuration, probCP)]
+#roc2 <- d[,.(presenceCP, cpChoice, subject, duration, probCP)]
 #roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
 #roc2[presenceCP == "CP" & cpChoice == "CP", cpd:="Hit"]
 #roc2[presenceCP == "noCP" & cpChoice == "CP", cpd:="FA"]
 #roc2[presenceCP == "noCP" & cpChoice == "noCP", cpd:="CR"]
 #roc2[,cpd:=factor(cpd, levels = c("Hit", "FA", "CR", "Miss"))]
 #
-#roc2[cpd=="Miss", `:=`(len=.N), by=.(subject, viewingDuration, probCP)]
-#roc2[cpd=="CR", len:=.N, by=.(subject, viewingDuration, probCP)]
-#roc2[cpd=="Hit", len:=.N, by=.(subject, viewingDuration, probCP)]
-#roc2[cpd=="FA", len:=.N, by=.(subject, viewingDuration, probCP)]
+#roc2[cpd=="Miss", `:=`(len=.N), by=.(subject, duration, probCP)]
+#roc2[cpd=="CR", len:=.N, by=.(subject, duration, probCP)]
+#roc2[cpd=="Hit", len:=.N, by=.(subject, duration, probCP)]
+#roc2[cpd=="FA", len:=.N, by=.(subject, duration, probCP)]
 #roc2 <- unique(roc2[,`:=`(presenceCP=NULL, cpChoice=NULL)])
-#rocflat <- dcast(roc2, subject + viewingDuration + probCP ~ cpd, value.var="len")
+#rocflat <- dcast(roc2, subject + duration + probCP ~ cpd, value.var="len")
 #names(rocflat)[4] <- "NAvals"
 #rocflat[,`:=`(total=0)]
 #rocflat[!is.na(Miss),`:=`(total=total + Miss)]
@@ -1236,64 +1247,45 @@ d <- data
 #
 #ggplot(data=roc3, aes(x=probCP, y=len, fill=cpd)) +
 #  geom_bar(stat="identity", position=position_dodge()) +
-#  facet_grid(subject~viewingDuration) +
+#  facet_grid(subject~duration) +
 #  theme_bw() +
 #  ylab("%") +
 #  theme(text=element_text(size=17))
 
 #--------------Hist CPD AVG-subj
 # Hit/FA/Miss/CR
-get_dprime <- function(hits, fas) {
-  return(qnorm(hits) - qnorm(fas))
-}
-
-roc2 <- data[coh_cat=="th" & viewingDuration > 200,.(presenceCP, cpChoice, viewingDuration, probCP, coh_cat)]
-roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
-roc2[presenceCP == "CP" & cpChoice == "CP", cpd:="Hit"]
-roc2[presenceCP == "noCP" & cpChoice == "CP", cpd:="FA"]
-roc2[presenceCP == "noCP" & cpChoice == "noCP", cpd:="CR"]
-roc2[,cpd:=factor(cpd, levels = c("Hit", "FA", "CR", "Miss"))]
-
-roc2[cpd=="Miss" & presenceCP == "CP", `:=`(len=.N), by=.(viewingDuration, probCP)]
-roc2[cpd=="CR" & presenceCP == "noCP", len:=.N, by=.(viewingDuration, probCP)]
-roc2[cpd=="Hit" & presenceCP == "CP", len:=.N, by=.(viewingDuration, probCP)]
-roc2[cpd=="FA" & presenceCP == "noCP", len:=.N, by=.(viewingDuration, probCP)]
-roc2 <- unique(roc2[,`:=`(presenceCP=NULL, cpChoice=NULL)])
-rocflat <- dcast(roc2, viewingDuration + probCP ~ cpd, value.var="len")
-rocflat[,`:=`(totalCP=0L, totalNoCP=0L)]
-rocflat[!is.na(Miss) & !is.na(Hit),`:=`(totalCP=Hit + Miss)]
-rocflat[!is.na(FA) & !is.na(CR),`:=`(totalNoCP=CR + FA)]
-rocflat[,Hit:=Hit/totalCP]
-rocflat[,Miss:=Miss / totalCP]
-rocflat[,CR:=CR / totalNoCP]
-rocflat[,FA:=FA / totalNoCP]
-rocflat[,total:=NULL]
-rocflat[,dprime := get_dprime(Hit, FA)]
-
-# histograms
-roc3 <- melt(rocflat, measure.vars = c("Hit", "FA", "Miss", "CR"), variable.name = "cpd", value.name = "len")
-# head(roc3)
-
-#png(filename="newhist_cpd_avg_subj.png", width=600, height=360)
-#ggplot(data=roc3, aes(x=probCP, y=len, fill=cpd)) +
-#  geom_bar(stat="identity", position=position_dodge()) +
-#  facet_grid(~viewingDuration) +
-#  theme_bw() +
-#  ylab("%") +
-#  ggtitle("CPD performance") +
-#  theme(text=element_text(size=18))
+#roc2 <- d[duration > 200,.(presenceCP, cpChoice, duration, probCP)]
+#roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
+#roc2[presenceCP == "CP" & cpChoice == "CP", cpd:="Hit"]
+#roc2[presenceCP == "noCP" & cpChoice == "CP", cpd:="FA"]
+#roc2[presenceCP == "noCP" & cpChoice == "noCP", cpd:="CR"]
+#roc2[,cpd:=factor(cpd, levels = c("Hit", "FA", "CR", "Miss"))]
 #
-#png(filename="hist_cpd_avg_subj.png", width=600, height=360)
+#roc2[cpd=="Miss", `:=`(len=.N), by=.(duration, probCP)]
+#roc2[cpd=="CR", len:=.N, by=.(duration, probCP)]
+#roc2[cpd=="Hit", len:=.N, by=.(duration, probCP)]
+#roc2[cpd=="FA", len:=.N, by=.(duration, probCP)]
+#roc2 <- unique(roc2[,`:=`(presenceCP=NULL, cpChoice=NULL)])
+#rocflat <- dcast(roc2, duration + probCP ~ cpd, value.var="len")
+#rocflat[,`:=`(total=0)]
+#rocflat[!is.na(Miss),`:=`(total=total + Miss)]
+#rocflat[!is.na(Hit),`:=`(total=total + Hit)]
+#rocflat[!is.na(FA),`:=`(total=total + FA)]
+#rocflat[!is.na(CR),`:=`(total=total + CR)]
+#rocflat[,Hit:=Hit/total]
+#rocflat[,Miss:=Miss / total]
+#rocflat[,CR:=CR / total]
+#rocflat[,FA:=FA / total]
+#rocflat[,total:=NULL]
+#roc3 <- melt(rocflat, measure.vars = c("Hit", "FA", "Miss", "CR", "NA"), variable.name = "cpd", value.name = "len")
+#head(roc3)
+#
+#png(paste0(TODAY,hist_cpd_avg_subj.png"), width=600, height=360)
 #ggplot(data=roc3, aes(x=probCP, y=len, fill=cpd)) +
 #  geom_bar(stat="identity", position=position_dodge()) +
-#  facet_grid(~viewingDuration) +
+#  facet_grid(~duration) +
 #  theme_bw() +
 #  ylab("%") +
 #  ggtitle("CPD performance") +
 #  theme(text=element_text(size=18))
 #dev.off()
-png(filename="dprime_avg_subj.png", width=600, height=360)
-ggplot(rocflat, aes(x=probCP, y=dprime)) + geom_point(size=4) + facet_grid(~viewingDuration) +
-  geom_hline(yintercept=0, linetype="dashed") +
-  theme(text=element_text(size=18))
-dev.off()

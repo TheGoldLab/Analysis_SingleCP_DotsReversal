@@ -1,0 +1,316 @@
+---
+title: "Data IO Fall 2019 Single CP task"
+output:
+  html_document:
+    df_print: paged
+    code_folding: hide
+---
+
+```{r}
+library(data.table)
+library(ggplot2)
+source("process.r")
+```
+
+```{r}
+DATA_FOLDER <- '/home/adrian/SingleCP_DotsReversal/Fall2019/raw/'
+```
+
+```{r}
+#t1 <- fread(paste0(DATA_FOLDER, 'completed4AFCtrials_task99_date_2019_11_05_10_27.csv'))
+full_data <- get_full_data(paste0(DATA_FOLDER, 'full_2019_12_18.csv'))
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+# Sandbox
+```{r}
+str(full_data[,.(date, subject, probCP)])
+```
+
+```{r}
+unique(full_data[,.(date, subject, probCP)])
+```
+
+# Main Plots
+## Direction Accuracy as function of VD
+### All subjects 
+```{r}
+crossover <- full_data[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
+crossover[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(5)
+ggplot(unique(crossover[coh_cat=="th",.(dirAcc, duration, probCP, ci)]), 
+       aes(x=duration, y=dirAcc, col=probCP)) + geom_point(size=2.3, position=pd) + geom_line(size=1.4) + 
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=10, position=pd) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  scale_color_manual(values=c(cbbPalette[8], cbbPalette[6])) +
+  theme(text=element_text(size=17))
+```
+
+### Subject-by-subject
+```{r}
+crossover <- full_data[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP, subject)]
+crossover[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(5)
+ggplot(unique(crossover[coh_cat=="th",.(dirAcc, duration, probCP, ci, subject)]), 
+       aes(x=duration, y=dirAcc, col=probCP)) + geom_point(size=2.3, position=pd) + geom_line(size=1.4) + facet_wrap(~subject, ncol=2) +
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=10, position=pd) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  scale_color_manual(values=c(cbbPalette[8], cbbPalette[6])) +
+  theme(text=element_text(size=17))
+```
+## Direction Accuracy as function of VD -- by presenceCP
+### All subjects together
+```{r, fig.width=7}
+acc0 <- full_data[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, presenceCP, duration, probCP)]
+acc0[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(5)
+ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point(size=3.5, position=pd) + 
+  geom_line(size=1.3) + 
+  facet_grid(~probCP) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  theme(text=element_text(size=16))
+```
+### Subject-by-subject
+```{r, fig.width=7, fig.height=8}
+acc0 <- full_data[coh_cat=="th",`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), by=.(coh_cat, presenceCP, duration, probCP, subject)]
+acc0[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(5)
+ggplot(unique(acc0[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, ci, subject)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + geom_point(size=3.5, position=pd) + 
+  geom_line(size=1.3) + 
+  facet_grid(subject~probCP) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  theme(text=element_text(size=17))
+```
+
+## Direction Accuracy as function of VD -- by presenceCP by cpChoice by coherence
+### All subjects together
+In the plot below, each row is a coherence level and each column is a probCP condition.
+
+Focusing on the threshold-coherence row, we note the following:
+
+1. Solid green and dashed red curves correspond to correct CP-detection trials. For the solid green curve, the CP was correctly rejected, for the dashed red curve, the CP was correctly detected (hit). 
+
+    a. In both probCP conditions, the 300-msec red datapoint (100-msec after CP) is higher than the 100-msec green datapoint (100-msec after dots onset). This suggests that on CP trials on which the CP was perceived (i.e. reported) information prior to CP-time is beneficial to the direction discrimination process. This effect seems robust within-subject as well (see subject-by-subject plots further down).
+    b. The dashed red curve (direction discrimination accuracy on CP-hit trials) is higher in the 0.3 probCP than in the 0.7 probCP condition, for viewing durations 250-300 msec. This is surprising as in the 0.3 probCP condition, CPs are relatively infrequent.
+    c. For 250-msec trials, direction discrimination accuracy on CP-correct-rejection trials is higher than on CP-hit trials. But this effect is modulated by probCP: it is more pronounced when CPs are frequent. 
+    
+2. Dashed green and solid red curves correspond to CP-FA and CP-Miss trials respectively.
+
+    a. The solid red curve (CP-miss) is roughly the same (monotonically increasing with diminishing returns) across probCP conditions (the dip at 600-msec cannot be trusted because of too few data). The fact that it starts below chance level (50% accuracy) is consistent with accrued evidence in favor of the the pre-CP correct direction of motion "carrying over" the CP-time. The fact that the 50%-accuracy threshold is crossed before the 400-msec viewing duration landmark indicates that accuracy is better than that of the simplest DDM model (the perfect accumulator).
+    b. The dashed green curve (CP-FA) starts roughly at the same level as the solid green one (CP-correct-rejection), but too few data forbids interpretation for the 100-msec viewing duration. In the 0.3-probCP condition, direction discrimination accuracy on CP-FA trials remains below 50% for 200-400 msec viewing durations. Can we interpret that on these trials, subjects "possess" enough information to make the correct decision more often than chance but use it wrongly systematically? Why is this attenuated in the 0.7-probCP condition? 
+        
+Hopefully, psychophysical kernels will soon give us more information about the dynamics of evidence integration in these various conditions.
+    
+```{r, fig.width=10, fig.height=12}
+acc <- full_data[,`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), 
+                 by=.(coh_cat, presenceCP, duration, probCP, cpChoice)]
+acc[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(10)
+ggplot(unique(acc[,.(dirAcc, presenceCP, duration, probCP, cpChoice, ci, coh_cat)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + 
+  geom_point(size=2, position=pd) + 
+  geom_line(size=1.5, aes(linetype=cpChoice)) + facet_grid(coh_cat~probCP) +
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  # geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  ylim(0,1)+
+  theme(text=element_text(size=17))
+```
+
+We now reproduce the above plot with 95%-confidence intervals.
+```{r, fig.width=13, fig.height=16}
+acc <- full_data[,`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), 
+                 by=.(coh_cat, presenceCP, duration, probCP, cpChoice)]
+acc[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(10)
+ggplot(unique(acc[,.(dirAcc, presenceCP, duration, probCP, cpChoice, ci, coh_cat)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + 
+  geom_point(size=2, position=pd) + 
+  geom_line(size=1.5, aes(linetype=cpChoice)) + facet_grid(coh_cat~probCP) +
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  ylim(0,1)+
+  theme(text=element_text(size=17))
+```
+
+### Subject-by-subject -- only threshold coherence
+
+```{r, fig.width=10, fig.height=16}
+acc <- full_data[,`:=`(dirAcc=sum(dirCorrect)/.N, numTrials=.N), 
+                 by=.(coh_cat, presenceCP, duration, probCP, cpChoice, subject)]
+acc[,`:=`(ci=1.96*sqrt(dirAcc * (1-dirAcc) / numTrials))]
+pd <- position_dodge(10)
+ggplot(unique(acc[coh_cat=="th",.(dirAcc, presenceCP, duration, probCP, cpChoice, ci, subject)]), 
+       aes(x=duration, y=dirAcc, col=presenceCP)) + 
+  geom_point(size=2, position=pd) + 
+  geom_line(size=1.5, aes(linetype=cpChoice)) + facet_grid(subject~probCP) +
+  geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  # geom_errorbar(aes(ymin=dirAcc - ci, ymax=dirAcc+ci), width=12, position=pd) +
+  scale_color_manual(values=c(cbbPalette[4], cbbPalette[7]) , name = "", labels = c("no CP", "CP")) +
+  ylim(0,1)+
+  theme(text=element_text(size=17))
+```
+
+## CP-detection accuracy as function of VD -- by probCP
+### All subjects together
+```{r, fig.width=10}
+cpd <- full_data[,`:=`(cpAcc=sum(cpCorrect)/.N, numTrials=.N), by=.(coh_cat, duration, probCP)]
+cpd[,`:=`(ci=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
+pd <- position_dodge(.2)
+ggplot(unique(cpd[coh_cat != "0",.(cpAcc, coh_cat, duration, probCP, ci)]), 
+       aes(x=duration, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=5, position=pd) + geom_line(size=1) + facet_grid(~probCP) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  scale_color_manual(values=cbbPalette[c(2,3)]) + 
+  geom_errorbar(aes(ymin=cpAcc - ci, ymax=cpAcc+ci), width=1, position=pd) +
+  theme(text=element_text(size=17)) + ggtitle("Acc. at CP-detection")
+```
+
+### Subject-by-subject
+```{r, fig.width=10.5, fig.height=14}
+cpd <- full_data[,`:=`(cpAcc=sum(cpCorrect)/.N, numTrials=.N), by=.(coh_cat, subject, duration, probCP)]
+cpd[,`:=`(ci=1.96*sqrt(cpAcc * (1-cpAcc) / numTrials))]
+pd <- position_dodge(.2)
+ggplot(unique(cpd[coh_cat != "0",.(cpAcc, coh_cat, duration, probCP, ci, subject)]), 
+       aes(x=duration, y=cpAcc, col=coh_cat, group=coh_cat)) + geom_point(size=5, position=pd) + geom_line(size=1) + facet_grid(subject~probCP) +
+   geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+  scale_color_manual(values=cbbPalette[c(2,3)]) + 
+  geom_errorbar(aes(ymin=cpAcc - ci, ymax=cpAcc+ci), width=.5, position=pd) +
+  theme(text=element_text(size=17)) + ggtitle("Acc. at CP-detection")
+```
+
+# Additional plots
+```{r, fig.width=10}
+d_modified <- full_data[coh_cat!="100"]
+d_modified[, `:=`(respondedCP=0, isCP=0)]
+d_modified[cpChoice == "CP", respondedCP:=1]
+d_modified[presenceCP == "CP", isCP:=1]
+dd <- d_modified[,.(isCP, respondedCP, subject, probCP, dirChoice, dirCorrect, cpCorrect, duration, coh_cat)]
+roc_cpd_avg_subj <- unique(dd[,
+                             .(propCP=sum(respondedCP)/.N, trueProp=sum(isCP)/.N, numTrials=.N),
+                             by=.(probCP, duration, coh_cat)])
+roc_cpd_avg_subj[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciTrueProp=1.96*sqrt(trueProp * (1-trueProp) / numTrials))]
+
+## Average across 5 subjects
+
+ggplot(roc_cpd_avg_subj, aes(x=probCP, y=propCP, group=coh_cat, col=coh_cat)) +
+ geom_point(size=4) +
+ geom_line(size=1.5) +
+ geom_line(aes(x=probCP, y=trueProp)) +
+ geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+ geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
+ scale_color_manual(values=cbbPalette) +
+  facet_wrap(~duration, ncol=6) +
+ # scale_color_brewer(palette = "Dark2") +
+ theme_bw() +
+ theme(text=element_text(size=17)) + 
+  ggtitle("Proportion Report CP")
+```
+
+```{r, fig.width=10, fig.height=15}
+d_modified <- full_data[coh_cat!="100"]
+d_modified[, `:=`(respondedCP=0, isCP=0)]
+d_modified[cpChoice == "CP", respondedCP:=1]
+d_modified[presenceCP == "CP", isCP:=1]
+dd <- d_modified[,.(isCP, respondedCP, subject, probCP, dirChoice, dirCorrect, cpCorrect, duration, coh_cat, subject)]
+roc_cpd_avg_subj <- unique(dd[,
+                             .(propCP=sum(respondedCP)/.N, trueProp=sum(isCP)/.N, numTrials=.N),
+                             by=.(probCP, duration, coh_cat, subject)])
+roc_cpd_avg_subj[, `:=`(ciPropCP=1.96*sqrt(propCP * (1-propCP) / numTrials), ciTrueProp=1.96*sqrt(trueProp * (1-trueProp) / numTrials))]
+
+ggplot(roc_cpd_avg_subj, aes(x=probCP, y=propCP, group=coh_cat, col=coh_cat)) +
+ geom_point(size=4) +
+ geom_line(size=1.5) +
+ geom_line(aes(x=probCP, y=trueProp)) +
+ geom_hline(yintercept = c(0.5,1), linetype='dashed') +
+ geom_errorbar(aes(ymin=propCP-ciPropCP, ymax=propCP+ciPropCP), width=.3, size=.7) +
+ scale_color_manual(values=cbbPalette) +
+  facet_grid(subject~duration) +
+ # scale_color_brewer(palette = "Dark2") +
+ theme_bw() +
+ theme(text=element_text(size=17)) + 
+  ggtitle("Proportion Report CP")
+```
+
+
+```{r}
+get_dprime <- function(hits, fas) {
+  return(qnorm(hits) - qnorm(fas))
+}
+```
+
+```{r}
+roc2 <- full_data[coh_cat=="th" & duration > 200,.(presenceCP, cpChoice, duration, probCP, coh_cat)]
+roc2[presenceCP=="CP" & cpChoice == "noCP",cpd:="Miss"]
+roc2[presenceCP == "CP" & cpChoice == "CP", cpd:="Hit"]
+roc2[presenceCP == "noCP" & cpChoice == "CP", cpd:="FA"]
+roc2[presenceCP == "noCP" & cpChoice == "noCP", cpd:="CR"]
+roc2[,cpd:=factor(cpd, levels = c("Hit", "FA", "CR", "Miss"))]
+
+roc2[cpd=="Miss" & presenceCP == "CP", `:=`(len=.N), by=.(duration, probCP)]
+roc2[cpd=="CR" & presenceCP == "noCP", len:=.N, by=.(duration, probCP)]
+roc2[cpd=="Hit" & presenceCP == "CP", len:=.N, by=.(duration, probCP)]
+roc2[cpd=="FA" & presenceCP == "noCP", len:=.N, by=.(duration, probCP)]
+roc2 <- unique(roc2[,`:=`(presenceCP=NULL, cpChoice=NULL)])
+rocflat <- dcast(roc2, duration + probCP ~ cpd, value.var="len")
+rocflat[,`:=`(totalCP=0L, totalNoCP=0L)]
+rocflat[!is.na(Miss) & !is.na(Hit),`:=`(totalCP=Hit + Miss)]
+rocflat[!is.na(FA) & !is.na(CR),`:=`(totalNoCP=CR + FA)]
+rocflat[,Hit:=Hit/totalCP]
+rocflat[,Miss:=Miss / totalCP]
+rocflat[,CR:=CR / totalNoCP]
+rocflat[,FA:=FA / totalNoCP]
+rocflat[,total:=NULL]
+rocflat[,dprime := get_dprime(Hit, FA)]
+
+# histograms
+roc3 <- melt(rocflat, measure.vars = c("Hit", "FA", "Miss", "CR"), variable.name = "cpd", value.name = "len")
+# head(roc3)
+
+ggplot(data=roc3, aes(x=probCP, y=len, fill=cpd)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  facet_grid(~duration) +
+  theme_bw() +
+  ylab("%") +
+  ggtitle("CPD performance") +
+  theme(text=element_text(size=18))
+```
+
+```{r}
+ggplot(rocflat, aes(x=duration, y=dprime, group=probCP, col=probCP)) + geom_line(size=3) + 
+  geom_hline(yintercept=0, linetype="dashed") +
+  scale_color_brewer(palette = "Set1") +
+  theme(text=element_text(size=18))
+```
+
+
+<!--
+# Investigation of time variability
+```{r}
+# str(full_data)
+```
+
+
+```{r}
+full_data[,trueVD:=1000*(dotsOff-dotsOn)]
+```
+
+```{r, fig.width=10, fig.height=5}
+# ref: https://stackoverflow.com/a/34045068
+# I have established that presenceCP is not the reason for bimodality of the histograms
+# nor is the date of the experiment
+ggplot(full_data, aes(x=trueVD, fill=cbbPalette[3])) + geom_histogram() + 
+  facet_wrap(~factor(duration), scales="free") + theme_classic() +
+  theme(text=element_text(size=17), legend.position="none") 
+```
+
+```{r}
+ggplot(full_data, aes(x=finalCPTime)) + geom_histogram() + theme_bw() + theme(text=element_text(size=17)) 
+```
+-->

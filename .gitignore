@@ -36,3 +36,8 @@ R/basics_files/*
 R/__pycache__/*
 R/dotsReproducibilityTest/.Rhistory
 R/animations/.Rhistory
+*.gif
+*.Rhistory
+*.mp4
+*.png
+*.pdf

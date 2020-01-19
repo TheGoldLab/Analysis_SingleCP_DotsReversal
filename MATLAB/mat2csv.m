@@ -22,8 +22,8 @@
 % subjStruct = metadata.(subjects{subjNumber});
 % sessions = fieldnames(subjStruct);  % session names for 
 % disp(sessions)
-timestamp='2019_09_27_11_29';
-datapath = ['/Users/joshuagold/Documents/MATLAB/projects/Task_SingleCP_DotsReversal/data/DotsReproducibilityTest/raw/',timestamp,'/'];
+timestamp='2019_12_30_13_47';
+datapath = ['/Users/adrian/oneCP/Fall_2019/raw/',timestamp,'/'];
 filename = [timestamp, '_topsDataLog.mat'];
 disp(datapath)
 
@@ -50,7 +50,7 @@ dotsColNames = {...
 fullMatrix = zeros(0,length(dotsColNames));
 end_block = 0;
 
-for taskID=1:length(topNode.children)
+for taskID=3:length(topNode.children)
     taskNode = topNode.children{taskID};
     numTrials=length(taskNode.dotsInfo.dotsPositions);
     if numTrials ~= length(taskNode.dotsInfo.dumpTime)
@@ -59,7 +59,7 @@ for taskID=1:length(topNode.children)
         
     for trial = 1:numTrials
         dotsPositions = taskNode.dotsInfo.dotsPositions{trial};
-        dumpTime = taskNode.dotsInfo.dumpTime{trial};
+        dumpTime = taskNode.dotsInfo.dumpTime(trial);
         numDotsFrames = size(dotsPositions,3);
         
         for frame = 1:numDotsFrames
@@ -70,7 +70,7 @@ for taskID=1:length(topNode.children)
             
             fullMatrix(start_block:end_block,:) = [...
                 squeeze(dotsPositions(:,:,frame)'),...
-                repmat([frame,dumpTime,subjNumber,taskID],numDots,1)];
+                repmat([frame,dumpTime,subjNumber,100],numDots,1)];
         end
    end
 end
