@@ -5,16 +5,10 @@
         "url": "https://github.com/TheGoldLab/Analysis_SingleCP_DotsReversal.git",
         "update": "never"
     },
-    {	
-        "name": "Task_SingleCP_DotsReversal",
-        "type": "git",
-        "url": "https://github.com/TheGoldLab/Task_SingleCP_DotsReversal.git",
-        "update": "never" 
-    },
     {
 		"name": "Lab_Matlab_Control",
 		"type": "git",
-        "flavor": "stable",
+        "flavor": "singlecp_dev",
 		"url": "https://github.com/TheGoldLab/Lab_Matlab_Control.git",
 		"pathPlacement": "append"
     },
